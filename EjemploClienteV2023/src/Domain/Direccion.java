@@ -11,8 +11,11 @@ package Domain;
 public class Direccion {
     private String canton;
     private String distrito;
-    private 
 
+    
+    
+    
+    
     public Direccion(String canton, String distrito) {
         this.canton = canton;
         this.distrito = distrito;
