@@ -11,6 +11,8 @@ import Domain.Examinador;
 import Domain.Usuario;
 import Utility.GestionXML;
 import Utility.MyUtil;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
@@ -33,7 +35,10 @@ public class JFLogging extends javax.swing.JFrame {
     public JFLogging(){
         this.usuario = null;
         initComponents();
+        setLocationRelativeTo(null);
     }
+    
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -186,6 +191,7 @@ public class JFLogging extends javax.swing.JFrame {
                 if (verificado != null && verificado.isActivo()) { // sí
                     this.usuario = verificado;//se guarda
                     JFPrincipal ventana = new JFPrincipal(this.usuario);//se abre la ventana con los menús
+                    this.setVisible(false);
                     ventana.setVisible(true);
                 } else { //si no, se envía un mensaje
                     JOptionPane.showMessageDialog(this, "Datos invalidos");
@@ -197,8 +203,9 @@ public class JFLogging extends javax.swing.JFrame {
                 if (verificado != null && verificado.isActivo()) {//sí
                     this.usuario = verificado; //se guarda el usuario
                     JFPrincipal ventana = new JFPrincipal(this.usuario);//se abre la ventana
+                    this.setVisible(false);
                     ventana.setVisible(true);
-                } else {//no, se notifica
+                } else {//si no se valida, se notifica
                     JOptionPane.showMessageDialog(this, "Datos invalidos");
                 }
             }

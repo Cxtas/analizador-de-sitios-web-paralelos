@@ -10,6 +10,8 @@ import Data.ExaminadorData;
 import Domain.Analisis;
 import Domain.Examinador;
 import Domain.Tarea;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -20,12 +22,14 @@ import org.jdom.JDOMException;
  * @author catas
  */
 public class JIFAsignarTarea extends javax.swing.JInternalFrame {
-    
+
     private ArrayList<Examinador> analistas;
     private Examinador analista;
     private ExaminadorBusiness examinadorBusiness;
     private ArrayList<Tarea> tareas;//Tareas Por Analizar
     private Tarea tarea; //tarea seleccionada
+    private int pos;
+
     /**
      * Creates new form JIFAsignarTarea
      */
@@ -36,21 +40,22 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
         agregarTareas();
         this.analista = null;
         this.tarea = null;
-        this.analistas=new ArrayList<>();
+        this.analistas = new ArrayList<>();
     }
-    
+
     private void solicitarAnalista() {
         this.analistas = this.examinadorBusiness.obtenerExaminadores();
         for (int i = 0; i < this.analistas.size(); i++) {
-            if(this.analistas.get(i).getRol().equals("analista") && this.analistas.get(i).isActivo() ){
-            this.jcbAnalistas.addItem(this.analistas.get(i).getUser());
-            }else{
-                this.analistas.remove(i);//elimina de una vez los que no son analistas
-            }
+            if (this.analistas.get(i).getRol().equals("analista") && this.analistas.get(i).isActivo()) {
+                this.jcbAnalistas.addItem(this.analistas.get(i).getUser());
+                this.pos = i;
+            }//else{
+//                this.analistas.remove(i);//elimina de una vez los que no son analistas
+//            }
         }
     }//solicitar
-    
-    private void agregarTareas(){
+
+    private void agregarTareas() {
         TareaBusiness tareaBusiness = new TareaBusiness();
         this.tareas = tareaBusiness.obtenerTareas();
         for (int i = 0; i < this.tareas.size(); i++) {
@@ -99,14 +104,15 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
                         .addGap(164, 164, 164)
                         .addComponent(jbtnAsignar))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(129, 129, 129)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel2)
-                            .addComponent(jcbAnalistas, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(137, 137, 137)
+                        .addComponent(jLabel2))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(113, 113, 113)
-                        .addComponent(jcbTareas, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(117, Short.MAX_VALUE))
+                        .addGap(32, 32, 32)
+                        .addComponent(jcbTareas, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(75, 75, 75)
+                        .addComponent(jcbAnalistas, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -129,8 +135,12 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
 
     private void jbtnAsignarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAsignarActionPerformed
         this.analista = this.analistas.get(this.jcbAnalistas.getSelectedIndex());//guarda el analista seleccionado
+        for (int i = 0; i < this.analistas.size(); i++) {
+            System.out.println(this.analistas.get(i).getRol());
+        }
         this.tarea = this.tareas.get(this.jcbTareas.getSelectedIndex());
         this.analista.addTareas(tarea);
+        System.out.println(this.analista.getTareas().get(0));
     }//GEN-LAST:event_jbtnAsignarActionPerformed
 
 

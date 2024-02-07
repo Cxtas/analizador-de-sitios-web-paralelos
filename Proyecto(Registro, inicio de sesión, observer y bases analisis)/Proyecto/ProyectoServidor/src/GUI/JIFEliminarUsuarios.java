@@ -10,6 +10,8 @@ import Domain.Administrador;
 import Domain.Examinador;
 import Domain.Usuario;
 import Utility.GestionXML;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -49,9 +51,12 @@ public class JIFEliminarUsuarios extends javax.swing.JInternalFrame {
         this.usuarios.addAll(this.examinadorBusiness.obtenerExaminadores());
         this.usuarios.addAll(this.administradorBusiness.obtenerAdministradores());
         for (int i = 0; i < this.usuarios.size(); i++) {
-            this.jcbUsuarios.addItem(this.usuarios.get(i).getUser());
+            if (this.usuarios.get(i).isActivo()) {
+                this.jcbUsuarios.addItem(this.usuarios.get(i).getUser());
+            }
         }
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -87,19 +92,19 @@ public class JIFEliminarUsuarios extends javax.swing.JInternalFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(112, 112, 112)
-                        .addComponent(jcbUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(167, 167, 167)
-                        .addComponent(jbtnEliminar)))
-                .addContainerGap(132, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(jbtnVolver)
                 .addGap(15, 15, 15))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(167, 167, 167)
+                        .addComponent(jbtnEliminar))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(84, 84, 84)
+                        .addComponent(jcbUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(105, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -132,17 +137,17 @@ public class JIFEliminarUsuarios extends javax.swing.JInternalFrame {
             int pos = jcbUsuarios.getSelectedIndex();
             this.usuarios.get(pos).setActivo(false);
             if (this.usuarios.get(pos).getTipoUsuario().equals("administrador")) {
-                if(this.administradorBusiness.desactivarAdministrador((Administrador)this.usuarios.get(pos))){
+                if (this.administradorBusiness.desactivarAdministrador((Administrador) this.usuarios.get(pos))) {
                     JOptionPane.showMessageDialog(this, "Se eliminó correctamente");
-                }else{
+                } else {
                     JOptionPane.showMessageDialog(this, "No se pudo eliminar");
                 }
             } else {
-                 if(this.examinadorBusiness.desactivarExaminador((Examinador)this.usuarios.get(pos))){
-                     JOptionPane.showMessageDialog(this, "Se eliminó correctamente");
-                 }else{
-                      JOptionPane.showMessageDialog(this, "No se pudo eliminar");
-                 }
+                if (this.examinadorBusiness.desactivarExaminador((Examinador) this.usuarios.get(pos))) {
+                    JOptionPane.showMessageDialog(this, "Se eliminó correctamente");
+                } else {
+                    JOptionPane.showMessageDialog(this, "No se pudo eliminar");
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(JIFEliminarUsuarios.class.getName()).log(Level.SEVERE, null, ex);

@@ -7,6 +7,8 @@ package GUI;
 import Business.AnalisisBusiness;
 import Business.TareaBusiness;
 import Domain.Tarea;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +24,7 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
      * Creates new form JIFDatosAnalisis
      */
     private Tarea tarea;
+
     public JIFDatosAnalisis() {
         initComponents();
         this.tarea = null;
@@ -156,22 +159,22 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
                 if (this.jcheckImg.isSelected()) {
                     this.tarea.setImagenes(true);
                 }
-                
+
             } else {
                 this.tarea = new Tarea(0, "en proceso", (String) this.jcbTipoAnalisis.getSelectedItem(), this.jtfURL.getText());
             }
             boolean registrado = tareaBusiness.insertarTareas(this.tarea);
-            if(registrado){
+            if (registrado) {
                 JOptionPane.showMessageDialog(this, "Se agregó una tarea");
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(this, "No se pudo agregar");
             }
-                
+
         } catch (IOException ex) {
             Logger.getLogger(JIFDatosAnalisis.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        
+
     }//GEN-LAST:event_jbtnGuardarActionPerformed
 
     private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed

@@ -35,7 +35,7 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jcbSitios = new javax.swing.JComboBox<>();
-        jbtnAnalizar = new javax.swing.JButton();
+        jbtnGraficar = new javax.swing.JButton();
 
         setTitle("Estadísticas");
 
@@ -44,10 +44,10 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
 
         jcbSitios.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jbtnAnalizar.setText("Analizar");
-        jbtnAnalizar.addActionListener(new java.awt.event.ActionListener() {
+        jbtnGraficar.setText("Graficar");
+        jbtnGraficar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbtnAnalizarActionPerformed(evt);
+                jbtnGraficarActionPerformed(evt);
             }
         });
 
@@ -55,36 +55,36 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(41, 41, 41))
             .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addComponent(jbtnAnalizar)
-                            .addGap(172, 172, 172)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(130, 130, 130)
-                        .addComponent(jcbSitios, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(141, 141, 141)))
-                .addContainerGap(51, Short.MAX_VALUE))
+                        .addGap(196, 196, 196)
+                        .addComponent(jbtnGraficar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(40, 40, 40)
+                        .addComponent(jcbSitios, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(94, 94, 94)
+                .addGap(23, 23, 23)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                .addGap(29, 29, 29)
                 .addComponent(jcbSitios, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38)
-                .addComponent(jbtnAnalizar)
-                .addGap(95, 95, 95))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addComponent(jbtnGraficar)
+                .addGap(27, 27, 27))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jbtnAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAnalizarActionPerformed
+    private void jbtnGraficarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGraficarActionPerformed
         Sitio sitio= (Sitio)this.jcbSitios.getSelectedItem();
 
         DefaultPieDataset pieDataset= new DefaultPieDataset();
@@ -106,12 +106,12 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
         ChartFrame frame= new ChartFrame("Grafico circular", chart);
         frame.pack();
         frame.setVisible(true);
-    }//GEN-LAST:event_jbtnAnalizarActionPerformed
+    }//GEN-LAST:event_jbtnGraficarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JButton jbtnAnalizar;
+    private javax.swing.JButton jbtnGraficar;
     private javax.swing.JComboBox<String> jcbSitios;
     // End of variables declaration//GEN-END:variables
 }
