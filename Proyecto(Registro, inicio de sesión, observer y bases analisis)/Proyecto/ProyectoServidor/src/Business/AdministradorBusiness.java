@@ -45,7 +45,7 @@ public class AdministradorBusiness {
         return this.administradorData.verificarUsuario(nombreUsuario);
     }//verificar que los usuarios no se registren repetidos
     
-    public boolean desactivarUsuario(Usuario usuario) throws IOException {
-        return this.administradorData.desactivarUsuario(usuario);
+    public boolean desactivarAdministrador(Administrador administrador) throws IOException {
+        return this.administradorData.desactivarAdministrador(administrador);
     }
 }

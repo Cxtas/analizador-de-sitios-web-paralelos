@@ -188,13 +188,13 @@ public class JFLogging extends javax.swing.JFrame {
                     JFPrincipal ventana = new JFPrincipal(this.usuario);//se abre la ventana con los menús
                     ventana.setVisible(true);
                 } else { //si no, se envía un mensaje
-                    JOptionPane.showMessageDialog(this, "Datos invalidos o el usuario está desactivado");
+                    JOptionPane.showMessageDialog(this, "Datos invalidos");
                     this.jtfUsuario.setText("");
                     this.jtfContrasenia.setText("");
                 }
             } else {//entonces es examinador
                 Examinador verificado = examinadorBusiness.buscarExaminador(this.jtfUsuario.getText());//se busca en el archivo a ver si está registrado
-                if (verificado != null) {//sí
+                if (verificado != null && verificado.isActivo()) {//sí
                     this.usuario = verificado; //se guarda el usuario
                     JFPrincipal ventana = new JFPrincipal(this.usuario);//se abre la ventana
                     ventana.setVisible(true);

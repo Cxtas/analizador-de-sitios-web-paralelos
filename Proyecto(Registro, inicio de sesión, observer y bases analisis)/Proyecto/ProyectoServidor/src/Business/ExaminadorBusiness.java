@@ -46,4 +46,8 @@ public class ExaminadorBusiness {
         return this.examinadorData.verificarUsuario(nombreUsuario);
     }//verificar que los usuarios no se registren repetidos
     
+    public boolean desactivarExaminador(Examinador examinador) throws IOException {
+        return this.examinadorData.desactivarExaminador(examinador);
+    }
+    
 }//clase

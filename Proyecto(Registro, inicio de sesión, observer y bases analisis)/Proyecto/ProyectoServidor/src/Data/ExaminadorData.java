@@ -4,6 +4,7 @@
  */
 package Data;
 
+import Domain.Administrador;
 import Domain.Examinador;
 import Domain.Sitio;
 import Domain.Tarea;
@@ -128,6 +129,24 @@ public boolean insertarExaminador(Examinador examinador) throws IOException{
         
         return false;
     }
+    
+        public boolean desactivarExaminador(Examinador examinador) throws IOException {
+        List elementList = this.root.getChildren();
+        boolean hecho = false;
+        for (Object object : elementList) {
+            Element eUsuarioActual = (Element) object;
+            if (eUsuarioActual.getChild("user").getValue().equals(examinador.getUser())) {
+                eUsuarioActual.getChild("activo").removeContent();
+                eUsuarioActual.getChild("activo").addContent(String.valueOf(examinador.isActivo()));
+                hecho=true;
+            }
+        }//for
+        if (hecho) {
+            this.guardarXML();
+            return true;
+        }
+        return false;
+    }//desactivar
     
     public void asignarTarea(Examinador e, Tarea tarea){//metodo que usan los gestores
         e.verificarRol();

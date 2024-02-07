@@ -28,6 +28,7 @@ public class JFPrincipal extends javax.swing.JFrame {
     private void permisos(){
         if(this.usuario.getTipoUsuario().equals("examinador")){
             this.jmiNuevoUsuario.setEnabled(false);//Los examinadores no pueden registrar usuarios
+            this.jmiEliminarUsuarios.setEnabled(false);//y tampoco eliminarlos
             Examinador examinador = (Examinador)this.usuario;//establecer el usuario como examinador
             switch (examinador.getRol()) { //depende del rol tiene acceso a distintos menús
                 case "digitador"->{this.jmiAnalisis.setEnabled(true);}

@@ -111,14 +111,14 @@ public class AdministradorData {
         return false;
     }//verificar usuario
 
-    public boolean desactivarUsuario(Usuario usuario) throws IOException {
+    public boolean desactivarAdministrador(Administrador admin) throws IOException {
         List elementList = this.root.getChildren();
         boolean hecho = false;
         for (Object object : elementList) {
             Element eUsuarioActual = (Element) object;
-            if (eUsuarioActual.getChild("user").getValue().equals(usuario.getUser())) {
+            if (eUsuarioActual.getChild("user").getValue().equals(admin.getUser())) {
                 eUsuarioActual.getChild("activo").removeContent();
-                eUsuarioActual.getChild("activo").addContent(String.valueOf(usuario.isActivo()));
+                eUsuarioActual.getChild("activo").addContent(String.valueOf(admin.isActivo()));
                 hecho=true;
             }
         }//for
@@ -127,5 +127,5 @@ public class AdministradorData {
             return true;
         }
         return false;
-    }
+    }//desactivar
 }//clase

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
@@ -27,7 +28,7 @@ public class JIFEliminarUsuarios extends javax.swing.JInternalFrame {
      * Creates new form JIFEliminarUsuarios
      */
     private ArrayList<Usuario> usuarios;
-    private AdministradorBusiness administradorBusiness ;
+    private AdministradorBusiness administradorBusiness;
     private ExaminadorBusiness examinadorBusiness;
 
     public JIFEliminarUsuarios() {
@@ -130,8 +131,19 @@ public class JIFEliminarUsuarios extends javax.swing.JInternalFrame {
         try {
             int pos = jcbUsuarios.getSelectedIndex();
             this.usuarios.get(pos).setActivo(false);
-            System.out.println(this.usuarios.get(pos).toString());
-            System.out.println(this.administradorBusiness.desactivarUsuario(this.usuarios.get(pos)));
+            if (this.usuarios.get(pos).getTipoUsuario().equals("administrador")) {
+                if(this.administradorBusiness.desactivarAdministrador((Administrador)this.usuarios.get(pos))){
+                    JOptionPane.showMessageDialog(this, "Se eliminó correctamente");
+                }else{
+                    JOptionPane.showMessageDialog(this, "No se pudo eliminar");
+                }
+            } else {
+                 if(this.examinadorBusiness.desactivarExaminador((Examinador)this.usuarios.get(pos))){
+                     JOptionPane.showMessageDialog(this, "Se eliminó correctamente");
+                 }else{
+                      JOptionPane.showMessageDialog(this, "No se pudo eliminar");
+                 }
+            }
         } catch (IOException ex) {
             Logger.getLogger(JIFEliminarUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
