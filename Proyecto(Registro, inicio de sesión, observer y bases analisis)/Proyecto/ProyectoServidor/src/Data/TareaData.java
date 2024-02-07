@@ -42,7 +42,7 @@ public class TareaData {
     
     private void guardarXML() throws FileNotFoundException, IOException {
         XMLOutputter xmlOutputter = new XMLOutputter();
-        xmlOutputter.output(this.document, new PrintWriter(Ruta.RUTAADMINISTRADOR));
+        xmlOutputter.output(this.document, new PrintWriter(Ruta.RUTATAREAS));
     }//guaradarXML
 
      public boolean insertarTarea(Tarea tarea) throws IOException {
