@@ -4,6 +4,8 @@
  */
 package GUI;
 
+import Business.ExaminadorBusiness;
+import Business.TareaBusiness;
 import Data.ExaminadorData;
 import Domain.Analisis;
 import Domain.Examinador;
@@ -18,24 +20,42 @@ import org.jdom.JDOMException;
  * @author catas
  */
 public class JIFAsignarTarea extends javax.swing.JInternalFrame {
-    private ExaminadorData e;
-    private ArrayList<Examinador> examinadores;
-    private Analisis analisis;
-    private ArrayList<Tarea> TPA;//Tareas Por Analizar
-    private boolean eEncontrado;
-    private boolean tEncontrado;
     
+    private ArrayList<Examinador> analistas;
+    private Examinador analista;
+    private ExaminadorBusiness examinadorBusiness;
+    private ArrayList<Tarea> tareas;//Tareas Por Analizar
+    private Tarea tarea; //tarea seleccionada
     /**
      * Creates new form JIFAsignarTarea
      */
     public JIFAsignarTarea() throws IOException, JDOMException {
+        this.examinadorBusiness = new ExaminadorBusiness();
         initComponents();
-        e= new ExaminadorData();
-        examinadores=new ArrayList<>();
-        analisis= new Analisis();
-        TPA=analisis.getTareasAn();
-        eEncontrado=false;
-        tEncontrado=false;
+        solicitarAnalista();
+        agregarTareas();
+        this.analista = null;
+        this.tarea = null;
+        this.analistas=new ArrayList<>();
+    }
+    
+    private void solicitarAnalista() {
+        this.analistas = this.examinadorBusiness.obtenerExaminadores();
+        for (int i = 0; i < this.analistas.size(); i++) {
+            if(this.analistas.get(i).getRol().equals("analista") && this.analistas.get(i).isActivo() ){
+            this.jcbAnalistas.addItem(this.analistas.get(i).getUser());
+            }else{
+                this.analistas.remove(i);//elimina de una vez los que no son analistas
+            }
+        }
+    }//solicitar
+    
+    private void agregarTareas(){
+        TareaBusiness tareaBusiness = new TareaBusiness();
+        this.tareas = tareaBusiness.obtenerTareas();
+        for (int i = 0; i < this.tareas.size(); i++) {
+            this.jcbTareas.addItem(this.tareas.get(i).getTipoAnalisis());
+        }
     }
 
     /**
@@ -47,21 +67,15 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jtfAnalista = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jtfTarea = new javax.swing.JTextField();
         jbtnAsignar = new javax.swing.JButton();
+        jcbAnalistas = new javax.swing.JComboBox<>();
+        jcbTareas = new javax.swing.JComboBox<>();
 
         setTitle("Asignar");
 
-        jtfAnalista.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtfAnalistaActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setText("Ingrese el nombre del analista a asiganar la tarea");
+        jLabel1.setText("Seleccione el analista:");
 
         jLabel2.setText("Ingrese la tarea a asignar");
 
@@ -79,29 +93,33 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(45, 45, 45)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1)
-                            .addComponent(jtfTarea, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
-                            .addComponent(jtfAnalista)))
+                        .addGap(146, 146, 146)
+                        .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(164, 164, 164)
-                        .addComponent(jbtnAsignar)))
-                .addContainerGap(43, Short.MAX_VALUE))
+                        .addComponent(jbtnAsignar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(129, 129, 129)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2)
+                            .addComponent(jcbAnalistas, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(113, 113, 113)
+                        .addComponent(jcbTareas, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(117, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(44, 44, 44)
+                .addGap(40, 40, 40)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(jtfAnalista, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(43, 43, 43)
+                .addComponent(jcbAnalistas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37)
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
-                .addComponent(jtfTarea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jcbTareas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
                 .addComponent(jbtnAsignar)
                 .addContainerGap(34, Short.MAX_VALUE))
         );
@@ -109,32 +127,10 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jtfAnalistaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfAnalistaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jtfAnalistaActionPerformed
-
     private void jbtnAsignarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAsignarActionPerformed
-        for (int i = 0; i < this.examinadores.size(); i++) {
-            examinadores.get(i).verificarRol();
-            if (this.examinadores.get(i).getRol().equals("analista")
-                    && this.examinadores.get(i).getUser().equals(this.jtfAnalista.getText())) {
-                this.eEncontrado=true;
-                for(int j=0;j<TPA.size();j++){
-                    if(TPA.get(j).getNombre().equals(this.jtfTarea.getText())){
-                        this.examinadores.get(i).getTareas().add(TPA.get(j));
-                        this.tEncontrado=true;
-                    }//if asigna al analista la tarea
-                }//for recorre las tareas para validar si la tarea existe
-            } else {
-                JOptionPane.showMessageDialog(null, "Solo se pueden asignar tareas a los analistas");
-            }//if externo valida que el examinador exista y sea un analista
-        }//for recorre el arreglo de examinadores para encontrar al examinador ingresado
-        
-        if(this.eEncontrado==false)
-            JOptionPane.showMessageDialog(null, "El usuario no se ha encontrado o no es un analista");
-        if(this.tEncontrado==false)
-            JOptionPane.showMessageDialog(null, "La tarea no se ha encontrado");
-        
+        this.analista = this.analistas.get(this.jcbAnalistas.getSelectedIndex());//guarda el analista seleccionado
+        this.tarea = this.tareas.get(this.jcbTareas.getSelectedIndex());
+        this.analista.addTareas(tarea);
     }//GEN-LAST:event_jbtnAsignarActionPerformed
 
 
@@ -142,7 +138,7 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JButton jbtnAsignar;
-    private javax.swing.JTextField jtfAnalista;
-    private javax.swing.JTextField jtfTarea;
+    private javax.swing.JComboBox<String> jcbAnalistas;
+    private javax.swing.JComboBox<String> jcbTareas;
     // End of variables declaration//GEN-END:variables
 }

@@ -19,6 +19,7 @@ public class Examinador extends Usuario{
     public Examinador(String user, String contrasenia, String rol, String tipoUsuario, boolean activo) {
         super(user, contrasenia, tipoUsuario, activo);
         this.rol = rol;
+        this.tareas = new ArrayList<>();
     }
 
     public String getRol() {
@@ -27,6 +28,10 @@ public class Examinador extends Usuario{
 
     public ArrayList<Tarea> getTareas() {
         return tareas;
+    }
+    
+    public void addTareas(Tarea tarea){
+        this.tareas.add(tarea);
     }
     
     public void verificarRol(){

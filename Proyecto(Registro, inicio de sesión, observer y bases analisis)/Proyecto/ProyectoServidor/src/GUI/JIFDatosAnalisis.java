@@ -5,8 +5,12 @@
 package GUI;
 
 import Business.AnalisisBusiness;
+import Business.TareaBusiness;
 import Domain.Tarea;
-
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -17,8 +21,10 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
     /**
      * Creates new form JIFDatosAnalisis
      */
+    private Tarea tarea;
     public JIFDatosAnalisis() {
         initComponents();
+        this.tarea = null;
     }
 
     /**
@@ -139,8 +145,32 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGuardarActionPerformed
-        
-       Tarea tarea = new Tarea(0,"en proceso",this.jcbTipoAnalisis.getSelectedIndex());
+        try {
+            TareaBusiness tareaBusiness = new TareaBusiness();
+            if (this.jcbTipoAnalisis.getSelectedIndex() == 1) {//Análisis de elementos y extracción. seleccionan img y/o enlaces
+                this.tarea = new Tarea(0, "en proceso", "Análisis de elementos y extracción.", this.jtfURL.getText());
+
+                if (this.jcheckEnlaces.isSelected()) {
+                    this.tarea.setEnlaces(true);
+                }
+                if (this.jcheckImg.isSelected()) {
+                    this.tarea.setImagenes(true);
+                }
+                
+            } else {
+                this.tarea = new Tarea(0, "en proceso", (String) this.jcbTipoAnalisis.getSelectedItem(), this.jtfURL.getText());
+            }
+            boolean registrado = tareaBusiness.insertarTareas(this.tarea);
+            if(registrado){
+                JOptionPane.showMessageDialog(this, "Se agregó una tarea");
+            }else{
+                JOptionPane.showMessageDialog(this, "No se pudo agregar");
+            }
+                
+        } catch (IOException ex) {
+            Logger.getLogger(JIFDatosAnalisis.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         
     }//GEN-LAST:event_jbtnGuardarActionPerformed
 
