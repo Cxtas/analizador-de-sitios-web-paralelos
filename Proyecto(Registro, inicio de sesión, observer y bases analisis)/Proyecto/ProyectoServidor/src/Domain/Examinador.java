@@ -16,8 +16,8 @@ public class Examinador extends Usuario{
     private ArrayList<Sitio> sitios;
     private String rol;
     
-    public Examinador(String user, String contrasenia, String rol) {
-        super(user, contrasenia);
+    public Examinador(String user, String contrasenia, String rol, String tipoUsuario, boolean activo) {
+        super(user, contrasenia, tipoUsuario, activo);
         this.rol = rol;
     }
 

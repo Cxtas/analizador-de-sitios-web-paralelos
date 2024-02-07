@@ -56,7 +56,7 @@ public class ExaminadorData {
         xmlOutputter.output(this.document, new PrintWriter(Ruta.RUTAEXAMINADOR));
     }//guaradarXML
     
-    public boolean insertarExaminador(Examinador examinador) throws IOException{
+public boolean insertarExaminador(Examinador examinador) throws IOException{
         
         ArrayList<Examinador> examinadores = obtenerExaminadores();
         
@@ -75,12 +75,20 @@ public class ExaminadorData {
             eContrasenia.addContent(examinador.getContrasenia());
             
             Element eRol =  new Element("rol");
-            eContrasenia.addContent(examinador.getRol());
+            eRol.addContent(examinador.getRol());
+            
+            Element eTipoUsuario =  new Element("tipoUsuario");
+            eTipoUsuario.addContent(examinador.getTipoUsuario());
+            
+            Element eActivo =  new Element("activo");
+            eActivo.addContent(String.valueOf(examinador.isActivo()));
 
         
         eExaminador.addContent(eUser);
         eExaminador.addContent(eContrasenia);
         eExaminador.addContent(eRol);
+        eExaminador.addContent(eTipoUsuario);
+        eExaminador.addContent(eActivo);
     
         this.root.addContent(eExaminador);
         guardarXML();
@@ -88,7 +96,7 @@ public class ExaminadorData {
         return true;
     }
     
-    public ArrayList<Examinador> obtenerExaminadores(){
+   public ArrayList<Examinador> obtenerExaminadores(){
         ArrayList<Examinador> examinadores = new ArrayList<>();
         
         List eExaminadores = this.root.getChildren();
@@ -96,7 +104,9 @@ public class ExaminadorData {
             Element eActual = (Element) objetoActual;
             Examinador examinador = new Examinador(eActual.getChild("user").getValue(), 
                                                    eActual.getChild("contrasenia").getValue(), 
-                                                   eActual.getChild("rol").getValue());
+                                                   eActual.getChild("rol").getValue(),
+                                                   eActual.getChild("tipoUsuario").getValue(),
+                                                   Boolean.parseBoolean(eActual.getChild("activo").getValue()));
             examinadores.add(examinador);
         }//for
         return examinadores;
@@ -107,15 +117,17 @@ public class ExaminadorData {
         
         for (Object object : elementList) {
             Element eElementTemp = (Element) object;
-             Examinador examinador = new Examinador(eElementTemp.getChild("user").getValue(), eElementTemp.getChild("contrasenia").getValue(), eElementTemp.getChild("rol").getValue());
-            if (examinador.getUser().equals(nombreUsuario)) {
+             Examinador examinador = new Examinador(eElementTemp.getChild("user").getValue(), eElementTemp.getChild("contrasenia").getValue(), 
+                                                    eElementTemp.getChild("rol").getValue(), eElementTemp.getChild("tipoUsuario").getValue(),
+                                                    Boolean.parseBoolean(eElementTemp.getChild("activo").getValue()));
+            if (examinador.getUser().equals(nombreUsuario) && examinador.isActivo()) {
                 return true;
             }
             
         }
         
         return false;
-    }//verificarUsuario
+    }
     
     public void asignarTarea(Examinador e, Tarea tarea){//metodo que usan los gestores
         e.verificarRol();

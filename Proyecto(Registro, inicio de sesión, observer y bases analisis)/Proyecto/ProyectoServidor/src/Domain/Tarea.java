@@ -24,6 +24,8 @@ public class Tarea {
     public void setPorcentajeAvance(int porcentajeAvance) {
         this.porcentajeAvance = porcentajeAvance;
     }
+    
+    
 
     public String getEstado() {
         return estado;

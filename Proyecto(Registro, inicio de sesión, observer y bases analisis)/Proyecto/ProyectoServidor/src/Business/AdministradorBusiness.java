@@ -6,6 +6,7 @@ package Business;
 
 import Data.AdministradorData;
 import Domain.Administrador;
+import Domain.Usuario;
 import java.io.IOException;
 import java.util.ArrayList;
 import org.jdom.Element;
@@ -43,4 +44,8 @@ public class AdministradorBusiness {
     public boolean verificarUsuario(String nombreUsuario) {
         return this.administradorData.verificarUsuario(nombreUsuario);
     }//verificar que los usuarios no se registren repetidos
+    
+    public boolean desactivarUsuario(Usuario usuario) throws IOException {
+        return this.administradorData.desactivarUsuario(usuario);
+    }
 }

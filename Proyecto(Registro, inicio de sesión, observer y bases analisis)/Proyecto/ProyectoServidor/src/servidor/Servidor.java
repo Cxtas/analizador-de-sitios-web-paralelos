@@ -4,7 +4,7 @@
  */
 package servidor;
 
-import Domain.ServidorSingleton;
+import GUI.JFLogging;
 
 /**
  *
@@ -16,7 +16,8 @@ public class Servidor {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-         ServidorSingleton.getInstance();
+        JFLogging logging = new JFLogging();
+         logging.setVisible(true);
     }
     
 }

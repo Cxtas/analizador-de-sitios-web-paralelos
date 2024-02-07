@@ -12,10 +12,14 @@ public class Usuario {
     
     private String user;
     private String contrasenia;
+    private String tipoUsuario;
+    private boolean activo;
 
-    public Usuario(String user, String contrasenia) {
+    public Usuario(String user, String contrasenia, String tipoUsuario, boolean activo) {
         this.user = user;
         this.contrasenia = contrasenia;
+        this.tipoUsuario = tipoUsuario;
+        this.activo = activo;
     }
 
     public String getUser() {
@@ -24,6 +28,18 @@ public class Usuario {
 
     public String getContrasenia() {
         return contrasenia;
+    }
+
+    public String getTipoUsuario() {
+        return tipoUsuario;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
     
     
