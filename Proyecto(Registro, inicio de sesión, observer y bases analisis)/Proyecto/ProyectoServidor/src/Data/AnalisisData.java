@@ -45,7 +45,7 @@ public class AnalisisData {
         this.sitio= new Sitio(url);
     }
     
-    public void CantElementos(){
+    public void CantElementos(){ //Análisis de elementos que conforman un sitio web.
         BuscarElementos("imagen");
         this.sitio.setImagenes(this.cont);
         this.cont=0;
@@ -62,6 +62,10 @@ public class AnalisisData {
         this.sitio.setTitulos(this.cont);
         this.cont=0;
         
+        BuscarElementos("subtitulo");
+        this.sitio.setSubtitulos(this.cont);
+        this.cont=0;
+        
         BuscarElementos("tabla");
         this.sitio.setTablas(this.cont);
         this.cont=0;
@@ -69,6 +73,7 @@ public class AnalisisData {
         System.out.println("Imagenes: "+ this.sitio.getImagenes());
         System.out.println("Enlaces: "+ this.sitio.getEnlaces());
         System.out.println("Titulos: "+ this.sitio.getTitulos());
+        System.out.println("Subtitulos: "+ this.sitio.getSubtitulos());
         System.out.println("Videos: "+ this.sitio.getVideos());
         System.out.println("Tablas: "+ this.sitio.getTablas());
         

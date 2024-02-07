@@ -6,6 +6,10 @@ package Business;
 
 import Data.AnalisisData;
 import Domain.Sitio;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jdom.JDOMException;
 
 /**
  *
@@ -13,6 +17,16 @@ import Domain.Sitio;
  */
 public class AnalisisBusiness {
     private AnalisisData ad;
+
+//    public AnalisisBusiness(String url) {
+//        try {
+//            this.ad = new AnalisisData(url);
+//        } catch (JDOMException ex) {
+//            Logger.getLogger(AnalisisBusiness.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (IOException ex) {
+//            Logger.getLogger(AnalisisBusiness.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
     
     
     public void CantElementos(){

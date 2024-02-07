@@ -4,6 +4,10 @@
  */
 package GUI;
 
+import Business.AnalisisBusiness;
+import Domain.Tarea;
+
+
 /**
  *
  * @author Estephanie
@@ -33,8 +37,9 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
         jcbTipoAnalisis = new javax.swing.JComboBox<>();
         jcheckImg = new javax.swing.JCheckBox();
         jcheckEnlaces = new javax.swing.JCheckBox();
-        jbtnAnalizar = new javax.swing.JButton();
+        jbtnGuardar = new javax.swing.JButton();
         jbtnVolver = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setTitle("Datos");
 
@@ -45,15 +50,13 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
         jcbTipoAnalisis.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Análisis de elementos que conforman un sitio web.", "Análisis de elementos y extracción.", "Análisis de extracción y comparación." }));
 
         jcheckImg.setText("Imágenes");
-        jcheckImg.setEnabled(false);
 
         jcheckEnlaces.setText("Enlaces");
-        jcheckEnlaces.setEnabled(false);
 
-        jbtnAnalizar.setText("Analizar");
-        jbtnAnalizar.addActionListener(new java.awt.event.ActionListener() {
+        jbtnGuardar.setText("Guardar");
+        jbtnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbtnAnalizarActionPerformed(evt);
+                jbtnGuardarActionPerformed(evt);
             }
         });
 
@@ -64,35 +67,39 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
             }
         });
 
+        jLabel1.setText("Exclusivo para el análisis de elementos y extracción:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(17, 17, 17)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jcbTipoAnalisis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(18, 18, 18)
-                                .addComponent(jtfURL, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jcbTipoAnalisis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(109, 109, 109)
-                        .addComponent(jcheckImg)
-                        .addGap(110, 110, 110)
-                        .addComponent(jcheckEnlaces)))
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(jtfURL, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(25, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(206, 206, 206)
-                .addComponent(jbtnAnalizar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jbtnVolver)
-                .addGap(16, 16, 16))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jbtnGuardar)
+                        .addGap(117, 117, 117)
+                        .addComponent(jbtnVolver))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel1)
+                        .addGap(26, 26, 26)
+                        .addComponent(jcheckImg)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jcheckEnlaces)))
+                .addGap(36, 36, 36))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -105,15 +112,16 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jtfURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(43, 43, 43)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
                     .addComponent(jcheckImg)
                     .addComponent(jcheckEnlaces))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
+                .addGap(34, 34, 34)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jbtnAnalizar)
+                    .addComponent(jbtnGuardar)
                     .addComponent(jbtnVolver))
-                .addGap(22, 22, 22))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -130,13 +138,11 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jbtnAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAnalizarActionPerformed
-        if(this.jcbTipoAnalisis.getSelectedIndex() == 1){
-            this.jcheckImg.setEnabled(true);
-            this.jcheckEnlaces.setEnabled(true);
-        }
+    private void jbtnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGuardarActionPerformed
         
-    }//GEN-LAST:event_jbtnAnalizarActionPerformed
+       Tarea tarea = new Tarea(0,"en proceso",this.jcbTipoAnalisis.getSelectedIndex());
+        
+    }//GEN-LAST:event_jbtnGuardarActionPerformed
 
     private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed
         this.setVisible(false);
@@ -144,10 +150,11 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JButton jbtnAnalizar;
+    private javax.swing.JButton jbtnGuardar;
     private javax.swing.JButton jbtnVolver;
     private javax.swing.JComboBox<String> jcbTipoAnalisis;
     private javax.swing.JCheckBox jcheckEnlaces;

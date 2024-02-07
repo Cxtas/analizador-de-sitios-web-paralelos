@@ -11,10 +11,20 @@ package Domain;
 public class Tarea {
     private int porcentajeAvance;
     private String estado;
+    private int tipoAnalisis;//0 -> Análisis de elementos que conforman un sitio web.
+                            //1 -> Análisis de elementos y extracción.
+                            //2 -> Análisis de extracción y comparación
+    private String url;
+    private boolean imagenes;
+    private boolean enlaces;
 
-    public Tarea(int porcentajeAvance, String estado) {
+    public Tarea(int porcentajeAvance, String estado, int tipoAnalisis, String url) {
         this.porcentajeAvance = porcentajeAvance;
         this.estado = estado;
+        this.tipoAnalisis = tipoAnalisis;
+        this.url = url;
+        this.imagenes = false;
+        this.enlaces = false;
     }
 
     public int getPorcentajeAvance() {
@@ -24,8 +34,6 @@ public class Tarea {
     public void setPorcentajeAvance(int porcentajeAvance) {
         this.porcentajeAvance = porcentajeAvance;
     }
-    
-    
 
     public String getEstado() {
         return estado;
@@ -34,6 +42,24 @@ public class Tarea {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+
+    public int getTipoAnalisis() {
+        return tipoAnalisis;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public boolean isImagenes() {
+        return imagenes;
+    }
+
+    public boolean isEnlaces() {
+        return enlaces;
+    }
+    
+    
 
     @Override
     public String toString() {

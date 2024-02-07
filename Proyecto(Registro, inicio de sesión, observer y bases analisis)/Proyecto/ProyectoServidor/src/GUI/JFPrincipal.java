@@ -6,6 +6,10 @@ package GUI;
 
 import Domain.Examinador;
 import Domain.Usuario;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jdom.JDOMException;
 
 /**
  *
@@ -17,28 +21,36 @@ public class JFPrincipal extends javax.swing.JFrame {
      * Creates new form JFPrincipal
      */
     private Usuario usuario;
-    
+
     public JFPrincipal(Usuario usuario) {
         this.usuario = usuario;
         initComponents();
         permisos();
     }
-    
+
     //Este método abre los menús depende del tipo y rol de cada usuario
-    private void permisos(){
-        if(this.usuario.getTipoUsuario().equals("examinador")){
+    private void permisos() {
+        if (this.usuario.getTipoUsuario().equals("examinador")) {
             this.jmiNuevoUsuario.setEnabled(false);//Los examinadores no pueden registrar usuarios
             this.jmiEliminarUsuarios.setEnabled(false);//y tampoco eliminarlos
-            Examinador examinador = (Examinador)this.usuario;//establecer el usuario como examinador
+            Examinador examinador = (Examinador) this.usuario;//establecer el usuario como examinador
             switch (examinador.getRol()) { //depende del rol tiene acceso a distintos menús
-                case "digitador"->{this.jmiAnalisis.setEnabled(true);}
-                case "gestor"->{this.jmiGrafico.setEnabled(false);}//ingreso de url por defecto en false
-                case "analista"->{this.jmTareas.setEnabled(true);}//Solo el analista puede ver y asignar tareas
-                    
+                case "digitador" -> {
+                    this.jmDatos.setEnabled(true);//ingresa urls
+                    this.jmTareas.setEnabled(false);
+                }
+                case "gestor" -> {
+                    this.jmResultados.setEnabled(false);//asigna tareas
+                    this.jmiGSolicitudes.setEnabled(true);
+                }
+                case "analista" -> {
+                    this.jmAnalisis.setEnabled(true);//Solo el analista puede analizar las páginas
+                }
+
             }
         }
     }//permisos
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -50,17 +62,18 @@ public class JFPrincipal extends javax.swing.JFrame {
 
         jDesktopPane1 = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
+        jmRegistrar = new javax.swing.JMenu();
         jmiNuevoUsuario = new javax.swing.JMenuItem();
         jmiEliminarUsuarios = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        jmiAnalisis = new javax.swing.JMenuItem();
+        jmDatos = new javax.swing.JMenu();
+        jmiIngresarDatos = new javax.swing.JMenuItem();
         jmTareas = new javax.swing.JMenu();
         jmiGSolicitudes = new javax.swing.JMenuItem();
         jmiEstadoTareas = new javax.swing.JMenuItem();
-        jMenu3 = new javax.swing.JMenu();
+        jmAnalisis = new javax.swing.JMenu();
+        jmResultados = new javax.swing.JMenu();
         jmiGrafico = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        jmiPDFenviar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -75,7 +88,7 @@ public class JFPrincipal extends javax.swing.JFrame {
             .addGap(0, 357, Short.MAX_VALUE)
         );
 
-        jMenu1.setText("Registrar");
+        jmRegistrar.setText("Registrar");
 
         jmiNuevoUsuario.setText("Nuevo usuario");
         jmiNuevoUsuario.addActionListener(new java.awt.event.ActionListener() {
@@ -83,7 +96,7 @@ public class JFPrincipal extends javax.swing.JFrame {
                 jmiNuevoUsuarioActionPerformed(evt);
             }
         });
-        jMenu1.add(jmiNuevoUsuario);
+        jmRegistrar.add(jmiNuevoUsuario);
 
         jmiEliminarUsuarios.setText("Eliminar usuarios");
         jmiEliminarUsuarios.addActionListener(new java.awt.event.ActionListener() {
@@ -91,42 +104,72 @@ public class JFPrincipal extends javax.swing.JFrame {
                 jmiEliminarUsuariosActionPerformed(evt);
             }
         });
-        jMenu1.add(jmiEliminarUsuarios);
+        jmRegistrar.add(jmiEliminarUsuarios);
 
-        jMenuBar1.add(jMenu1);
+        jMenuBar1.add(jmRegistrar);
 
-        jMenu2.setText("Analisis");
+        jmDatos.setText("Datos");
+        jmDatos.setEnabled(false);
 
-        jmiAnalisis.setText("Establecer datos para el análisis");
-        jmiAnalisis.setEnabled(false);
-        jmiAnalisis.addActionListener(new java.awt.event.ActionListener() {
+        jmiIngresarDatos.setText("Establecer datos para el análisis");
+        jmiIngresarDatos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jmiAnalisisActionPerformed(evt);
+                jmiIngresarDatosActionPerformed(evt);
             }
         });
-        jMenu2.add(jmiAnalisis);
+        jmDatos.add(jmiIngresarDatos);
 
-        jMenuBar1.add(jMenu2);
+        jMenuBar1.add(jmDatos);
 
         jmTareas.setText("Tareas");
 
         jmiGSolicitudes.setText("Gestionar solicitudes");
+        jmiGSolicitudes.setEnabled(false);
+        jmiGSolicitudes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiGSolicitudesActionPerformed(evt);
+            }
+        });
         jmTareas.add(jmiGSolicitudes);
 
         jmiEstadoTareas.setText("Estado de tareas");
+        jmiEstadoTareas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiEstadoTareasActionPerformed(evt);
+            }
+        });
         jmTareas.add(jmiEstadoTareas);
 
         jMenuBar1.add(jmTareas);
 
-        jMenu3.setText("Resultados");
+        jmAnalisis.setText("Analisis");
+        jmAnalisis.setEnabled(false);
+        jmAnalisis.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmAnalisisActionPerformed(evt);
+            }
+        });
+        jMenuBar1.add(jmAnalisis);
+
+        jmResultados.setText("Resultados");
 
         jmiGrafico.setText("Gráfico");
-        jMenu3.add(jmiGrafico);
+        jmiGrafico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiGraficoActionPerformed(evt);
+            }
+        });
+        jmResultados.add(jmiGrafico);
 
-        jMenuItem1.setText("jMenuItem1");
-        jMenu3.add(jMenuItem1);
+        jmiPDFenviar.setText("Generar PDF y enviar");
+        jmiPDFenviar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiPDFenviarActionPerformed(evt);
+            }
+        });
+        jmResultados.add(jmiPDFenviar);
 
-        jMenuBar1.add(jMenu3);
+        jMenuBar1.add(jmResultados);
 
         setJMenuBar(jMenuBar1);
 
@@ -150,17 +193,54 @@ public class JFPrincipal extends javax.swing.JFrame {
         ventanaR.setVisible(true);
     }//GEN-LAST:event_jmiNuevoUsuarioActionPerformed
 
-    private void jmiAnalisisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiAnalisisActionPerformed
+    private void jmiIngresarDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiIngresarDatosActionPerformed
         JIFDatosAnalisis ventana = new JIFDatosAnalisis();
         this.jDesktopPane1.add(ventana);
         ventana.setVisible(true);
-    }//GEN-LAST:event_jmiAnalisisActionPerformed
+    }//GEN-LAST:event_jmiIngresarDatosActionPerformed
 
     private void jmiEliminarUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiEliminarUsuariosActionPerformed
         JIFEliminarUsuarios ventana = new JIFEliminarUsuarios();
         this.jDesktopPane1.add(ventana);
         ventana.setVisible(true);
     }//GEN-LAST:event_jmiEliminarUsuariosActionPerformed
+
+    private void jmiGSolicitudesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiGSolicitudesActionPerformed
+        try {
+            JIFAsignarTarea tarea = new JIFAsignarTarea();
+            this.jDesktopPane1.add(tarea);
+            tarea.setVisible(true);
+        } catch (IOException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JDOMException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jmiGSolicitudesActionPerformed
+
+    private void jmiEstadoTareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiEstadoTareasActionPerformed
+        JIFEstadoTareas tarea = new JIFEstadoTareas();
+        this.jDesktopPane1.add(tarea);
+        tarea.setVisible(true);
+
+    }//GEN-LAST:event_jmiEstadoTareasActionPerformed
+
+    private void jmAnalisisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmAnalisisActionPerformed
+        JIFRealizarAnalisis analisis = new JIFRealizarAnalisis();
+        this.jDesktopPane1.add(analisis);
+        analisis.setVisible(true);
+    }//GEN-LAST:event_jmAnalisisActionPerformed
+
+    private void jmiGraficoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiGraficoActionPerformed
+        JIFGrafico grafico = new JIFGrafico();
+        this.jDesktopPane1.add(grafico);
+        grafico.setVisible(true);
+    }//GEN-LAST:event_jmiGraficoActionPerformed
+
+    private void jmiPDFenviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiPDFenviarActionPerformed
+        JIFGenerarPDFenviar generar = new JIFGenerarPDFenviar();
+        this.jDesktopPane1.add(generar);
+        generar.setVisible(true);
+    }//GEN-LAST:event_jmiPDFenviarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -202,17 +282,18 @@ public class JFPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane jDesktopPane1;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenu jmAnalisis;
+    private javax.swing.JMenu jmDatos;
+    private javax.swing.JMenu jmRegistrar;
+    private javax.swing.JMenu jmResultados;
     private javax.swing.JMenu jmTareas;
-    private javax.swing.JMenuItem jmiAnalisis;
     private javax.swing.JMenuItem jmiEliminarUsuarios;
     private javax.swing.JMenuItem jmiEstadoTareas;
     private javax.swing.JMenuItem jmiGSolicitudes;
     private javax.swing.JMenuItem jmiGrafico;
+    private javax.swing.JMenuItem jmiIngresarDatos;
     private javax.swing.JMenuItem jmiNuevoUsuario;
+    private javax.swing.JMenuItem jmiPDFenviar;
     // End of variables declaration//GEN-END:variables
 }

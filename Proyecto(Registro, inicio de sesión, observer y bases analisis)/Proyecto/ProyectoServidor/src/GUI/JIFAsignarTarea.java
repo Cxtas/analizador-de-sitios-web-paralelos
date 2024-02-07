@@ -53,6 +53,8 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
         jtfTarea = new javax.swing.JTextField();
         jbtnAsignar = new javax.swing.JButton();
 
+        setTitle("Asignar");
+
         jtfAnalista.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jtfAnalistaActionPerformed(evt);
