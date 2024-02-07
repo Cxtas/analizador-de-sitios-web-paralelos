@@ -59,6 +59,9 @@ public class JFPrincipal extends javax.swing.JFrame {
                 }
 
             }
+        }else{//si es administrador solo ingresa al menu de registro
+            this.jmTareas.setEnabled(false);
+            this.jmResultados.setEnabled(false);
         }
     }//permisos
 
@@ -82,6 +85,7 @@ public class JFPrincipal extends javax.swing.JFrame {
         jmiGSolicitudes = new javax.swing.JMenuItem();
         jmiEstadoTareas = new javax.swing.JMenuItem();
         jmAnalisis = new javax.swing.JMenu();
+        jmiAnalizar = new javax.swing.JMenuItem();
         jmResultados = new javax.swing.JMenu();
         jmiGrafico = new javax.swing.JMenuItem();
         jmiPDFenviar = new javax.swing.JMenuItem();
@@ -163,6 +167,15 @@ public class JFPrincipal extends javax.swing.JFrame {
                 jmAnalisisActionPerformed(evt);
             }
         });
+
+        jmiAnalizar.setText("Analizar páginas");
+        jmiAnalizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiAnalizarActionPerformed(evt);
+            }
+        });
+        jmAnalisis.add(jmiAnalizar);
+
         jMenuBar1.add(jmAnalisis);
 
         jmResultados.setText("Resultados");
@@ -225,7 +238,6 @@ public class JFPrincipal extends javax.swing.JFrame {
         JIFRegistroUsuario ventanaR = new JIFRegistroUsuario();
         this.jDesktopPane1.add(ventanaR);
         centrar(ventanaR);
-//        ventanaR.setVisible(true);
     }//GEN-LAST:event_jmiNuevoUsuarioActionPerformed
 
     private void jmiIngresarDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiIngresarDatosActionPerformed
@@ -260,9 +272,6 @@ public class JFPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jmiEstadoTareasActionPerformed
 
     private void jmAnalisisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmAnalisisActionPerformed
-        JIFRealizarAnalisis analisis = new JIFRealizarAnalisis();
-        this.jDesktopPane1.add(analisis);
-        centrar(analisis);
     }//GEN-LAST:event_jmAnalisisActionPerformed
 
     private void jmiGraficoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiGraficoActionPerformed
@@ -287,6 +296,12 @@ public class JFPrincipal extends javax.swing.JFrame {
         this.dispose();
         System.exit(0);
     }//GEN-LAST:event_jmiSalirActionPerformed
+
+    private void jmiAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiAnalizarActionPerformed
+       JIFRealizarAnalisis analisis = new JIFRealizarAnalisis();
+        this.jDesktopPane1.add(analisis);
+        centrar(analisis);
+    }//GEN-LAST:event_jmiAnalizarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -336,6 +351,7 @@ public class JFPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenu jmResultados;
     private javax.swing.JMenu jmSesion;
     private javax.swing.JMenu jmTareas;
+    private javax.swing.JMenuItem jmiAnalizar;
     private javax.swing.JMenuItem jmiCambioUsuario;
     private javax.swing.JMenuItem jmiEliminarUsuarios;
     private javax.swing.JMenuItem jmiEstadoTareas;
