@@ -36,11 +36,11 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
     public JIFAsignarTarea() throws IOException, JDOMException {
         this.examinadorBusiness = new ExaminadorBusiness();
         initComponents();
-        solicitarAnalista();
-        agregarTareas();
         this.analista = null;
         this.tarea = null;
         this.analistas = new ArrayList<>();
+        solicitarAnalista();
+        agregarTareas();
     }
 
     private void solicitarAnalista() {
@@ -49,9 +49,9 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
             if (this.analistas.get(i).getRol().equals("analista") && this.analistas.get(i).isActivo()) {
                 this.jcbAnalistas.addItem(this.analistas.get(i).getUser());
                 this.pos = i;
-            }//else{
-//                this.analistas.remove(i);//elimina de una vez los que no son analistas
-//            }
+            }else{
+                this.analistas.remove(i);//elimina de una vez los que no son analistas
+            }
         }
     }//solicitar
 
@@ -134,12 +134,11 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnAsignarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAsignarActionPerformed
+        System.out.println(this.jcbAnalistas.getSelectedIndex());
+        System.out.println(this.analistas.get(0).getUser());
         this.analista = this.analistas.get(this.jcbAnalistas.getSelectedIndex());//guarda el analista seleccionado
-        for (int i = 0; i < this.analistas.size(); i++) {
-            System.out.println(this.analistas.get(i).getRol());
-        }
-        this.tarea = this.tareas.get(this.jcbTareas.getSelectedIndex());
-        this.analista.addTareas(tarea);
+        this.tarea = this.tareas.get(this.jcbTareas.getSelectedIndex());//guarda la tarea
+        this.analista.addTareas(tarea);//asigna la tarea al analista seleccionado
         System.out.println(this.analista.getTareas().get(0));
     }//GEN-LAST:event_jbtnAsignarActionPerformed
 
