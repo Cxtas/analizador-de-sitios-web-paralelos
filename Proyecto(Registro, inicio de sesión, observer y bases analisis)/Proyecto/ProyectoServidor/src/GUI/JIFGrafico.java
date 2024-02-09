@@ -36,6 +36,7 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
         jLabel1 = new javax.swing.JLabel();
         jcbSitios = new javax.swing.JComboBox<>();
         jbtnGraficar = new javax.swing.JButton();
+        jbtnVolver = new javax.swing.JButton();
 
         setTitle("Estadísticas");
 
@@ -51,6 +52,13 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
             }
         });
 
+        jbtnVolver.setText("Volver");
+        jbtnVolver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnVolverActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -60,14 +68,15 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
                 .addComponent(jLabel1)
                 .addGap(41, 41, 41))
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(196, 196, 196)
-                        .addComponent(jbtnGraficar))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(40, 40, 40)
-                        .addComponent(jcbSitios, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(40, 40, 40)
+                .addComponent(jcbSitios, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(23, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(196, 196, 196)
+                .addComponent(jbtnGraficar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jbtnVolver)
+                .addGap(31, 31, 31))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -77,7 +86,9 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
                 .addGap(29, 29, 29)
                 .addComponent(jcbSitios, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
-                .addComponent(jbtnGraficar)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jbtnGraficar)
+                    .addComponent(jbtnVolver))
                 .addGap(27, 27, 27))
         );
 
@@ -108,10 +119,15 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
         frame.setVisible(true);
     }//GEN-LAST:event_jbtnGraficarActionPerformed
 
+    private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed
+        this.setVisible(false);
+    }//GEN-LAST:event_jbtnVolverActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JButton jbtnGraficar;
+    private javax.swing.JButton jbtnVolver;
     private javax.swing.JComboBox<String> jcbSitios;
     // End of variables declaration//GEN-END:variables
 }

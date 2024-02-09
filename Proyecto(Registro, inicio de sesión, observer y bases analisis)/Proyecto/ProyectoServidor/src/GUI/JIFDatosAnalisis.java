@@ -4,12 +4,11 @@
  */
 package GUI;
 
-import Business.AnalisisBusiness;
 import Business.TareaBusiness;
 import Domain.Tarea;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -43,20 +42,19 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
         jLabel2 = new javax.swing.JLabel();
         jtfURL = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jcbTipoAnalisis = new javax.swing.JComboBox<>();
         jcheckImg = new javax.swing.JCheckBox();
         jcheckEnlaces = new javax.swing.JCheckBox();
         jbtnGuardar = new javax.swing.JButton();
         jbtnVolver = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        jcheckAnalisis1 = new javax.swing.JCheckBox();
+        jcheckAnalisis2 = new javax.swing.JCheckBox();
+        jcheckAnalisis3 = new javax.swing.JCheckBox();
 
         setTitle("Datos");
 
         jLabel2.setText("Ingrese la URL del sitio para el análisis:");
 
         jLabel3.setText("Tipo de análisis:");
-
-        jcbTipoAnalisis.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Análisis de elementos que conforman un sitio web.", "Análisis de elementos y extracción.", "Análisis de extracción y comparación." }));
 
         jcheckImg.setText("Imágenes");
 
@@ -76,61 +74,68 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
             }
         });
 
-        jLabel1.setText("Exclusivo para el análisis de elementos y extracción:");
+        jcheckAnalisis1.setText("Análisis de elementos que conforman un sitio web. ");
+
+        jcheckAnalisis2.setText("Análisis de elementos y extracción.");
+
+        jcheckAnalisis3.setText("Análisis de extracción y comparación.");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jcbTipoAnalisis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(18, 18, 18)
-                        .addComponent(jtfURL, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(25, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jbtnGuardar)
-                        .addGap(117, 117, 117)
+                        .addGap(155, 155, 155)
                         .addComponent(jbtnVolver))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel1)
-                        .addGap(26, 26, 26)
-                        .addComponent(jcheckImg)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jcheckEnlaces)))
-                .addGap(36, 36, 36))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(150, 150, 150)
+                                .addComponent(jcheckImg)
+                                .addGap(52, 52, 52)
+                                .addComponent(jcheckEnlaces))
+                            .addComponent(jLabel3)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jcheckAnalisis1)
+                                    .addComponent(jcheckAnalisis2)
+                                    .addComponent(jcheckAnalisis3))
+                                .addGap(75, 75, 75)))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel2)
+                            .addGap(18, 18, 18)
+                            .addComponent(jtfURL, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(49, 49, 49)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jcbTipoAnalisis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
+                .addGap(41, 41, 41)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jtfURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(40, 40, 40)
+                .addComponent(jLabel3)
+                .addGap(14, 14, 14)
+                .addComponent(jcheckAnalisis1)
+                .addGap(18, 18, 18)
+                .addComponent(jcheckAnalisis2)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
                     .addComponent(jcheckImg)
                     .addComponent(jcheckEnlaces))
-                .addGap(34, 34, 34)
+                .addGap(18, 18, 18)
+                .addComponent(jcheckAnalisis3)
+                .addGap(37, 37, 37)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jbtnGuardar)
                     .addComponent(jbtnVolver))
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -148,28 +153,22 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGuardarActionPerformed
+
         try {
             TareaBusiness tareaBusiness = new TareaBusiness();
-            if (this.jcbTipoAnalisis.getSelectedIndex() == 1) {//Análisis de elementos y extracción. seleccionan img y/o enlaces
-                this.tarea = new Tarea(0, "en proceso", "Análisis de elementos y extracción.", this.jtfURL.getText());
-
-                if (this.jcheckEnlaces.isSelected()) {
-                    this.tarea.setEnlaces(true);
+            if (isValidURL(this.jtfURL.getText())) {
+                this.tarea = new Tarea(0, "en proceso", this.jtfURL.getText());
+                boolean analisisSelected = getAnalisisSelected();
+                if (analisisSelected) {
+                    boolean registrado = tareaBusiness.insertarTareas(this.tarea);
+                    if (registrado) {
+                        JOptionPane.showMessageDialog(this, "Se agregó una tarea");
+                        setInformacion();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "No se pudo agregar");
+                    }
                 }
-                if (this.jcheckImg.isSelected()) {
-                    this.tarea.setImagenes(true);
-                }
-
-            } else {
-                this.tarea = new Tarea(0, "en proceso", (String) this.jcbTipoAnalisis.getSelectedItem(), this.jtfURL.getText());
             }
-            boolean registrado = tareaBusiness.insertarTareas(this.tarea);
-            if (registrado) {
-                JOptionPane.showMessageDialog(this, "Se agregó una tarea");
-            } else {
-                JOptionPane.showMessageDialog(this, "No se pudo agregar");
-            }
-
         } catch (IOException ex) {
             Logger.getLogger(JIFDatosAnalisis.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -181,15 +180,76 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
         this.setVisible(false);
     }//GEN-LAST:event_jbtnVolverActionPerformed
 
+    //borra la información de los espacios para una nueva tarea
+    private void setInformacion() {
+        this.jtfURL.setText("");
+        this.jcheckAnalisis1.setSelected(false);
+        this.jcheckAnalisis2.setSelected(false);
+        this.jcheckAnalisis3.setSelected(false);
+        this.jcheckEnlaces.setSelected(false);
+        this.jcheckImg.setSelected(false);
+    }
+
+    //Valida que el texto ingresado sea una URL
+    public boolean isValidURL(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            return true;
+        } catch (MalformedURLException e) {
+            JOptionPane.showMessageDialog(this, "Ingrese una URL válida");
+            return false;
+        }
+    }
+
+    //Este método permite un buen registro de análisis, para que no se envie en blanco
+    //Se selecciona al menos un tipo de analisis, y si es el análisis 2 se debe seleccionar
+    //al menos un elemento para el análisis de la página, si no se cumplen los requisitos devuelve null
+    private boolean getAnalisisSelected() {
+        int cantAnalisis = 0; //verifica que al menos se seleccione un análisis
+        int imgEnlaces = 0; //y se seleccione imgs o enlaces para el analisis2
+        boolean boolImgsEnlaces = false;
+        if (this.jcheckAnalisis1.isSelected()) {
+            this.tarea.setAnalisis0(true);
+            cantAnalisis += 1;
+        }
+        if (this.jcheckAnalisis2.isSelected()) {
+            this.tarea.setAnalisis1(true);
+            cantAnalisis += 1;
+            boolImgsEnlaces = true;
+        }
+        if (this.jcheckAnalisis3.isSelected()) {
+            this.tarea.setAnalisis2(true);
+            cantAnalisis += 1;
+        }
+        if (cantAnalisis == 0) {//Si no hay analisis seleccionados se pide que se seleccione al menos uno
+            JOptionPane.showMessageDialog(this, "Debe seleccionar al menos un análisis");
+            return false;
+        }
+        if (this.jcheckEnlaces.isSelected()) {
+            this.tarea.setEnlaces(true);
+            imgEnlaces += 1;
+        }
+        if (this.jcheckImg.isSelected()) {
+            this.tarea.setImagenes(true);
+            imgEnlaces += 1;
+        }
+        if ((boolImgsEnlaces) && (imgEnlaces == 0)) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar al menos un elemento para el análisis 2");
+            return false;
+        }
+        System.out.println("fin");
+        return true;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton jbtnGuardar;
     private javax.swing.JButton jbtnVolver;
-    private javax.swing.JComboBox<String> jcbTipoAnalisis;
+    private javax.swing.JCheckBox jcheckAnalisis1;
+    private javax.swing.JCheckBox jcheckAnalisis2;
+    private javax.swing.JCheckBox jcheckAnalisis3;
     private javax.swing.JCheckBox jcheckEnlaces;
     private javax.swing.JCheckBox jcheckImg;
     private javax.swing.JTextField jtfURL;

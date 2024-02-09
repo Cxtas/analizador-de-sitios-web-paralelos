@@ -6,14 +6,11 @@ package GUI;
 
 import Business.ExaminadorBusiness;
 import Business.TareaBusiness;
-import Data.ExaminadorData;
-import Domain.Analisis;
 import Domain.Examinador;
 import Domain.Tarea;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import javax.swing.JOptionPane;
 import org.jdom.JDOMException;
 
@@ -28,10 +25,12 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
     private ExaminadorBusiness examinadorBusiness;
     private ArrayList<Tarea> tareas;//Tareas Por Analizar
     private Tarea tarea; //tarea seleccionada
-    private int pos;
 
     /**
      * Creates new form JIFAsignarTarea
+     *
+     * @throws java.io.IOException
+     * @throws org.jdom.JDOMException
      */
     public JIFAsignarTarea() throws IOException, JDOMException {
         this.examinadorBusiness = new ExaminadorBusiness();
@@ -39,27 +38,31 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
         this.analista = null;
         this.tarea = null;
         this.analistas = new ArrayList<>();
+        this.tareas = new ArrayList<>();
         solicitarAnalista();
         agregarTareas();
     }
 
     private void solicitarAnalista() {
         this.analistas = this.examinadorBusiness.obtenerExaminadores();
-        for (int i = 0; i < this.analistas.size(); i++) {
-            if (this.analistas.get(i).getRol().equals("analista") && this.analistas.get(i).isActivo()) {
-                this.jcbAnalistas.addItem(this.analistas.get(i).getUser());
-                this.pos = i;
-            }else{
-                this.analistas.remove(i);//elimina de una vez los que no son analistas
+        Iterator<Examinador> iterator = this.analistas.iterator();
+        while (iterator.hasNext()) {
+            Examinador examinador = iterator.next();
+            if (!examinador.getRol().equals("analista") || !examinador.isActivo()) {
+                iterator.remove(); // Elimina el examinador que no cumple las condiciones
             }
+        }
+        for (Examinador examinador : this.analistas) {
+            this.jcbAnalistas.addItem(examinador.getUser());
+            System.out.println(examinador);
         }
     }//solicitar
 
     private void agregarTareas() {
         TareaBusiness tareaBusiness = new TareaBusiness();
         this.tareas = tareaBusiness.obtenerTareas();
-        for (int i = 0; i < this.tareas.size(); i++) {
-            this.jcbTareas.addItem(this.tareas.get(i).getTipoAnalisis());
+        for (Tarea tarea : this.tareas) {
+            this.jcbTareas.addItem(tarea.getUrl());
         }
     }
 
@@ -77,6 +80,7 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
         jbtnAsignar = new javax.swing.JButton();
         jcbAnalistas = new javax.swing.JComboBox<>();
         jcbTareas = new javax.swing.JComboBox<>();
+        jbtnVolver = new javax.swing.JButton();
 
         setTitle("Asignar");
 
@@ -91,33 +95,44 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
             }
         });
 
+        jbtnVolver.setText("Volver");
+        jbtnVolver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnVolverActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(47, 47, 47)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(146, 146, 146)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(164, 164, 164)
-                        .addComponent(jbtnAsignar))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(137, 137, 137)
+                        .addGap(105, 105, 105)
                         .addComponent(jLabel2))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(jcbTareas, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(75, 75, 75)
-                        .addComponent(jcbAnalistas, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(33, Short.MAX_VALUE))
+                    .addComponent(jcbTareas, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(132, 132, 132)
+                        .addComponent(jbtnAsignar)
+                        .addGap(67, 67, 67)
+                        .addComponent(jbtnVolver))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(114, 114, 114)
+                                .addComponent(jLabel1))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(43, 43, 43)
+                                .addComponent(jcbAnalistas, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(35, 35, 35)))
+                .addContainerGap(57, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
+                .addGap(33, 33, 33)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(jcbAnalistas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -126,27 +141,39 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jcbTareas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
-                .addComponent(jbtnAsignar)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jbtnAsignar)
+                    .addComponent(jbtnVolver))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnAsignarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAsignarActionPerformed
-        System.out.println(this.jcbAnalistas.getSelectedIndex());
-        System.out.println(this.analistas.get(0).getUser());
-        this.analista = this.analistas.get(this.jcbAnalistas.getSelectedIndex());//guarda el analista seleccionado
-        this.tarea = this.tareas.get(this.jcbTareas.getSelectedIndex());//guarda la tarea
-        this.analista.addTareas(tarea);//asigna la tarea al analista seleccionado
-        System.out.println(this.analista.getTareas().get(0));
+        try {
+            this.analista = this.analistas.get(this.jcbAnalistas.getSelectedIndex());//guarda el analista seleccionado
+            this.tarea = this.tareas.get(this.jcbTareas.getSelectedIndex());//guarda la tarea
+            this.analista.addTareas(tarea);//asigna la tarea al analista seleccionado
+        } catch (NullPointerException ex) {
+            JOptionPane.showMessageDialog(this, "No se pudo asignar");
+        }
+        JOptionPane.showMessageDialog(this, "Se asignó la tarea " + this.tarea.getUrl() + " al analista: " + this.analista.getUser());
+        //Elimina de la lista de tareas, tareas que ya son asignadas
+        this.tareas.remove(this.jcbTareas.getSelectedIndex());
+        this.jcbTareas.removeItemAt(this.jcbTareas.getSelectedIndex());
     }//GEN-LAST:event_jbtnAsignarActionPerformed
+
+    private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed
+        this.setVisible(false);
+    }//GEN-LAST:event_jbtnVolverActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JButton jbtnAsignar;
+    private javax.swing.JButton jbtnVolver;
     private javax.swing.JComboBox<String> jcbAnalistas;
     private javax.swing.JComboBox<String> jcbTareas;
     // End of variables declaration//GEN-END:variables

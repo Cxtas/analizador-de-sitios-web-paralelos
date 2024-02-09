@@ -55,8 +55,14 @@ public class TareaData {
         Element eEstado = new Element("estado");
         eEstado.addContent(tarea.getEstado());
 
-        Element eTipoAnalisis = new Element("tipoAnalisis");
-        eTipoAnalisis.addContent(tarea.getTipoAnalisis());
+        Element eAnalisis0 = new Element("analisis0");
+        eAnalisis0.addContent(String.valueOf(tarea.isAnalisis0()));
+        
+        Element eAnalisis1 = new Element("analisis1");
+        eAnalisis1.addContent(String.valueOf(tarea.isAnalisis1()));
+        
+        Element eAnalisis2 = new Element("analisis2");
+        eAnalisis2.addContent(String.valueOf(tarea.isAnalisis2()));
 
         Element eURL = new Element("url");
         eURL.addContent(tarea.getUrl());
@@ -69,7 +75,9 @@ public class TareaData {
 
         eTarea.addContent(eAvance);
         eTarea.addContent(eEstado);
-        eTarea.addContent(eTipoAnalisis);
+        eTarea.addContent(eAnalisis0);
+        eTarea.addContent(eAnalisis1);
+        eTarea.addContent(eAnalisis2);
         eTarea.addContent(eURL);
         eTarea.addContent(eImgs);
         eTarea.addContent(eEnlaces);
@@ -87,8 +95,9 @@ public class TareaData {
         for (Object objetoActual : eTareas) {
             Element eActual = (Element) objetoActual;
             Tarea tarea = new Tarea(Integer.parseInt(eActual.getChild("porcentajeAvance").getValue()), eActual.getChild("estado").getValue(),
-                    eActual.getChild("tipoAnalisis").getValue(), eActual.getChild("url").getValue(),Boolean.parseBoolean(eActual.getChild("imagenes").getValue()),
-                    Boolean.parseBoolean(eActual.getChild("enlaces").getValue()));
+                    Boolean.parseBoolean(eActual.getChild("analisis0").getValue()),Boolean.parseBoolean(eActual.getChild("analisis1").getValue()),
+                    Boolean.parseBoolean(eActual.getChild("analisis2").getValue()),eActual.getChild("url").getValue(),
+                    Boolean.parseBoolean(eActual.getChild("imagenes").getValue()),Boolean.parseBoolean(eActual.getChild("enlaces").getValue()));
             tareas.add(tarea);
         }//for
         return tareas;

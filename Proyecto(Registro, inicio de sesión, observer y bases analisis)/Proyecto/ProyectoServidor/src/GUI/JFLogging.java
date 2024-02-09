@@ -223,6 +223,7 @@ public class JFLogging extends javax.swing.JFrame {
 
     private void jbtnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnSalirActionPerformed
         this.dispose();
+        System.exit(0);
     }//GEN-LAST:event_jbtnSalirActionPerformed
 
     /**
