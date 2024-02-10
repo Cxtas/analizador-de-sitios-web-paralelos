@@ -156,19 +156,19 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
 
         try {
             TareaBusiness tareaBusiness = new TareaBusiness();
-            if (isValidURL(this.jtfURL.getText())) {
-                this.tarea = new Tarea(0, "en proceso", this.jtfURL.getText());
-                boolean analisisSelected = getAnalisisSelected();
-                if (analisisSelected) {
-                    boolean registrado = tareaBusiness.insertarTareas(this.tarea);
-                    if (registrado) {
+            if (isValidURL(this.jtfURL.getText())) {//si el texto ingresado es una url prosigue
+                this.tarea = new Tarea(0, "en proceso", this.jtfURL.getText());//se guardan datos generales de la tarea
+                boolean analisisSelected = getAnalisisSelected();//se le dan los detalles a la tarea registrada
+                if (analisisSelected) {//si los detalles son idoneos
+                    boolean registrado = tareaBusiness.insertarTareas(this.tarea);//se registra la tarea
+                    if (registrado) {//si se registra correctamente se indica
                         JOptionPane.showMessageDialog(this, "Se agregó una tarea");
-                        setInformacion();
-                    } else {
+                        setInformacion();//se borra la información de la tarea registrada
+                    } else {//si no se registra bien se alerta al usuario
                         JOptionPane.showMessageDialog(this, "No se pudo agregar");
                     }
                 }
-            }
+            }//fin valida url
         } catch (IOException ex) {
             Logger.getLogger(JIFDatosAnalisis.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -194,8 +194,8 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
     public boolean isValidURL(String urlString) {
         try {
             URL url = new URL(urlString);
-            return true;
-        } catch (MalformedURLException e) {
+            return true;//si tiene el formato devuelve que sí
+        } catch (MalformedURLException e) {//si no atrapa el error e indica que no es una url
             JOptionPane.showMessageDialog(this, "Ingrese una URL válida");
             return false;
         }
@@ -203,11 +203,12 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
 
     //Este método permite un buen registro de análisis, para que no se envie en blanco
     //Se selecciona al menos un tipo de analisis, y si es el análisis 2 se debe seleccionar
-    //al menos un elemento para el análisis de la página, si no se cumplen los requisitos devuelve null
+    //al menos un elemento para el análisis de la página, si no se cumplen los requisitos devuelve false
     private boolean getAnalisisSelected() {
         int cantAnalisis = 0; //verifica que al menos se seleccione un análisis
-        int imgEnlaces = 0; //y se seleccione imgs o enlaces para el analisis2
-        boolean boolImgsEnlaces = false;
+        int imgEnlaces = 0; //y se seleccione imagenes y/o enlaces para el analisis2
+        boolean boolImgsEnlaces = false;//indica si se selecciona el analisis 2
+        
         if (this.jcheckAnalisis1.isSelected()) {
             this.tarea.setAnalisis0(true);
             cantAnalisis += 1;
@@ -233,6 +234,7 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
             this.tarea.setImagenes(true);
             imgEnlaces += 1;
         }
+        //si se seleccionó el analisis 2 pero no imágenes o enlaces se pide que se seleccione al menos uno
         if ((boolImgsEnlaces) && (imgEnlaces == 0)) {
             JOptionPane.showMessageDialog(this, "Debe seleccionar al menos un elemento para el análisis 2");
             return false;

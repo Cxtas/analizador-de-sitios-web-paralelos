@@ -11,6 +11,8 @@ import Domain.Tarea;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.jdom.JDOMException;
 
@@ -23,6 +25,7 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
     private ArrayList<Examinador> analistas;
     private Examinador analista;
     private ExaminadorBusiness examinadorBusiness;
+    private TareaBusiness tareaBusiness;
     private ArrayList<Tarea> tareas;//Tareas Por Analizar
     private Tarea tarea; //tarea seleccionada
 
@@ -34,6 +37,7 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
      */
     public JIFAsignarTarea() throws IOException, JDOMException {
         this.examinadorBusiness = new ExaminadorBusiness();
+        this.tareaBusiness = new TareaBusiness();
         initComponents();
         this.analista = null;
         this.tarea = null;
@@ -41,30 +45,37 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
         this.tareas = new ArrayList<>();
         solicitarAnalista();
         agregarTareas();
-    }
+    }//constructor
 
+    //Busca entre el arrayList se usuarios solo a los analistas y descarta los otros roles
     private void solicitarAnalista() {
-        this.analistas = this.examinadorBusiness.obtenerExaminadores();
-        Iterator<Examinador> iterator = this.analistas.iterator();
+        this.analistas = this.examinadorBusiness.obtenerExaminadores();//obtiene los examinadores
+        Iterator<Examinador> iterator = this.analistas.iterator(); //se necesita un iterador para no alterar el índice
         while (iterator.hasNext()) {
             Examinador examinador = iterator.next();
-            if (!examinador.getRol().equals("analista") || !examinador.isActivo()) {
-                iterator.remove(); // Elimina el examinador que no cumple las condiciones
+            if (!examinador.getRol().equals("analista") || !examinador.isActivo()) {//si el examinador no es analista o no está activo
+                iterator.remove(); // se elimina del arrayList
             }
         }
-        for (Examinador examinador : this.analistas) {
-            this.jcbAnalistas.addItem(examinador.getUser());
-            System.out.println(examinador);
+        for (Examinador examinador : this.analistas) {//recorre el array de analistas
+            this.jcbAnalistas.addItem(examinador.getUser());//y llena el combobox con sus usuarios para ser seleccionados
         }
     }//solicitar
 
     private void agregarTareas() {
-        TareaBusiness tareaBusiness = new TareaBusiness();
-        this.tareas = tareaBusiness.obtenerTareas();
-        for (Tarea tarea : this.tareas) {
-            this.jcbTareas.addItem(tarea.getUrl());
+        this.tareas = tareaBusiness.obtenerTareas();//obtiene las tareas registradas
+        Iterator<Tarea> iterator = this.tareas.iterator();//se necesita un iterador para no alterar el índice
+        while (iterator.hasNext()) {
+            Tarea tareaTemp = iterator.next();
+            if (!tareaTemp.getAnalista().equals("null")) {//Si ya tiene un analista no puede volver a ser asignada 
+                iterator.remove(); // y se elimina de la lista
+            }
         }
-    }
+        for (Tarea tareaTempo : this.tareas) {
+            this.jcbTareas.addItem(tareaTempo.getUrl());
+        }
+
+    }//asignarTareas
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -154,14 +165,20 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
         try {
             this.analista = this.analistas.get(this.jcbAnalistas.getSelectedIndex());//guarda el analista seleccionado
             this.tarea = this.tareas.get(this.jcbTareas.getSelectedIndex());//guarda la tarea
-            this.analista.addTareas(tarea);//asigna la tarea al analista seleccionado
+            boolean asignado = this.tareaBusiness.asignarAnalista(this.analista.getUser(), this.tarea.getUrl());//asigna el analista seleccionado a la tarea
+            if (asignado) {//si se asignó muestra un mensaje
+                JOptionPane.showMessageDialog(this, "Se asignó la tarea " + this.tarea.getUrl() + " al analista: " + this.analista.getUser());
+                //Elimina de la lista de tareas, tareas que ya son asignadas
+                this.tareas.remove(this.jcbTareas.getSelectedIndex());
+                this.jcbTareas.removeItemAt(this.jcbTareas.getSelectedIndex());
+            } else {//si no se pudo asignar envía un mensaje
+                JOptionPane.showMessageDialog(this, "No se pudo asignar");
+            }
         } catch (NullPointerException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo asignar");
+            JOptionPane.showMessageDialog(this, "No se pudo asignar, revise que se encuentren los datos completos para poder asignar");
+        } catch (IOException ex) {
+            Logger.getLogger(JIFAsignarTarea.class.getName()).log(Level.SEVERE, null, ex);
         }
-        JOptionPane.showMessageDialog(this, "Se asignó la tarea " + this.tarea.getUrl() + " al analista: " + this.analista.getUser());
-        //Elimina de la lista de tareas, tareas que ya son asignadas
-        this.tareas.remove(this.jcbTareas.getSelectedIndex());
-        this.jcbTareas.removeItemAt(this.jcbTareas.getSelectedIndex());
     }//GEN-LAST:event_jbtnAsignarActionPerformed
 
     private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed

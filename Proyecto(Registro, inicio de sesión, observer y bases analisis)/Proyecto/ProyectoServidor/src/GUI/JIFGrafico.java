@@ -4,9 +4,13 @@
  */
 package GUI;
 
+import Business.TareaBusiness;
 import Domain.Sitio;
+import Domain.Tarea;
+import java.util.ArrayList;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
 
@@ -19,10 +23,21 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
     /**
      * Creates new form JIFGrafico
      */
+    private TareaBusiness tareaBusiness;
+    private ArrayList<Tarea> tareas;
+    
     public JIFGrafico() {
+        this.tareaBusiness = new TareaBusiness();
+        this.tareas = new ArrayList<>();
+        this.tareas = this.tareaBusiness.obtenerTareas();//obtiene todas las tareas registradas
         initComponents();
+        for (Tarea tareaTempo : this.tareas) {
+            this.jcbSitios.addItem(tareaTempo.getUrl());//Llena el combobox con las tareas registradas
+        }
         //this.sitio=new Sitio();
-    }
+    }//constructor
+    
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -42,8 +57,6 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setText("Seleccione el sitio del cual desea ver su análisis");
-
-        jcbSitios.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jbtnGraficar.setText("Graficar");
         jbtnGraficar.addActionListener(new java.awt.event.ActionListener() {

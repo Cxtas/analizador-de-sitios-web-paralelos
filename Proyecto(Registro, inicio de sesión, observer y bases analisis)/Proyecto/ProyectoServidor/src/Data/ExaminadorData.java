@@ -4,7 +4,6 @@
  */
 package Data;
 
-import Domain.Administrador;
 import Domain.Examinador;
 import Domain.Sitio;
 import Domain.Tarea;
@@ -21,10 +20,6 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartFrame;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.general.DefaultPieDataset;
 
 /**
  *
@@ -59,16 +54,17 @@ public class ExaminadorData {
     
 public boolean insertarExaminador(Examinador examinador) throws IOException{
         
-        ArrayList<Examinador> examinadores = obtenerExaminadores();
+        ArrayList<Examinador> examinadores = obtenerExaminadores();//obtiene los examinadores registrados
         
-        if (examinadores.size()>0) {
-            boolean repetido = verificarUsuario(examinador.getUser());
+        if (examinadores.size()>0) {//si hay examinadores
+            boolean repetido = verificarUsuario(examinador.getUser());//verifica que antes de registrar no se repita el user
             if (repetido) {
                 return false;
             }
         }
         
-        Element eExaminador = new Element("examinador");//<administrador>
+        //se registran en el xml una vez verificados
+        Element eExaminador = new Element("examinador");
             Element eUser =  new Element("user");
             eUser.addContent(examinador.getUser());
 
@@ -97,6 +93,7 @@ public boolean insertarExaminador(Examinador examinador) throws IOException{
         return true;
     }
     
+    //se obtienen todos los examinadores del xml
    public ArrayList<Examinador> obtenerExaminadores(){
         ArrayList<Examinador> examinadores = new ArrayList<>();
         
@@ -113,6 +110,7 @@ public boolean insertarExaminador(Examinador examinador) throws IOException{
         return examinadores;
     }//obtenerExaminador
     
+   //verifica que no se registren examinadores con el mismo nombre de usuario
     public boolean verificarUsuario(String nombreUsuario) {
         List elementList = this.root.getChildren();
         
@@ -121,7 +119,7 @@ public boolean insertarExaminador(Examinador examinador) throws IOException{
              Examinador examinador = new Examinador(eElementTemp.getChild("user").getValue(), eElementTemp.getChild("contrasenia").getValue(), 
                                                     eElementTemp.getChild("rol").getValue(), eElementTemp.getChild("tipoUsuario").getValue(),
                                                     Boolean.parseBoolean(eElementTemp.getChild("activo").getValue()));
-            if (examinador.getUser().equals(nombreUsuario) && examinador.isActivo()) {
+            if (examinador.getUser().equalsIgnoreCase(nombreUsuario) && examinador.isActivo()) {
                 return true;
             }
             
@@ -129,7 +127,7 @@ public boolean insertarExaminador(Examinador examinador) throws IOException{
         
         return false;
     }
-    
+        //se cambia en el xml el atributo activo de true a false
         public boolean desactivarExaminador(Examinador examinador) throws IOException {
         List elementList = this.root.getChildren();
         boolean hecho = false;
@@ -148,21 +146,21 @@ public boolean insertarExaminador(Examinador examinador) throws IOException{
         return false;
     }//desactivar
     
-    public void asignarTarea(Examinador e, Tarea tarea){//metodo que usan los gestores
-        e.verificarRol();
-        if(e.getRol().equals("analista")){
-            e.getTareas().add(tarea);
-        }else{
-            JOptionPane.showMessageDialog(null, "Solo se pueden asignar tareas a los analistas");
-        }
-    }//asignarTarea - Lo usa el gestor
+//    public void asignarTarea(Examinador e, Tarea tarea){//metodo que usan los gestores
+//        e.verificarRol();
+//        if(e.getRol().equals("analista")){
+//            e.getTareas().add(tarea);
+//        }else{
+//            JOptionPane.showMessageDialog(null, "Solo se pueden asignar tareas a los analistas");
+//        }
+//    }//asignarTarea - Lo usa el gestor
     
-    public void registrarURL(String url) throws IOException{
-        Element eRuta = new Element("ruta");//<ruta>
-    
-        this.rootU.addContent(eRuta);
-        guardarXML();
-    }//registrarURL - lo usa el digitador
+//    public void registrarURL(String url) throws IOException{
+//        Element eRuta = new Element("ruta");//<ruta>
+//    
+//        this.rootU.addContent(eRuta);
+//        guardarXML();
+//    }//registrarURL - lo usa el digitador
     
     public void verEstadisticas(Sitio sitio){
         

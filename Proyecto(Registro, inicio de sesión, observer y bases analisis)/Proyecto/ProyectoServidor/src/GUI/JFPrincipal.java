@@ -25,8 +25,8 @@ public class JFPrincipal extends javax.swing.JFrame {
      */
     private Usuario usuario;
 
-    public JFPrincipal(Usuario usuario) {
-        this.usuario = usuario;
+    public JFPrincipal(Usuario usuario) {//recibe el usuario que inició sesión
+        this.usuario = usuario;//se guarda el usuario
         initComponents();
         setLocationRelativeTo(null);
         permisos();
@@ -48,11 +48,11 @@ public class JFPrincipal extends javax.swing.JFrame {
             switch (examinador.getRol()) { //depende del rol tiene acceso a distintos menús
                 case "digitador" -> {
                     this.jmDatos.setEnabled(true);//ingresa urls
-                    this.jmTareas.setEnabled(false);
+                    this.jmTareas.setEnabled(false);//información sobre tareas
                 }
                 case "gestor" -> {
-                    this.jmResultados.setEnabled(false);//asigna tareas
-                    this.jmiGSolicitudes.setEnabled(true);
+                    this.jmResultados.setEnabled(false);//pdf, correo y estadísticas
+                    this.jmiGSolicitudes.setEnabled(true);//asigna tareas
                 }
                 case "analista" -> {
                     this.jmAnalisis.setEnabled(true);//Solo el analista puede analizar las páginas
@@ -234,6 +234,7 @@ public class JFPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //Se abren las ventanas depende del menú seleccionado
     private void jmiNuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiNuevoUsuarioActionPerformed
         JIFRegistroUsuario ventanaR = new JIFRegistroUsuario();
         this.jDesktopPane1.add(ventanaR);
@@ -293,12 +294,13 @@ public class JFPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jmiCambioUsuarioActionPerformed
 
     private void jmiSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiSalirActionPerformed
+      //se cierra el programa
         this.dispose();
         System.exit(0);
     }//GEN-LAST:event_jmiSalirActionPerformed
 
     private void jmiAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiAnalizarActionPerformed
-       JIFRealizarAnalisis analisis = new JIFRealizarAnalisis();
+       JIFRealizarAnalisis analisis = new JIFRealizarAnalisis(this.usuario);//se le envía el usuario que inicia sesión
         this.jDesktopPane1.add(analisis);
         centrar(analisis);
     }//GEN-LAST:event_jmiAnalizarActionPerformed
