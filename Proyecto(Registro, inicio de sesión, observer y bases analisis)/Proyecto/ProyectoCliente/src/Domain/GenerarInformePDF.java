@@ -4,6 +4,7 @@
  */
 package Domain;
 
+import Utility.Ruta;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -30,7 +31,9 @@ public class GenerarInformePDF extends Thread {
     public void generarInforme() {
         Document document = new Document();
         try {
-            PdfWriter.getInstance(document, new FileOutputStream("Informe_Analisis.pdf"));
+            int contador = 1;
+            String nombreArchivo = "InformeAnalisis_" + contador + ".pdf";
+            PdfWriter.getInstance(document, new FileOutputStream(nombreArchivo));
             document.open();
             for (Sitio sitio : sitios) {
                 document.add(new Paragraph("Análisis del Sitio Web: " + sitio.getUrl()));
@@ -42,6 +45,8 @@ public class GenerarInformePDF extends Thread {
                 document.add(new Paragraph("-----------------------------------------------"));
             }
             document.close();
+            System.out.println("Informe PDF generado exitosamente: " + nombreArchivo);
+            contador++; // Incrementar el contador para el próximo informe
         } catch (Exception e) {
             e.printStackTrace();
         }
