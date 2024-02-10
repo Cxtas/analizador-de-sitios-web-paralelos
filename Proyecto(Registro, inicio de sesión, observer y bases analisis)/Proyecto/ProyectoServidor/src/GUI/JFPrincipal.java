@@ -281,7 +281,7 @@ public class JFPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jmiGraficoActionPerformed
 
     private void jmiPDFenviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiPDFenviarActionPerformed
-        JIFGenerarPDFenviar generar = new JIFGenerarPDFenviar();
+        JIFGenerarPDF generar = new JIFGenerarPDF();
         this.jDesktopPane1.add(generar);
         centrar(generar);
     }//GEN-LAST:event_jmiPDFenviarActionPerformed
