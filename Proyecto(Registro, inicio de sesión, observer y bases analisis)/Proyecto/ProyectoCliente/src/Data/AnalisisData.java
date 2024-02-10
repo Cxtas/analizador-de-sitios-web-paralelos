@@ -1,7 +1,4 @@
- /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package Data;
 
 import Domain.Analisis;
@@ -114,43 +111,72 @@ public class AnalisisData {
     
     public void ExtraerElementos(Sitio sitio){
         //yo ya tengo el sitio, solo pido la url y empiezo a buscar las cosas
+        ArrayList<ProductoServicio> productos= new ArrayList<>();
+        ArrayList<String> nombres= new ArrayList<>();
+        ArrayList<String> precios= new ArrayList<>();
+        String precioP="";
+        String nombreP="";
+        String temp="";
+        int p=0;
+        int IPunto=0;
+        int IComa=0;
         try {
-            //String url = "https://www.facebook.com/?locale=es_LA";
-            String et1="h1";
-            String et2="h3";
-            String abs="abs:src";
-            ArrayList<String> Lproductos= new ArrayList<>();
-            ArrayList<Integer> Lprecios= new ArrayList<>();
+            String url = "https://extremetechcr.com/tienda/32-combos-gaming";
+            
             try {
                 desactivarCertificado();
             } catch (NoSuchAlgorithmException ex) {
                 Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
             } catch (KeyManagementException ex) {
                 Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-            }//try - catch interno//try - catch interno//try - catch interno//try - catch interno
+            }//try - catch interno
             
-            Document document = Jsoup.connect(sitio.getUrl()).get();
-            Elements productos = document.select(et1);//IMPORTANTE selecciona la etiqueta a bucar
-            Elements precios = document.select(et1);//IMPORTANTE selecciona la etiqueta a bucar
+            Document document = Jsoup.connect(url).get();
             
-            for (Element producto : productos) {//busca links en una coleccion de links hasta que no haya mas
-                System.out.println(producto.attr(abs));// IMPORTANTE abs= absolute (el atributo absoluto)
-                Lproductos.add(producto.attr(abs));
+            System.out.println(document.outerHtml());
+            Elements links = document.select("a");//selecciona la etiqueta a bucar //a
+            
+            System.out.println("PRODUCTOS");
+            for (Element link : links) {//busca links en una coleccion de links hasta que no haya mas
+                if(temp.equals(link.attr("abs:href")))
+                    System.out.println("");
+                else if(link.attr("abs:href").contains(".html")){
+                    System.out.println(link.attr("abs:href"));//abs= absolute (el atributo absoluto) //href
+                    temp=link.attr("abs:href");
+                    nombres.add(temp);
+                    }
             }//for each
             
-            for (Element precio : precios) {//busca links en una coleccion de links hasta que no haya mas
-                System.out.println(precio.attr(abs));// IMPORTANTE abs= absolute (el atributo absoluto)
-                Lprecios.add(Integer.parseInt(precio.attr(abs)));
+            temp="";
+            Elements spans = document.select("span");//para buscar precios
+            System.out.println("PRECIOS");
+            for (Element span : spans) {//busca links en una coleccion de links hasta que no haya mas
+                if(span.text().contains(",")){
+                    System.out.println(span.text());//abs= absolute (el atributo absoluto) //href
+                    precios.add(span.text());
+                }//if interno
             }//for each
             
-            for (int i = 0; i < precios.size(); i++) {
-                sitio.getProductos().add(new ProductoServicio(Lproductos.get(i), Lprecios.get(i)));
+            p=45;
+            for (int i = 0; i < nombres.size(); i++) {
+                IPunto=nombres.get(i).indexOf('.', p);
+                IComa=precios.get(i).indexOf(',');
+                if(IPunto>-1){
+                    nombreP=nombres.get(i).substring(p, IPunto);
+                    precioP=precios.get(i).replace(',', precios.get(i).charAt(IComa-1));
+                }
+                productos.add(new ProductoServicio(nombreP, Integer.parseInt(precioP.substring(3))));
             }
+            
+            for (int i = 0; i < productos.size(); i++) {
+                System.out.println(productos.get(i).toString());
+            }
+            
+           
                     
         } catch (IOException ex) {
             Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-        }//try - catch//try - catch//try - catch//try - catch
-        
+        }//try - catch
     }
     
     private static void desactivarCertificado() throws NoSuchAlgorithmException, KeyManagementException {
