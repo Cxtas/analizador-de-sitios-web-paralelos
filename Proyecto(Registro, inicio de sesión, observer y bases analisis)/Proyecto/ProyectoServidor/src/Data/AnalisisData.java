@@ -30,14 +30,14 @@ import org.jsoup.select.Elements;
 public class AnalisisData {
     private GestionXML manejo;
     private Analisis a;
-    //private String url;
+    private String url;
     private Sitio sitio;
     private int cont;
     private ArrayList<Sitio> sitios;
     
     public AnalisisData(String url) throws JDOMException, IOException {
         a= new Analisis();
-        //this.url=url;
+        this.url=url;
         this.manejo= new GestionXML();
         this.sitio= new Sitio(url);
     }
@@ -77,7 +77,7 @@ public class AnalisisData {
     }
     
     public void BuscarElementos(String tipo){ //busca imagenes o enlaces
-//        try {
+        try {
             //String url = "https://www.facebook.com/?locale=es_LA";
             String et="";
             if(tipo.equalsIgnoreCase("enlace")){
@@ -106,25 +106,26 @@ public class AnalisisData {
             }
             //MEJORAR CON ENUM
             
-//            try {
-//                desactivarCertificado();
-//            } catch (NoSuchAlgorithmException ex) {
-//                Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-//            } catch (KeyManagementException ex) {
-//                Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                desactivarCertificado();
+            } catch (NoSuchAlgorithmException ex) {
+                Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (KeyManagementException ex) {
+                Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
             }//try - catch interno//try - catch interno
             
-//            Document document = Jsoup.connect(this.sitio.getUrl()).get();
-//            Elements links = document.select(et);//IMPORTANTE selecciona la etiqueta a bucar
+            Document document = Jsoup.connect(this.sitio.getUrl()).get();
+            Elements links = document.select(et);//IMPORTANTE selecciona la etiqueta a bucar
             
-//            for (Element link : links) {//busca links en una coleccion de links hasta que no haya mas
-//                System.out.println(link.attr(tipo));// IMPORTANTE abs= absolute (el atributo absoluto)
-//                this.cont++;
-//            }//for each
+            for (Element link : links) {//busca links en una coleccion de links hasta que no haya mas
+                System.out.println(link.attr(tipo));// IMPORTANTE abs= absolute (el atributo absoluto)
+                this.cont++;
+            }//for each
                     
-//        } catch (IOException ex) {
-//            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-//    }//try - catch//try - catch
+        } catch (IOException ex) {
+            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+    }//try - catch//try - catch
+    }// buscar elemento
 
     
     
