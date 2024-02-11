@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package Data;
 
 import Domain.Analisis;
@@ -80,7 +77,7 @@ public class AnalisisData {
     }
     
     public void BuscarElementos(String tipo){ //busca imagenes o enlaces
-        try {
+//        try {
             //String url = "https://www.facebook.com/?locale=es_LA";
             String et="";
             if(tipo.equalsIgnoreCase("enlace")){
@@ -109,26 +106,26 @@ public class AnalisisData {
             }
             //MEJORAR CON ENUM
             
-            try {
-                desactivarCertificado();
-            } catch (NoSuchAlgorithmException ex) {
-                Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (KeyManagementException ex) {
-                Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+//            try {
+//                desactivarCertificado();
+//            } catch (NoSuchAlgorithmException ex) {
+//                Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+//            } catch (KeyManagementException ex) {
+//                Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
             }//try - catch interno//try - catch interno
             
-            Document document = Jsoup.connect(this.sitio.getUrl()).get();
-            Elements links = document.select(et);//IMPORTANTE selecciona la etiqueta a bucar
+//            Document document = Jsoup.connect(this.sitio.getUrl()).get();
+//            Elements links = document.select(et);//IMPORTANTE selecciona la etiqueta a bucar
             
-            for (Element link : links) {//busca links en una coleccion de links hasta que no haya mas
-                System.out.println(link.attr(tipo));// IMPORTANTE abs= absolute (el atributo absoluto)
-                this.cont++;
-            }//for each
+//            for (Element link : links) {//busca links en una coleccion de links hasta que no haya mas
+//                System.out.println(link.attr(tipo));// IMPORTANTE abs= absolute (el atributo absoluto)
+//                this.cont++;
+//            }//for each
                     
-        } catch (IOException ex) {
-            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-        }//try - catch//try - catch
-    }
+//        } catch (IOException ex) {
+//            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+//    }//try - catch//try - catch
+
     
     
        public void ExtraerElementos(Sitio sitio){

@@ -74,6 +74,7 @@ public class JFPrincipal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuItem1 = new javax.swing.JMenuItem();
         jDesktopPane1 = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jmRegistrar = new javax.swing.JMenu();
@@ -89,9 +90,12 @@ public class JFPrincipal extends javax.swing.JFrame {
         jmResultados = new javax.swing.JMenu();
         jmiGrafico = new javax.swing.JMenuItem();
         jmiPDFenviar = new javax.swing.JMenuItem();
+        jmiCorreo = new javax.swing.JMenuItem();
         jmSesion = new javax.swing.JMenu();
         jmiCambioUsuario = new javax.swing.JMenuItem();
         jmiSalir = new javax.swing.JMenuItem();
+
+        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -188,13 +192,21 @@ public class JFPrincipal extends javax.swing.JFrame {
         });
         jmResultados.add(jmiGrafico);
 
-        jmiPDFenviar.setText("Generar PDF y enviar");
+        jmiPDFenviar.setText("Generar PDF");
         jmiPDFenviar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmiPDFenviarActionPerformed(evt);
             }
         });
         jmResultados.add(jmiPDFenviar);
+
+        jmiCorreo.setText("Enviar correo");
+        jmiCorreo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiCorreoActionPerformed(evt);
+            }
+        });
+        jmResultados.add(jmiCorreo);
 
         jMenuBar1.add(jmResultados);
 
@@ -303,6 +315,12 @@ public class JFPrincipal extends javax.swing.JFrame {
         centrar(analisis);
     }//GEN-LAST:event_jmiAnalizarActionPerformed
 
+    private void jmiCorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiCorreoActionPerformed
+        JIFEnviarCorreo ec= new JIFEnviarCorreo();
+        this.jDesktopPane1.add(ec);
+        centrar(ec);
+    }//GEN-LAST:event_jmiCorreoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -345,6 +363,7 @@ public class JFPrincipal extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenu jmAnalisis;
     private javax.swing.JMenu jmDatos;
     private javax.swing.JMenu jmRegistrar;
@@ -353,6 +372,7 @@ public class JFPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenu jmTareas;
     private javax.swing.JMenuItem jmiAnalizar;
     private javax.swing.JMenuItem jmiCambioUsuario;
+    private javax.swing.JMenuItem jmiCorreo;
     private javax.swing.JMenuItem jmiEliminarUsuarios;
     private javax.swing.JMenuItem jmiEstadoTareas;
     private javax.swing.JMenuItem jmiGSolicitudes;

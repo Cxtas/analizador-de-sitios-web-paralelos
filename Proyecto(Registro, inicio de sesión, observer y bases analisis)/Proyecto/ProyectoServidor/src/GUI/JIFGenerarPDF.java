@@ -4,6 +4,10 @@
  */
 package GUI;
 
+import Data.AnalisisData;
+import Domain.GenerarInformePDF;
+import Domain.Sitio;
+
 /**
  *
  * @author Estephanie
@@ -13,6 +17,9 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
     /**
      * Creates new form JIFGenerarPDFenviar
      */
+    private AnalisisData ad;
+    private Sitio s;
+    private GenerarInformePDF gipdf;
     public JIFGenerarPDF() {
         initComponents();
     }
@@ -42,7 +49,6 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
             }
         });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
@@ -73,9 +79,7 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
                         .addComponent(jbtnVolver)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(76, 76, 76))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -84,7 +88,10 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
                         .addComponent(jLabel2))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(179, 179, 179)
-                        .addComponent(jbtnGenerar)))
+                        .addComponent(jbtnGenerar))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(80, 80, 80)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -94,9 +101,9 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
-                .addGap(27, 27, 27)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(33, 33, 33)
                 .addComponent(jbtnGenerar)
                 .addGap(10, 10, 10)
                 .addComponent(jbtnVolver)
@@ -122,11 +129,12 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jbtnVolverActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
+         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jbtnGenerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGenerarActionPerformed
-        // TODO add your handling code here:
+
+        gipdf.generarInforme();
     }//GEN-LAST:event_jbtnGenerarActionPerformed
 
 

@@ -4,7 +4,12 @@
  */
 package servidor;
 
+import Data.AnalisisData;
+import Domain.Sitio;
 import GUI.JFLogging;
+import java.io.IOException;
+import org.jdom.JDOMException;
+
 
 /**
  *
@@ -15,9 +20,11 @@ public class Servidor {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JDOMException, IOException {
         JFLogging logging = new JFLogging();
          logging.setVisible(true);
+
+         
     }
     
 }
