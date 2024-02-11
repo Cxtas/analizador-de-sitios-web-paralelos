@@ -1,17 +1,17 @@
-
 package Data;
 
 import Domain.Analisis;
 import Utility.GestionXML;
-import Domain.ProductoServicio;
 import Domain.Sitio;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -28,201 +28,165 @@ import org.jsoup.select.Elements;
  * @author author
  */
 public class AnalisisData {
-    private GestionXML manejo;
-    private Analisis a;
-    private String url;
-    private Sitio sitio;
-    private int cont;
-    private ArrayList<Sitio> sitios;
+  
     
-    public AnalisisData(String url) throws JDOMException, IOException {
-        a= new Analisis();
-        this.url=url;
-        this.manejo= new GestionXML();
-        this.sitio= new Sitio(url);
+    public AnalisisData() throws JDOMException, IOException {
+       
     }
     
-    public void CantElementos(){ //Análisis de elementos que conforman un sitio web.
-        BuscarElementos("imagen");
-        this.sitio.setImagenes(this.cont);
-        this.cont=0;
-        
-        BuscarElementos("enlace");
-        this.sitio.setEnlaces(this.cont);
-        this.cont=0;
-        
-        BuscarElementos("video");
-        this.sitio.setVideos(this.cont);
-        this.cont=0;
-        
-        BuscarElementos("titulo");
-        this.sitio.setTitulos(this.cont);
-        this.cont=0;
-        
-        BuscarElementos("subtitulo");
-        this.sitio.setSubtitulos(this.cont);
-        this.cont=0;
-        
-        BuscarElementos("tabla");
-        this.sitio.setTablas(this.cont);
-        this.cont=0;
-        
-        System.out.println("Imagenes: "+ this.sitio.getImagenes());
-        System.out.println("Enlaces: "+ this.sitio.getEnlaces());
-        System.out.println("Titulos: "+ this.sitio.getTitulos());
-        System.out.println("Subtitulos: "+ this.sitio.getSubtitulos());
-        System.out.println("Videos: "+ this.sitio.getVideos());
-        System.out.println("Tablas: "+ this.sitio.getTablas());
-        
-    }
-    
-    public void BuscarElementos(String tipo){ //busca imagenes o enlaces
+
+       public void ExtraerElementos(String url) {
         try {
-            //String url = "https://www.facebook.com/?locale=es_LA";
-            String et="";
-            if(tipo.equalsIgnoreCase("enlace")){
-                et="a";
-                tipo="abs:href";
-            }
-            
-            if(tipo.equalsIgnoreCase("imagen")){
-                et="img";
-                tipo="abs:src";
-            }
-            
-            if(tipo.equalsIgnoreCase("tabla")){
-                et="table";
-                tipo="abs:summary";
-            }
-            
-            if(tipo.equalsIgnoreCase("titulo")){
-                et="title";
-                tipo="null";
-            }
-            
-            if(tipo.equalsIgnoreCase("video")){
-                et="video";
-                tipo="abs:width";
-            }
-            //MEJORAR CON ENUM
-            
-            try {
-                desactivarCertificado();
-            } catch (NoSuchAlgorithmException ex) {
-                Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (KeyManagementException ex) {
-                Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-            }//try - catch interno//try - catch interno
-            
-            Document document = Jsoup.connect(this.sitio.getUrl()).get();
-            Elements links = document.select(et);//IMPORTANTE selecciona la etiqueta a bucar
-            
-            for (Element link : links) {//busca links en una coleccion de links hasta que no haya mas
-                System.out.println(link.attr(tipo));// IMPORTANTE abs= absolute (el atributo absoluto)
-                this.cont++;
-            }//for each
-                    
-        } catch (IOException ex) {
-            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-    }//try - catch//try - catch
-    }// buscar elemento
+            // Obtener el documento HTML de una página web
+            Document doc = Jsoup.connect(url).get();
 
-    
-    
-       public void ExtraerElementos(Sitio sitio){
-        //yo ya tengo el sitio, solo pido la url y empiezo a buscar las cosas
-        ArrayList<ProductoServicio> productos= new ArrayList<>();
-        ArrayList<String> nombres= new ArrayList<>();
-        ArrayList<String> precios= new ArrayList<>();
-        String precioP="";
-        String nombreP="";
-        String temp="";
-        int p=0;
-        int IPunto=0;
-        int IComa=0;
-        try {
-            String url = "https://extremetechcr.com/tienda/32-combos-gaming";
-            
-            try {
-                desactivarCertificado();
-            } catch (NoSuchAlgorithmException ex) {
-                Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (KeyManagementException ex) {
-                Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-            }//try - catch interno
-            
-            Document document = Jsoup.connect(url).get();
-            
-            System.out.println(document.outerHtml());
-            Elements links = document.select("a");//selecciona la etiqueta a bucar //a
-            
-            System.out.println("PRODUCTOS");
-            for (Element link : links) {//busca links en una coleccion de links hasta que no haya mas
-                if(temp.equals(link.attr("abs:href")))
-                    System.out.println("");
-                else if(link.attr("abs:href").contains(".html")){
-                    System.out.println(link.attr("abs:href"));//abs= absolute (el atributo absoluto) //href
-                    temp=link.attr("abs:href");
-                    nombres.add(temp);
-                    }
-            }//for each
-            
-            temp="";
-            Elements spans = document.select("span");//para buscar precios
-            System.out.println("PRECIOS");
-            for (Element span : spans) {//busca links en una coleccion de links hasta que no haya mas
-                if(span.text().contains(",")){
-                    System.out.println(span.text());//abs= absolute (el atributo absoluto) //href
-                    precios.add(span.text());
-                }//if interno
-            }//for each
-            
-            p=45;
-            for (int i = 0; i < nombres.size(); i++) {
-                IPunto=nombres.get(i).indexOf('.', p);
-                IComa=precios.get(i).indexOf(',');
-                if(IPunto>-1){
-                    nombreP=nombres.get(i).substring(p, IPunto);
-                    precioP=precios.get(i).replace(',', precios.get(i).charAt(IComa-1));
+            // Contadores para imágenes, títulos, subtítulos, enlaces, tablas y videos
+            int imageCount = 0;
+            int titleCount = 0;
+            int subtitleCount = 0;
+            int linkCount = 0;
+            int tableCount = 0;
+            int videoCount = 0;
+
+            // Extraer imágenes
+            Elements images = doc.select("img");
+            imageCount = images.size();
+
+            // Extraer títulos
+            Elements titles = doc.select("title");
+            titleCount = titles.size();
+
+            // Extraer subtítulos (h2, h3, etc.)
+            Elements subtitles = doc.select("h2, h3, h4, h5, h6");
+            subtitleCount = subtitles.size();
+
+            // Extraer enlaces
+            Elements links = doc.select("a");
+            linkCount = links.size();
+
+            // Extraer tablas
+            Elements tables = doc.select("table");
+            tableCount = tables.size();
+
+            // Extraer videos
+            Elements videos = doc.select("video");
+            videoCount = videos.size();
+
+            // Almacenar los datos en un archivo
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("datos_extraidos.txt"))) {
+                writer.write("Número de imágenes: " + imageCount + "\n");
+                writer.write("Número de títulos: " + titleCount + "\n");
+                writer.write("Número de subtítulos: " + subtitleCount + "\n");
+                writer.write("Número de enlaces: " + linkCount + "\n");
+                writer.write("Número de tablas: " + tableCount + "\n");
+                writer.write("Número de videos: " + videoCount + "\n\n");
+
+                writer.write("Imágenes:\n");
+                for (Element image : images) {
+                    writer.write(image.attr("src") + "\n");
                 }
-                productos.add(new ProductoServicio(nombreP, Integer.parseInt(precioP.substring(3))));
+
+                writer.write("\nTítulos:\n");
+                for (Element title : titles) {
+                    writer.write(title.text() + "\n");
+                }
+
+                writer.write("\nSubtítulos:\n");
+                for (Element subtitle : subtitles) {
+                    writer.write(subtitle.text() + "\n");
+                }
+
+                writer.write("\nEnlaces:\n");
+                for (Element link : links) {
+                    writer.write(link.attr("href") + "\n");
+                }
+
+                writer.write("\nTablas:\n");
+                for (Element table : tables) {
+                    writer.write(table.outerHtml() + "\n");
+                }
+
+                writer.write("\nVideos:\n");
+                for (Element video : videos) {
+                    writer.write(video.attr("src") + "\n");
+                }
             }
-            
-            for (int i = 0; i < productos.size(); i++) {
-                System.out.println(productos.get(i).toString());
+
+            precios("https://www.apple.com//");
+
+            System.out.println("Datos extraídos y almacenados en 'datos_extraidos.txt'");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+       }  
+
+    public static void precios(String url) {
+    try {
+        // Obtener el documento HTML de una página web
+        Document doc = Jsoup.connect(url).get();
+
+        // Buscar elementos que contengan precios
+        Elements allElements = doc.getAllElements();
+        Elements priceElements = new Elements();
+        for (Element element : allElements) {
+            String text = element.text();
+            if (containsPrice(text)) {
+                priceElements.add(element);
             }
-            
-           
-                    
-        } catch (IOException ex) {
-            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-        }//try - catch
+        }
+
+        // Extraer y almacenar los precios en un archivo
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("precios_extraidos.txt"))) {
+            for (Element element : priceElements) {
+                // Extraer el texto del elemento
+                String text = element.text();
+                // Utilizar expresiones regulares para encontrar el precio
+                Pattern pattern = Pattern.compile("[€$£¥]\\s*\\d+(\\.\\d+)?"); // Patrón para encontrar precios (por ejemplo, €12.34)
+                Matcher matcher = pattern.matcher(text);
+                while (matcher.find()) {
+                    String price = matcher.group();
+                    writer.write(price + "\n");
+                }
+            }
+        }
+
+        System.out.println("Precios extraídos y almacenados en 'precios_extraidos.txt'");
+    } catch (IOException e) {
+        // Manejo de cualquier excepción de entrada/salida
+        System.out.println("Ocurrió un error al procesar la solicitud HTTP: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
+
+    // Método para verificar si una cadena contiene un precio
+    private static boolean containsPrice(String text) {
+        return text.matches(".*[€$£¥]\\s*\\d+(\\.\\d+)?.*");
     }
     
-    private static void desactivarCertificado() throws NoSuchAlgorithmException, KeyManagementException {
-        // Crear un administrador de confianza que no realice ninguna validación del certificado
-        TrustManager[] trustAllCerts = new TrustManager[]{
-            new X509TrustManager() {
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                }
-
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                }
-            }
-        };
-
-        // Configurar la conexión SSL para desactivar la validación del certificado
-        SSLContext sslContext = SSLContext.getInstance("SSL");
-        sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
-
-        // Desactivar la verificación del host
-        HostnameVerifier allHostsValid = (hostname, session) -> true;
-        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-    }
+//    private static void desactivarCertificado() throws NoSuchAlgorithmException, KeyManagementException {
+//        // Crear un administrador de confianza que no realice ninguna validación del certificado
+//        TrustManager[] trustAllCerts = new TrustManager[]{
+//            new X509TrustManager() {
+//                public X509Certificate[] getAcceptedIssuers() {
+//                    return null;
+//                }
+//
+//                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+//                }
+//
+//                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+//                }
+//            }
+//        };
+//
+//        // Configurar la conexión SSL para desactivar la validación del certificado
+//        SSLContext sslContext = SSLContext.getInstance("SSL");
+//        sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+//        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+//
+//        // Desactivar la verificación del host
+//        HostnameVerifier allHostsValid = (hostname, session) -> true;
+//        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+//    }
     
 }//fin clase

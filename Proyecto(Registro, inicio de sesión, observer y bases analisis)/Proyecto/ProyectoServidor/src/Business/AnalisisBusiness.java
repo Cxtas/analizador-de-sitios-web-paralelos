@@ -29,16 +29,16 @@ public class AnalisisBusiness {
 //    }
     
     
-    public void CantElementos(){
-        ad.CantElementos();
-    }
-    
-    public void BuscarElementos(String tipo){ //busca imagenes o enlaces
-        ad.BuscarElementos(tipo);
-    }
-    
-    public void ExtraerElementos(Sitio sitio){
-        ad.ExtraerElementos(sitio);
+//    public void CantElementos(){
+//        ad.CantElementos();
+//    }
+//    
+//    public void BuscarElementos(String tipo){ //busca imagenes o enlaces
+//        ad.BuscarElementos(tipo);
+//    }
+//    
+    public void ExtraerElementos(String url){
+        ad.ExtraerElementos(url);
     }
     
 }//fin clase
