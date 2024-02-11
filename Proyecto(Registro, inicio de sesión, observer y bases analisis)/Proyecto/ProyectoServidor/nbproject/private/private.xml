@@ -3,18 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
+            <file>file:/C:/Users/catas/Documents/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/Domain/Sitio.java</file>
             <file>file:/C:/Users/catas/Documents/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/GUI/JIFEnviarCorreo.java</file>
-=======
-            <file>file:/C:/Users/Estephanie/OneDrive%20-%20Universidad%20de%20Costa%20Rica/Documentos/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/Domain/Examinador.java</file>
-            <file>file:/C:/Users/Estephanie/OneDrive%20-%20Universidad%20de%20Costa%20Rica/Documentos/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/GUI/JIFGenerarPDFenviar.java</file>
-            <file>file:/C:/Users/Estephanie/OneDrive%20-%20Universidad%20de%20Costa%20Rica/Documentos/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/Data/TareaData.java</file>
-            <file>file:/C:/Users/Estephanie/OneDrive%20-%20Universidad%20de%20Costa%20Rica/Documentos/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/GUI/JIFDatosAnalisis.java</file>
-            <file>file:/C:/Users/Estephanie/OneDrive%20-%20Universidad%20de%20Costa%20Rica/Documentos/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/GUI/JIFAsignarTarea.java</file>
-            <file>file:/C:/Users/Estephanie/OneDrive%20-%20Universidad%20de%20Costa%20Rica/Documentos/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/GUI/JFPrincipal.java</file>
-            <file>file:/C:/Users/Estephanie/OneDrive%20-%20Universidad%20de%20Costa%20Rica/Documentos/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/GUI/JIFGrafico.java</file>
-            <file>file:/C:/Users/Estephanie/OneDrive%20-%20Universidad%20de%20Costa%20Rica/Documentos/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/Business/TareaBusiness.java</file>
->>>>>>> 9d11dcc1d2ab5230e5f10c504337581c37d9b756
+            <file>file:/C:/Users/catas/Documents/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/Data/AnalisisData.java</file>
         </group>
     </open-files>
 </project-private>
