@@ -204,8 +204,10 @@ public class JIFRegistroUsuario extends javax.swing.JInternalFrame {
                         "administrador", true));
                 if (registrado) {
                     JOptionPane.showMessageDialog(this, "Usuario registrado");
+                    borrarDatos();
                 } else {
                     JOptionPane.showMessageDialog(this, "Ya existe un usuario con ese nombre");
+                    borrarDatos();
                 }
             } else {//examinador
                 if (getSelectedRol() != null) {
@@ -215,8 +217,10 @@ public class JIFRegistroUsuario extends javax.swing.JInternalFrame {
                             this.getSelectedRol(), "examinador", true));
                     if (registrado) {
                         JOptionPane.showMessageDialog(this, "Usuario registrado");
+                        borrarDatos();
                     } else {
                         JOptionPane.showMessageDialog(this, "Ya existe un usuario con ese nombre.");
+                        borrarDatos();
                     }
                 } else {
                     JOptionPane.showMessageDialog(this, "Debe seleccionar un rol.");
@@ -239,6 +243,14 @@ public class JIFRegistroUsuario extends javax.swing.JInternalFrame {
             return "gestor";
         }
         return null;
+    }//getSelectedRol
+    
+    private void borrarDatos(){
+        this.jtfUser.setText("");
+        this.jtfContrasenia.setText("");
+        this.jrbAnalista.setSelected(false);
+        this.jrbDigitador.setSelected(false);
+        this.jrbGestor.setSelected(false);
     }
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed

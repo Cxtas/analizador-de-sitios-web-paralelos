@@ -47,17 +47,19 @@ public class AdministradorData {
         xmlOutputter.output(this.document, new PrintWriter(Ruta.RUTAADMINISTRADOR));
     }//guaradarXML
 
+    //se registran administradores
     public boolean insertarAdministrador(Administrador administrador) throws IOException {
 
-        ArrayList<Administrador> administradores = obtenerAdministradores();
+        ArrayList<Administrador> administradores = obtenerAdministradores();//se obtinen los administradores registrados
 
-        if (administradores.size() > 0) {
-            boolean repetido = verificarUsuario(administrador.getUser());
-            if (repetido) {
+        if (administradores.size() > 0) {//si hay administradores
+            boolean repetido = verificarUsuario(administrador.getUser());//se verifica que no tenga el mismo user el que se va a registrar
+            if (repetido) {//si ya está registrado el user se devulve false
                 return false;
             }
         }
 
+        //de lo contrario se registra el nuevo administrador
         Element eAdministrador = new Element("administrador");//<administrador>
         Element eUser = new Element("user");
         eUser.addContent(administrador.getUser());
@@ -82,7 +84,7 @@ public class AdministradorData {
         return true;
     }
 
-    public ArrayList<Administrador> obtenerAdministradores() {
+    public ArrayList<Administrador> obtenerAdministradores() {//se obtienen todos los administradores registrados
         ArrayList<Administrador> administradores = new ArrayList<>();
 
         List eAdministradores = this.root.getChildren();
@@ -95,6 +97,7 @@ public class AdministradorData {
         return administradores;
     }//obtenerAdmins
 
+    //se verifica que no tengan el mismo user
     public boolean verificarUsuario(String nombreUsuario) {
         List elementList = this.root.getChildren();
 
@@ -111,6 +114,7 @@ public class AdministradorData {
         return false;
     }//verificar usuario
 
+    //se desactiva un administrador cambiando el atributo activo de false a true
     public boolean desactivarAdministrador(Administrador admin) throws IOException {
         List elementList = this.root.getChildren();
         boolean hecho = false;

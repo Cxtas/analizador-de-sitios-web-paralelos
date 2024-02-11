@@ -47,12 +47,14 @@ public class JIFEliminarUsuarios extends javax.swing.JInternalFrame {
         }
     }
 
+   
     private void solicitarUsuarios() {
+        //se obtienen tanto administradores como examinadores para el combobox
         this.usuarios.addAll(this.examinadorBusiness.obtenerExaminadores());
         this.usuarios.addAll(this.administradorBusiness.obtenerAdministradores());
         for (int i = 0; i < this.usuarios.size(); i++) {
-            if (this.usuarios.get(i).isActivo()) {
-                this.jcbUsuarios.addItem(this.usuarios.get(i).getUser());
+            if (this.usuarios.get(i).isActivo()) {//si el usuario está activo
+                this.jcbUsuarios.addItem(this.usuarios.get(i).getUser());//se ingresa al combobox
             }
         }
     }
@@ -142,16 +144,19 @@ public class JIFEliminarUsuarios extends javax.swing.JInternalFrame {
 
     private void jbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnEliminarActionPerformed
         try {
-            int pos = jcbUsuarios.getSelectedIndex();
-            this.usuarios.get(pos).setActivo(false);
-            if (this.usuarios.get(pos).getTipoUsuario().equals("administrador")) {
-                if (this.administradorBusiness.desactivarAdministrador((Administrador) this.usuarios.get(pos))) {
-                    JOptionPane.showMessageDialog(this, "Se eliminó correctamente");
+            int pos = jcbUsuarios.getSelectedIndex();//posicion del usuario seleccionado
+            this.usuarios.get(pos).setActivo(false);//se cambia el activo a false
+            if (this.usuarios.get(pos).getTipoUsuario().equals("administrador")) {//si es administrador cambia el xml de admins
+                if (this.administradorBusiness.desactivarAdministrador((Administrador) this.usuarios.get(pos))) {//se le pasa el usuario seleccionado
+                    //mensajes de aviso de la acción
+                    JOptionPane.showMessageDialog(this, "Se eliminó correctamente"); 
                 } else {
                     JOptionPane.showMessageDialog(this, "No se pudo eliminar");
                 }
             } else {
-                if (this.examinadorBusiness.desactivarExaminador((Examinador) this.usuarios.get(pos))) {
+                //busca en el xml de examinadores
+                if (this.examinadorBusiness.desactivarExaminador((Examinador) this.usuarios.get(pos))) {//se le pasa el usuario
+                    //y depende del éxito igual se notifica
                     JOptionPane.showMessageDialog(this, "Se eliminó correctamente");
                 } else {
                     JOptionPane.showMessageDialog(this, "No se pudo eliminar");

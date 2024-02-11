@@ -4,6 +4,7 @@
  */
 package Data;
 
+import Domain.Examinador;
 import Domain.Tarea;
 import Utility.Ruta;
 import java.io.File;
@@ -45,6 +46,7 @@ public class TareaData {
         xmlOutputter.output(this.document, new PrintWriter(Ruta.RUTATAREAS));
     }//guaradarXML
 
+    //se registran tareas
      public boolean insertarTarea(Tarea tarea) throws IOException {
 
         Element eTarea = new Element("tarea");
@@ -72,6 +74,9 @@ public class TareaData {
         
         Element eEnlaces = new Element("enlaces");
         eEnlaces.addContent(String.valueOf(tarea.isEnlaces()));
+        
+        Element eAnalista = new Element("analista");
+        eAnalista.addContent(tarea.getAnalista());
 
         eTarea.addContent(eAvance);
         eTarea.addContent(eEstado);
@@ -81,6 +86,7 @@ public class TareaData {
         eTarea.addContent(eURL);
         eTarea.addContent(eImgs);
         eTarea.addContent(eEnlaces);
+        eTarea.addContent(eAnalista);
 
         this.root.addContent(eTarea);
         guardarXML();
@@ -88,6 +94,7 @@ public class TareaData {
         return true;
     }
 
+     //se obtienen todas las tareas
     public ArrayList<Tarea> obtenerTareas() {
         ArrayList<Tarea> tareas = new ArrayList<>();
 
@@ -97,10 +104,29 @@ public class TareaData {
             Tarea tarea = new Tarea(Integer.parseInt(eActual.getChild("porcentajeAvance").getValue()), eActual.getChild("estado").getValue(),
                     Boolean.parseBoolean(eActual.getChild("analisis0").getValue()),Boolean.parseBoolean(eActual.getChild("analisis1").getValue()),
                     Boolean.parseBoolean(eActual.getChild("analisis2").getValue()),eActual.getChild("url").getValue(),
-                    Boolean.parseBoolean(eActual.getChild("imagenes").getValue()),Boolean.parseBoolean(eActual.getChild("enlaces").getValue()));
+                    Boolean.parseBoolean(eActual.getChild("imagenes").getValue()),Boolean.parseBoolean(eActual.getChild("enlaces").getValue()),
+                    eActual.getChild("analista").getValue());
             tareas.add(tarea);
         }//for
         return tareas;
     }//obtenerAdmins
     
+    //se les asigna un analista cambiando el atributo analista de null al user del analista asignado
+     public boolean asignarAnalista(String userAnalista, String url) throws IOException {
+        List elementList = this.root.getChildren();
+        boolean hecho = false;
+        for (Object object : elementList) {
+            Element eTareaActual = (Element) object;
+            if (eTareaActual.getChild("url").getValue().equals(url)) {
+                eTareaActual.getChild("analista").removeContent();
+                eTareaActual.getChild("analista").addContent(userAnalista);
+                hecho=true;
+            }
+        }//for
+        if (hecho) {
+            this.guardarXML();
+            return true;
+        }
+        return false;
+    }//desactivar
 }

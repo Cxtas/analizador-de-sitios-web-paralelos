@@ -186,27 +186,31 @@ public class JFLogging extends javax.swing.JFrame {
             AdministradorBusiness administradorBusiness = new AdministradorBusiness();
             ExaminadorBusiness examinadorBusiness = new ExaminadorBusiness();
 
-            if (this.jcbUsuario.getSelectedItem().equals("Administrador")) {
+            if (this.jcbUsuario.getSelectedItem().equals("Administrador")) {//si es un administrador
                 Administrador verificado = administradorBusiness.buscarAdministrador(this.jtfUsuario.getText());//se busca a ver si está registrado
-                if (verificado != null && verificado.isActivo()) { // sí
+                if (verificado != null && verificado.isActivo()) { // sí está registrado y activo
                     this.usuario = verificado;//se guarda
-                    JFPrincipal ventana = new JFPrincipal(this.usuario);//se abre la ventana con los menús
-                    this.setVisible(false);
-                    ventana.setVisible(true);
+                    JFPrincipal ventana = new JFPrincipal(this.usuario);//se llama la ventana principal y se le pasa por parámetro el usuario que inició sesión
+                    this.setVisible(false);//se cierra esta
+                    ventana.setVisible(true);//se abre la ventana
                 } else { //si no, se envía un mensaje
                     JOptionPane.showMessageDialog(this, "Datos invalidos");
+                    //se elimina la información de los campos
                     this.jtfUsuario.setText("");
                     this.jtfContrasenia.setText("");
                 }
             } else {//entonces es examinador
                 Examinador verificado = examinadorBusiness.buscarExaminador(this.jtfUsuario.getText());//se busca en el archivo a ver si está registrado
-                if (verificado != null && verificado.isActivo()) {//sí
+                if (verificado != null && verificado.isActivo()) {//sí está registrado y activo
                     this.usuario = verificado; //se guarda el usuario
-                    JFPrincipal ventana = new JFPrincipal(this.usuario);//se abre la ventana
-                    this.setVisible(false);
-                    ventana.setVisible(true);
+                    JFPrincipal ventana = new JFPrincipal(this.usuario);//se llama la ventana principal y se le pasa por parámetro el usuario que inició sesión
+                    this.setVisible(false);//se cierra esta
+                    ventana.setVisible(true);//se abre la ventana
                 } else {//si no se valida, se notifica
                     JOptionPane.showMessageDialog(this, "Datos invalidos");
+                    //se elimina la información de los campos
+                    this.jtfUsuario.setText("");
+                    this.jtfContrasenia.setText("");
                 }
             }
         } catch (IOException ex) {
@@ -222,6 +226,7 @@ public class JFLogging extends javax.swing.JFrame {
     }//GEN-LAST:event_jtfUsuarioActionPerformed
 
     private void jbtnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnSalirActionPerformed
+       //se cierra el programa
         this.dispose();
         System.exit(0);
     }//GEN-LAST:event_jbtnSalirActionPerformed

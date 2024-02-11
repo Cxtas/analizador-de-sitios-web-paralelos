@@ -21,6 +21,7 @@ public class Tarea {
     private String url;
     private boolean imagenes;
     private boolean enlaces;
+    private String analista;
 
     public Tarea(int porcentajeAvance, String estado, String url) {
         this.porcentajeAvance = porcentajeAvance;
@@ -31,9 +32,11 @@ public class Tarea {
         this.url = url;
         this.imagenes = false;
         this.enlaces = false;
+        this.analista = "null";
     }
     
-    public Tarea(int porcentajeAvance, String estado, boolean analisis0,boolean analisis1,boolean analisis2, String url, boolean imagenes, boolean enlaces) {
+    public Tarea(int porcentajeAvance, String estado, boolean analisis0,boolean analisis1,boolean analisis2, String url, boolean imagenes, 
+                boolean enlaces, String analista) {
         this.porcentajeAvance = porcentajeAvance;
         this.estado = estado;
         this.analisis0 = analisis0;
@@ -42,6 +45,7 @@ public class Tarea {
         this.url = url;
         this.imagenes = imagenes;
         this.enlaces = enlaces;
+        this.analista = analista;
     }
 
     public int getPorcentajeAvance() {
@@ -104,9 +108,17 @@ public class Tarea {
         this.enlaces = enlaces;
     }
 
+    public String getAnalista() {
+        return analista;
+    }
+
+    public void setAnalista(String analista) {
+        this.analista = analista;
+    }
+
     @Override
     public String toString() {
-        return "Tarea{ Sitio: " +this.url+ "\nPorcentaje de avance = " + porcentajeAvance + "%, estado = " + estado + '}';
+        return "Tarea{ Sitio: " +this.url+ "\nPorcentaje de avance = " + porcentajeAvance + "%, estado = " + estado + ", analista: "+this.analista+"}\n";
     }
     
 }//fin clase

@@ -27,15 +27,29 @@ public class TareaBusiness {
         } catch (IOException ex) {
             Logger.getLogger(TareaBusiness.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }//constructor
     
     
      public boolean insertarTareas(Tarea tarea) throws IOException {
          return this.tareaData.insertarTarea(tarea);
-     }
+     }//registrar tarea
      
       public ArrayList<Tarea> obtenerTareas() {
           return this.tareaData.obtenerTareas();
-      }
+      }//obtener tareas
+      
+     public Tarea buscarTarea(String url){
+        ArrayList<Tarea> tareas = obtenerTareas();
+        for (int i = 0; i < tareas.size(); i++) {
+            if(tareas.get(i).getUrl().equals(url)){
+                return tareas.get(i);
+            }
+        }
+        return null;
+    }//buscar tarea por url
+      
+      public boolean asignarAnalista(String userAnalista, String url) throws IOException {
+          return this.tareaData.asignarAnalista(userAnalista, url);
+      }//asignar analista
 }
 

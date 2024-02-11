@@ -40,7 +40,7 @@ public class ExaminadorBusiness {
             }
         }
         return null;
-    }//obtenerAdministradores
+    }//buscar examinador
     
     public boolean verificarUsuario(String nombreUsuario) {
         return this.examinadorData.verificarUsuario(nombreUsuario);
@@ -48,6 +48,6 @@ public class ExaminadorBusiness {
     
     public boolean desactivarExaminador(Examinador examinador) throws IOException {
         return this.examinadorData.desactivarExaminador(examinador);
-    }
+    }//desactivar administrador
     
 }//clase

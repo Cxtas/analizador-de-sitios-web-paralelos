@@ -39,7 +39,7 @@ public class AdministradorBusiness {
             }
         }
         return null;
-    }//buscar
+    }//buscar administrador por user
     
     public boolean verificarUsuario(String nombreUsuario) {
         return this.administradorData.verificarUsuario(nombreUsuario);
@@ -47,5 +47,5 @@ public class AdministradorBusiness {
     
     public boolean desactivarAdministrador(Administrador administrador) throws IOException {
         return this.administradorData.desactivarAdministrador(administrador);
-    }
+    }//desactivar administrador
 }
