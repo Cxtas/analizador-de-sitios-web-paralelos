@@ -7,7 +7,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
@@ -23,7 +22,7 @@ import javax.swing.JOptionPane;
 
 /**
  *javax.swing.JInternalFrame
- * @author LCode
+ * @author 
  */
 public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
 
@@ -46,9 +45,11 @@ public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
         nombres_archivos = "";
     }
 
-    private void creaEmail() {
-        emailTo.clear();
+    private void añadirDestinatario(){
         emailTo.add(jtfDestinatario.getText().trim());
+    }
+    private void creaEmail() {
+        
         subject = jtfAsunto.getText().trim();
         content = jtfContenido.getText().trim();
 
@@ -94,6 +95,7 @@ public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
             mCorreo.setRecipients(Message.RecipientType.TO, recipients);
             mCorreo.setSubject(subject);
             mCorreo.setContent(mElementosCorreo);
+            emailTo.clear();
 
         } catch (AddressException ex) {
             Logger.getLogger(JIFEnviarCorreo.class.getName()).log(Level.SEVERE, null, ex);
@@ -148,6 +150,7 @@ public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
         jLabel4 = new javax.swing.JLabel();
         lblAdjuntos = new javax.swing.JLabel();
         jbtnAdjuntos = new javax.swing.JButton();
+        jbtnAñadir = new javax.swing.JButton();
 
         jbtnSendEmail.setText("Enviar correo");
         jbtnSendEmail.addActionListener(new java.awt.event.ActionListener() {
@@ -189,6 +192,13 @@ public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
             }
         });
 
+        jbtnAñadir.setText("Añadir");
+        jbtnAñadir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnAñadirActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -208,14 +218,17 @@ public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jtfDestinatario)
                             .addComponent(jtfAsunto)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(lblAdjuntos, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jbtnAdjuntos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE))
-                                .addGap(28, 28, 28)))))
+                                .addGap(28, 28, 28))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jtfDestinatario)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jbtnAñadir)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -226,7 +239,8 @@ public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
                 .addGap(32, 32, 32)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jtfDestinatario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel2)
+                    .addComponent(jbtnAñadir))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -284,6 +298,11 @@ public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_jbtnAdjuntosActionPerformed
 
+    private void jbtnAñadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAñadirActionPerformed
+        añadirDestinatario();
+        jtfDestinatario.setText("");
+    }//GEN-LAST:event_jbtnAñadirActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -293,6 +312,7 @@ public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton jbtnAdjuntos;
+    private javax.swing.JButton jbtnAñadir;
     private javax.swing.JButton jbtnSendEmail;
     private javax.swing.JTextField jtfAsunto;
     private javax.swing.JTextArea jtfContenido;
