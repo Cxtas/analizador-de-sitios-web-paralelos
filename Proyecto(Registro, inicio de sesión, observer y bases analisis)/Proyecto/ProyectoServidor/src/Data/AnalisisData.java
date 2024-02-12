@@ -1,15 +1,15 @@
 package Data;
 
-import Domain.Analisis;
-import Utility.GestionXML;
-import Domain.Sitio;
+import Utility.Ruta;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.net.ssl.HostnameVerifier;
@@ -18,6 +18,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.XMLOutputter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -28,165 +30,190 @@ import org.jsoup.select.Elements;
  * @author author
  */
 public class AnalisisData {
-  
-    
-    public AnalisisData() throws JDOMException, IOException {
-       
-    }
-    
 
-       public void ExtraerElementos(String url) {
+    private int imagenCont = 0;
+    private int tituloCOnt = 0;
+    private int subtituloCont = 0;
+    private int enlanceCont = 0;
+    private int tablaCont = 0;
+    private int videoCOnt = 0;
+    private org.jdom.Document document;
+    private org.jdom.Element root;
+
+    public AnalisisData() throws JDOMException, IOException {
+        File f = new File(Ruta.RUTAANALISIS);
+        if (f.exists()) {
+            SAXBuilder saxBuilder = new SAXBuilder();
+            saxBuilder.setIgnoringElementContentWhitespace(true);
+            this.document = saxBuilder.build(Ruta.RUTAANALISIS);
+            this.root = this.document.getRootElement();
+        } else {
+            this.root = new org.jdom.Element("estudiantes");
+            this.document = new org.jdom.Document(this.root);
+            guardarXML();
+        }
+    }
+
+    public void ExtraerElementos(String url) throws NoSuchAlgorithmException, KeyManagementException {
+        try {
+            // Desactivar la verificación del certificado SSL
+            desactivarCertificado();
+
+            // Obtener el documento HTML de una página web
+            Document doc = Jsoup.connect(url).get();
+
+            // Extraer imágenes
+            Elements imagenes = doc.select("img");
+            this.imagenCont = imagenes.size();
+
+            // Extraer títulos
+            Elements titulos = doc.select("title");
+            this.tituloCOnt = titulos.size();
+
+            // Extraer subtítulos (h2, h3, etc.)
+            Elements subtitulos = doc.select("h2, h3, h4, h5, h6");
+            this.subtituloCont = subtitulos.size();
+
+            // Extraer enlaces
+            Elements enlaces = doc.select("a");
+            this.enlanceCont = enlaces.size();
+
+            // Extraer tablas
+            Elements tablas = doc.select("table");
+            this.tablaCont = tablas.size();
+
+            // Extraer videos
+            Elements videos = doc.select("video");
+            this.videoCOnt = videos.size();
+
+            // Almacenar los datos en un archivo
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("datos_extraidos.xml"))) {
+                writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                writer.write("<datos>\n");
+                writer.write("  <num_imagenes>" + imagenCont + "</num_imagenes>\n");
+                writer.write("  <num_titulos>" + tituloCOnt + "</num_titulos>\n");
+                writer.write("  <num_subtitulos>" + subtituloCont + "</num_subtitulos>\n");
+                writer.write("  <num_enlaces>" + enlanceCont + "</num_enlaces>\n");
+                writer.write("  <num_tablas>" + tablaCont + "</num_tablas>\n");
+                writer.write("  <num_videos>" + videoCOnt + "</num_videos>\n\n");
+
+                writer.write("  <imagenes>\n");
+                for (Element imagen : imagenes) {
+                    writer.write("    <imagen src=\"" + imagen.attr("src") + "\" />\n");
+                }
+                writer.write("  </imagenes>\n");
+
+                writer.write("  <titulos>\n");
+                for (Element titulo : titulos) {
+                    writer.write("    <titulo>" + titulo.text() + "</titulo>\n");
+                }
+                writer.write("  </titulos>\n");
+
+                writer.write("  <subtitulos>\n");
+                for (Element subtitulo : subtitulos) {
+                    writer.write("    <subtitulo>" + subtitulo.text() + "</subtitulo>\n");
+                }
+                writer.write("  </subtitulos>\n");
+
+                writer.write("  <enlaces>\n");
+                for (Element enlace : enlaces) {
+                    writer.write("    <enlace href=\"" + enlace.attr("href") + "\" />\n");
+                }
+                writer.write("  </enlaces>\n");
+
+                writer.write("  <tablas>\n");
+                for (Element tabla : tablas) {
+                    writer.write("    <tabla>" + tabla.outerHtml() + "</tabla>\n");
+                }
+                writer.write("  </tablas>\n");
+
+                writer.write("  <videos>\n");
+                for (Element video : videos) {
+                    writer.write("    <video src=\"" + video.attr("src") + "\" />\n");
+                }
+                writer.write("  </videos>\n");
+
+                // Llamar al método precios para guardar los precios
+                precios(url, writer);
+
+                writer.write("</datos>");
+            }
+
+            System.out.println("Datos extraídos y almacenados en 'datos_extraidos.xml'");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void precios(String url, BufferedWriter writer) {
         try {
             // Obtener el documento HTML de una página web
             Document doc = Jsoup.connect(url).get();
 
-            // Contadores para imágenes, títulos, subtítulos, enlaces, tablas y videos
-            int imageCount = 0;
-            int titleCount = 0;
-            int subtitleCount = 0;
-            int linkCount = 0;
-            int tableCount = 0;
-            int videoCount = 0;
-
-            // Extraer imágenes
-            Elements images = doc.select("img");
-            imageCount = images.size();
-
-            // Extraer títulos
-            Elements titles = doc.select("title");
-            titleCount = titles.size();
-
-            // Extraer subtítulos (h2, h3, etc.)
-            Elements subtitles = doc.select("h2, h3, h4, h5, h6");
-            subtitleCount = subtitles.size();
-
-            // Extraer enlaces
-            Elements links = doc.select("a");
-            linkCount = links.size();
-
-            // Extraer tablas
-            Elements tables = doc.select("table");
-            tableCount = tables.size();
-
-            // Extraer videos
-            Elements videos = doc.select("video");
-            videoCount = videos.size();
-
-            // Almacenar los datos en un archivo
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("datos_extraidos.txt"))) {
-                writer.write("Número de imágenes: " + imageCount + "\n");
-                writer.write("Número de títulos: " + titleCount + "\n");
-                writer.write("Número de subtítulos: " + subtitleCount + "\n");
-                writer.write("Número de enlaces: " + linkCount + "\n");
-                writer.write("Número de tablas: " + tableCount + "\n");
-                writer.write("Número de videos: " + videoCount + "\n\n");
-
-                writer.write("Imágenes:\n");
-                for (Element image : images) {
-                    writer.write(image.attr("src") + "\n");
-                }
-
-                writer.write("\nTítulos:\n");
-                for (Element title : titles) {
-                    writer.write(title.text() + "\n");
-                }
-
-                writer.write("\nSubtítulos:\n");
-                for (Element subtitle : subtitles) {
-                    writer.write(subtitle.text() + "\n");
-                }
-
-                writer.write("\nEnlaces:\n");
-                for (Element link : links) {
-                    writer.write(link.attr("href") + "\n");
-                }
-
-                writer.write("\nTablas:\n");
-                for (Element table : tables) {
-                    writer.write(table.outerHtml() + "\n");
-                }
-
-                writer.write("\nVideos:\n");
-                for (Element video : videos) {
-                    writer.write(video.attr("src") + "\n");
+            // Buscar elementos que contengan precios
+            Elements allElements = doc.getAllElements();
+            Elements priceElements = new Elements();
+            for (Element element : allElements) {
+                String text = element.text();
+                if (containsPrice(text)) {
+                    priceElements.add(element);
                 }
             }
 
-            precios("https://www.apple.com//");
-
-            System.out.println("Datos extraídos y almacenados en 'datos_extraidos.txt'");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-       }  
-
-    public static void precios(String url) {
-    try {
-        // Obtener el documento HTML de una página web
-        Document doc = Jsoup.connect(url).get();
-
-        // Buscar elementos que contengan precios
-        Elements allElements = doc.getAllElements();
-        Elements priceElements = new Elements();
-        for (Element element : allElements) {
-            String text = element.text();
-            if (containsPrice(text)) {
-                priceElements.add(element);
-            }
-        }
-
-        // Extraer y almacenar los precios en un archivo
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("precios_extraidos.txt"))) {
+            // Extraer y almacenar los precios en el archivo XML
             for (Element element : priceElements) {
                 // Extraer el texto del elemento
                 String text = element.text();
                 // Utilizar expresiones regulares para encontrar el precio
-                Pattern pattern = Pattern.compile("[€$£¥]\\s*\\d+(\\.\\d+)?"); // Patrón para encontrar precios (por ejemplo, €12.34)
+                Pattern pattern = Pattern.compile("[€$£¥:]\\s*\\d+(\\.\\d+)?");
                 Matcher matcher = pattern.matcher(text);
                 while (matcher.find()) {
                     String price = matcher.group();
-                    writer.write(price + "\n");
+                    writer.write("  <precio>" + price + "</precio>\n");
                 }
             }
-        }
 
-        System.out.println("Precios extraídos y almacenados en 'precios_extraidos.txt'");
-    } catch (IOException e) {
-        // Manejo de cualquier excepción de entrada/salida
-        System.out.println("Ocurrió un error al procesar la solicitud HTTP: " + e.getMessage());
-        e.printStackTrace();
+            System.out.println("Precios extraídos y almacenados en 'datos_extraidos.xml'");
+        } catch (IOException e) {
+            // Manejo de cualquier excepción de entrada/salida
+            System.out.println("Ocurrió un error al procesar la solicitud HTTP: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
-}
 
     // Método para verificar si una cadena contiene un precio
     private static boolean containsPrice(String text) {
-        return text.matches(".*[€$£¥]\\s*\\d+(\\.\\d+)?.*");
+        return text.matches(".*[€$£¥:]\\s*\\d+(\\.\\d+)?.*");
     }
-    
-//    private static void desactivarCertificado() throws NoSuchAlgorithmException, KeyManagementException {
-//        // Crear un administrador de confianza que no realice ninguna validación del certificado
-//        TrustManager[] trustAllCerts = new TrustManager[]{
-//            new X509TrustManager() {
-//                public X509Certificate[] getAcceptedIssuers() {
-//                    return null;
-//                }
-//
-//                public void checkClientTrusted(X509Certificate[] certs, String authType) {
-//                }
-//
-//                public void checkServerTrusted(X509Certificate[] certs, String authType) {
-//                }
-//            }
-//        };
-//
-//        // Configurar la conexión SSL para desactivar la validación del certificado
-//        SSLContext sslContext = SSLContext.getInstance("SSL");
-//        sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-//        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
-//
-//        // Desactivar la verificación del host
-//        HostnameVerifier allHostsValid = (hostname, session) -> true;
-//        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-//    }
-    
+
+    private static void desactivarCertificado() throws NoSuchAlgorithmException, KeyManagementException {
+        // Crear un administrador de confianza que no realice ninguna validación del certificado
+        TrustManager[] trustAllCerts = new TrustManager[]{
+            new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            }
+        };
+
+        // Configurar la conexión SSL para desactivar la validación del certificado
+        SSLContext sslContext = SSLContext.getInstance("SSL");
+        sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+
+        // Desactivar la verificación del host
+        HostnameVerifier allHostsValid = (hostname, session) -> true;
+        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+    }
+
+    private void guardarXML() throws FileNotFoundException, IOException {
+        XMLOutputter xMLOutputter = new XMLOutputter();
+        xMLOutputter.output(this.document, new PrintWriter(Ruta.RUTAANALISIS));
+    }
 }//fin clase
