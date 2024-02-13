@@ -4,13 +4,18 @@
  */
 package Utility;
 
+import Domain.GenerarInformePDF;
+
 /**
  *
  * @author Estephanie
  */
 public class Ruta {
     
+    
     public static final String RUTAADMINISTRADOR = "administrador.xml";
     public static final String RUTAEXAMINADOR = "examinador.xml";
     public static final String RUTAURLS = "URLs.xml";
+   
+    
 }
