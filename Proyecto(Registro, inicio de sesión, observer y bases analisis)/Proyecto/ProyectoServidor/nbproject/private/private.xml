@@ -2,14 +2,10 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-<<<<<<< HEAD
-        <group/>
-=======
         <group>
-            <file>file:/C:/Users/catas/Documents/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/Domain/Sitio.java</file>
-            <file>file:/C:/Users/catas/Documents/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/GUI/JIFEnviarCorreo.java</file>
-            <file>file:/C:/Users/catas/Documents/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/Data/AnalisisData.java</file>
+            <file>file:/C:/Users/Estephanie/OneDrive%20-%20Universidad%20de%20Costa%20Rica/Documentos/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/GUI/JIFAsignarTarea.java</file>
+            <file>file:/C:/Users/Estephanie/OneDrive%20-%20Universidad%20de%20Costa%20Rica/Documentos/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/Data/AnalisisData.java</file>
+            <file>file:/C:/Users/Estephanie/OneDrive%20-%20Universidad%20de%20Costa%20Rica/Documentos/GitHub/analizador-de-sitios-web-paralelos/Proyecto(Registro,%20inicio%20de%20sesión,%20observer%20y%20bases%20analisis)/Proyecto/ProyectoServidor/src/GUI/JIFRealizarAnalisis.java</file>
         </group>
->>>>>>> 16ed07e2d1738558ca7ad5fda3a782f6dfff57c8
     </open-files>
 </project-private>

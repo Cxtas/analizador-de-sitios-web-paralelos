@@ -18,15 +18,15 @@ import org.jdom.JDOMException;
 public class AnalisisBusiness {
     private AnalisisData ad;
 
-//    public AnalisisBusiness(String url) {
-//        try {
-//            this.ad = new AnalisisData(url);
-//        } catch (JDOMException ex) {
-//            Logger.getLogger(AnalisisBusiness.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (IOException ex) {
-//            Logger.getLogger(AnalisisBusiness.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
+    public AnalisisBusiness(String url) {
+        try {
+            this.ad = new AnalisisData(url);
+        } catch (JDOMException ex) {
+            Logger.getLogger(AnalisisBusiness.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(AnalisisBusiness.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     
     public void CantElementos(){
@@ -37,8 +37,12 @@ public class AnalisisBusiness {
         ad.BuscarElementos(tipo);
     }
     
-    public void ExtraerElementos(Sitio sitio){
-        ad.ExtraerElementos(sitio);
+    public void ExtraerElementos(){
+        ad.ExtraerElementos();
+    }
+    
+    public Sitio getSitio() {
+        return ad.getSitio();
     }
     
 }//fin clase

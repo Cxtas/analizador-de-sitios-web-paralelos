@@ -28,6 +28,7 @@ import org.jsoup.select.Elements;
  * @author author
  */
 public class AnalisisData {
+    private String et;
     private GestionXML manejo;
     private Analisis a;
     private String url;
@@ -40,6 +41,7 @@ public class AnalisisData {
         this.url=url;
         this.manejo= new GestionXML();
         this.sitio= new Sitio(url);
+        this.et="";
     }
     
     public void CantElementos(){ //Análisis de elementos que conforman un sitio web.
@@ -59,8 +61,11 @@ public class AnalisisData {
         this.sitio.setTitulos(this.cont);
         this.cont=0;
         
-        BuscarElementos("subtitulo");
-        this.sitio.setSubtitulos(this.cont);
+        for (int i = 1; i < 7; i++) {
+            this.et="h"+i;
+            BuscarElementos("subtitulo");
+            this.sitio.setSubtitulos(this.cont);
+        }
         this.cont=0;
         
         BuscarElementos("tabla");
@@ -78,30 +83,36 @@ public class AnalisisData {
     
     public void BuscarElementos(String tipo){ //busca imagenes o enlaces
         try {
-            //String url = "https://www.facebook.com/?locale=es_LA";
-            String et="";
+            
+            
+            
             if(tipo.equalsIgnoreCase("enlace")){
-                et="a";
+                this.et="a";
                 tipo="abs:href";
             }
             
             if(tipo.equalsIgnoreCase("imagen")){
-                et="img";
+                this.et="img";
                 tipo="abs:src";
             }
             
             if(tipo.equalsIgnoreCase("tabla")){
-                et="table";
+                this.et="table";
                 tipo="abs:summary";
             }
             
             if(tipo.equalsIgnoreCase("titulo")){
-                et="title";
+                this.et="title";
                 tipo="null";
             }
             
+            if(tipo.equalsIgnoreCase("subtitulo")){
+                
+                tipo="class";
+            }
+            
             if(tipo.equalsIgnoreCase("video")){
-                et="video";
+                this.et="video";
                 tipo="abs:width";
             }
             //MEJORAR CON ENUM
@@ -115,7 +126,7 @@ public class AnalisisData {
             }//try - catch interno//try - catch interno
             
             Document document = Jsoup.connect(this.sitio.getUrl()).get();
-            Elements links = document.select(et);//IMPORTANTE selecciona la etiqueta a bucar
+            Elements links = document.select(this.et);//IMPORTANTE selecciona la etiqueta a bucar
             
             for (Element link : links) {//busca links en una coleccion de links hasta que no haya mas
                 System.out.println(link.attr(tipo));// IMPORTANTE abs= absolute (el atributo absoluto)
@@ -129,7 +140,7 @@ public class AnalisisData {
 
     
     
-       public void ExtraerElementos(Sitio sitio){
+       public void ExtraerElementos(){
         //yo ya tengo el sitio, solo pido la url y empiezo a buscar las cosas
         ArrayList<ProductoServicio> productos= new ArrayList<>();
         ArrayList<String> nombres= new ArrayList<>();
@@ -141,7 +152,8 @@ public class AnalisisData {
         int IPunto=0;
         int IComa=0;
         try {
-            String url = "https://extremetechcr.com/tienda/32-combos-gaming";
+            //esta url es this.url porque es la que se le pasa por parámetro
+//            String url = "https://extremetechcr.com/tienda/32-combos-gaming";
             
             try {
                 desactivarCertificado();
@@ -151,7 +163,7 @@ public class AnalisisData {
                 Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
             }//try - catch interno
             
-            Document document = Jsoup.connect(url).get();
+            Document document = Jsoup.connect(this.sitio.getUrl()).get();
             
             System.out.println(document.outerHtml());
             Elements links = document.select("a");//selecciona la etiqueta a bucar //a
@@ -224,5 +236,10 @@ public class AnalisisData {
         HostnameVerifier allHostsValid = (hostname, session) -> true;
         HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
     }
+
+    public Sitio getSitio() {
+        return sitio;
+    }
+    
     
 }//fin clase

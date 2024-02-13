@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public class Sitio {
     
-    private String url="";
+    private String url;
     private int imagenes;
     private int enlaces;
     private int videos;
@@ -26,8 +26,20 @@ public class Sitio {
         this.subtitulos = 0;
         this.tablas = 0;
         this.productos=new ArrayList<>();
+        this.url = url;
     }
 
+    public Sitio(String url,int imagenes, int enlaces, int videos, int titulos, int subtitulos, int tablas ) {//ArrayList<ProductoServicio> productos
+        this.url = url;
+        this.imagenes = imagenes;
+        this.enlaces = enlaces;
+        this.videos = videos;
+        this.titulos = titulos;
+        this.subtitulos = subtitulos;
+        this.tablas = tablas;
+        //this.productos = productos;
+    }
+    
     public String getUrl() {
         return url;
     }

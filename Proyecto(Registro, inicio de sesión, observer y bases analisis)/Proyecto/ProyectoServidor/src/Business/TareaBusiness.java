@@ -51,5 +51,9 @@ public class TareaBusiness {
       public boolean asignarAnalista(String userAnalista, String url) throws IOException {
           return this.tareaData.asignarAnalista(userAnalista, url);
       }//asignar analista
+      
+      public boolean cambiarEstado(String url) throws IOException {
+          return this.tareaData.cambiarEstado(url);
+      }
 }
 
