@@ -160,10 +160,10 @@ public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
         });
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("Envio de correo ");
 
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("Enviar a:");
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
@@ -179,7 +179,7 @@ public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
         jtfContenido.setRows(5);
         jScrollPane1.setViewportView(jtfContenido);
 
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("Contenido:");
 
         lblAdjuntos.setForeground(new java.awt.Color(255, 255, 255));

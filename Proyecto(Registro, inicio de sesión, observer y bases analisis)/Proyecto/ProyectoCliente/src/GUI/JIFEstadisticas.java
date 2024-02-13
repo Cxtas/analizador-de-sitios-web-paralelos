@@ -96,27 +96,27 @@ public class JIFEstadisticas extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAnalizarActionPerformed
-        Sitio sitio= (Sitio)this.jcbSitios.getSelectedItem();
-        
-        DefaultPieDataset pieDataset= new DefaultPieDataset();
-        
-        pieDataset.setValue("Enlaces", sitio.getEnlaces());
-        pieDataset.setValue("Imagenes", sitio.getImagenes());
-        pieDataset.setValue("Videos", sitio.getVideos());
-        pieDataset.setValue("Titulos", sitio.getTitulos());
-        pieDataset.setValue("Subtitulos", sitio.getSubtitulos());
-        pieDataset.setValue("Tablas", sitio.getTablas());
-        
-        JFreeChart chart= ChartFactory.createPieChart(
-                "Elecciones generales",
-                pieDataset,
-                true,
-                true,
-                false);
-        
-        ChartFrame frame= new ChartFrame("Grafico circular", chart);
-        frame.pack();
-        frame.setVisible(true);
+//        Sitio sitio= (Sitio)this.jcbSitios.getSelectedItem();
+//        
+//        DefaultPieDataset pieDataset= new DefaultPieDataset();
+//        
+//        pieDataset.setValue("Enlaces", sitio.getEnlaces());
+//        pieDataset.setValue("Imagenes", sitio.getImagenes());
+//        pieDataset.setValue("Videos", sitio.getVideos());
+//        pieDataset.setValue("Titulos", sitio.getTitulos());
+//        pieDataset.setValue("Subtitulos", sitio.getSubtitulos());
+//        pieDataset.setValue("Tablas", sitio.getTablas());
+//        
+//        JFreeChart chart= ChartFactory.createPieChart(
+//                "Elecciones generales",
+//                pieDataset,
+//                true,
+//                true,
+//                false);
+//        
+//        ChartFrame frame= new ChartFrame("Grafico circular", chart);
+//        frame.pack();
+//        frame.setVisible(true);
     }//GEN-LAST:event_jbtnAnalizarActionPerformed
 
 

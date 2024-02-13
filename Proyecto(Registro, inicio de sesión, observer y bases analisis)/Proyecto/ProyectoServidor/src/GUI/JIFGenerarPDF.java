@@ -4,9 +4,16 @@
  */
 package GUI;
 
+import Business.SitioBusiness;
+import Business.TareaBusiness;
 import Data.AnalisisData;
 import Domain.GenerarInformePDF;
 import Domain.Sitio;
+import Domain.Tarea;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import org.jdom.JDOMException;
 
 /**
  *
@@ -18,11 +25,36 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
      * Creates new form JIFGenerarPDFenviar
      */
     private AnalisisData ad;
+    private SitioBusiness sitioBusiness;
     private Sitio s;
     private GenerarInformePDF gipdf;
-    public JIFGenerarPDF() {
+    private TareaBusiness tareaBusiness;
+    private ArrayList<Tarea> tareas;
+    
+    public JIFGenerarPDF() throws IOException, JDOMException {
+        this.sitioBusiness = new SitioBusiness();
+        this.tareaBusiness = new TareaBusiness();
+        this.tareas = new ArrayList<>();
+        this.gipdf = new GenerarInformePDF();
         initComponents();
-    }
+        agregarTareas();
+    }//constructor
+    
+    //Agrega las tareas al combobox
+    private void agregarTareas() {
+        this.tareas = tareaBusiness.obtenerTareas();
+        Iterator<Tarea> iterator = this.tareas.iterator();//se necesita un iterador para no alterar el índice
+        while (iterator.hasNext()) {
+            Tarea tareaTemp = iterator.next();
+            if (tareaTemp.getEstado().equals("en proceso")) {//Si ya tiene un analista no puede volver a ser asignada 
+                iterator.remove(); // y se elimina de la lista
+            }
+        }
+        for (Tarea tareaTempo : this.tareas) {
+            this.jcbTareas.addItem(tareaTempo.getUrl());
+        }
+
+    }//asignarTareas
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -35,7 +67,7 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jbtnVolver = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        jcbTareas = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jbtnGenerar = new javax.swing.JButton();
@@ -49,9 +81,9 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
             }
         });
 
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        jcbTareas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                jcbTareasActionPerformed(evt);
             }
         });
 
@@ -91,7 +123,7 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
                         .addComponent(jbtnGenerar))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(80, 80, 80)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jcbTareas, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -102,7 +134,7 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jcbTareas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(33, 33, 33)
                 .addComponent(jbtnGenerar)
                 .addGap(10, 10, 10)
@@ -128,22 +160,22 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
         this.setVisible(false);
     }//GEN-LAST:event_jbtnVolverActionPerformed
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+    private void jcbTareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbTareasActionPerformed
          // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    }//GEN-LAST:event_jcbTareasActionPerformed
 
     private void jbtnGenerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGenerarActionPerformed
-
-        gipdf.generarInforme();
+        Sitio sitio = this.sitioBusiness.obtenerSitio(this.jcbTareas.getSelectedItem().toString());
+        gipdf.generarInforme(sitio);
     }//GEN-LAST:event_jbtnGenerarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton jbtnGenerar;
     private javax.swing.JButton jbtnVolver;
+    private javax.swing.JComboBox<String> jcbTareas;
     // End of variables declaration//GEN-END:variables
 }
