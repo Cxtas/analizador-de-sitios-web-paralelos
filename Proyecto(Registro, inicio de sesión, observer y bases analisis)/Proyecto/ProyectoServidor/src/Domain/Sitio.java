@@ -17,6 +17,7 @@ public class Sitio {
     private int subtitulos;
     private int tablas;
     ArrayList <ProductoServicio> productos;
+    ArrayList <String> aEnlaces;
 
     public Sitio(String url) {
         this.imagenes = 0;
@@ -29,7 +30,8 @@ public class Sitio {
         this.url = url;
     }
 
-    public Sitio(String url,int imagenes, int enlaces, int videos, int titulos, int subtitulos, int tablas ) {//ArrayList<ProductoServicio> productos
+    public Sitio(String url,int imagenes, int enlaces, int videos, int titulos, int subtitulos, int tablas, ArrayList<ProductoServicio> productos,
+                 ArrayList<String> aEnlaces) {
         this.url = url;
         this.imagenes = imagenes;
         this.enlaces = enlaces;
@@ -37,7 +39,8 @@ public class Sitio {
         this.titulos = titulos;
         this.subtitulos = subtitulos;
         this.tablas = tablas;
-        //this.productos = productos;
+        this.productos = productos;
+        this.aEnlaces = aEnlaces;
     }
     
     public String getUrl() {
@@ -54,6 +57,10 @@ public class Sitio {
 
     public void setProductos(ArrayList<ProductoServicio> productos) {
         this.productos = productos;
+    }
+    
+    public void addProductos(String producto, String precio ){
+        this.productos.add(new ProductoServicio(producto, precio));
     }
     
     public int getImagenes() {
@@ -103,5 +110,15 @@ public class Sitio {
     public void setTablas(int tablas) {
         this.tablas = tablas;
     }
+
+    public ArrayList<String> getaEnlaces() {
+        return aEnlaces;
+    }
+
+    public void setaEnlaces(ArrayList<String> aEnlaces) {
+        this.aEnlaces = aEnlaces;
+    }
+    
+    
     
 }//fin clase

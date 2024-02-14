@@ -215,46 +215,46 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
     }//GEN-LAST:event_jbtnVolverActionPerformed
 
     private void jbtnAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAnalizarActionPerformed
-        try{
-        jtaResultado.setText("");
-        System.out.println(this.tareaSelected.getUrl());
-        this.analisisBusiness = new AnalisisBusiness(this.tareaSelected.getUrl());//se le asigna al analizador de sitio la url
-        
-        if (this.tareaSelected.isAnalisis0()) { //Análisis de elementos que conforman un sitio web.
-            this.analisisBusiness.CantElementos();//Crea un sitio y le asigna la cantidad de los elementos de este tipo de analisis
-            this.sitio = this.analisisBusiness.getSitio();
-            this.jtaResultado.append("Enlaces: " + this.sitio.getEnlaces() + "\n"
-                    + "Imagenes: " + this.sitio.getImagenes() + "\n"
-                    + "Titulos: " + this.sitio.getTitulos() + "\n"
-                    + "Subtitulos: " + this.sitio.getSubtitulos() + "\n"
-                    + "Tablas: " + this.sitio.getTablas() + "\n"
-                    + "Videos: " + this.sitio.getVideos());
-            
-        } else if (this.tareaSelected.isAnalisis1()) {//Análisis de elementos y extracción. seleccionan img y/o enlaces
-            this.analisisBusiness.CantElementos();//Busca imagenes y enlace
-            if (this.tareaSelected.isImagenes()) {//si se pidió imagenes
-                this.jtaResultado.append("Imagenes: " + this.sitio.getImagenes());
-            } else if (this.tareaSelected.isEnlaces()) {//si se pidieron enlaces
-                this.jtaResultado.append("Enlaces: " + this.sitio.getEnlaces());
-            }
-            
-        } else if (this.tareaSelected.isAnalisis2()) {//Análisis de extracción y comparación
-            this.analisisBusiness.ExtraerElementos();
-            this.jtaResultado.append("Productos: " + this.sitio.getProductos() + "\n");
-        }
-        
-        this.tareaBusiness.cambiarEstado(this.tareaSelected.getUrl());
-        JOptionPane.showMessageDialog(this, "Se analizó correctamente");
-        this.sitioBusiness.guardarSitio(this.sitio);//guarda en xml los datos del sitio
-        //Elimina del combobox y del array la página que ya ha sido analizada
-        this.tareas.remove(this.jcbTareasPendientes.getSelectedIndex());
-        this.jcbTareasPendientes.removeItemAt(this.jcbTareasPendientes.getSelectedIndex());
-        jtaResultado.setText("");
-        }catch(NullPointerException ex){
-            JOptionPane.showMessageDialog(this, "Error "+ex);
-        } catch (IOException ex) {
-            Logger.getLogger(JIFRealizarAnalisis.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try{
+//        jtaResultado.setText("");
+//        System.out.println(this.tareaSelected.getUrl());
+//        this.analisisBusiness = new AnalisisBusiness();//se le asigna al analizador de sitio la url
+//        
+//        if (this.tareaSelected.isAnalisis0()) { //Análisis de elementos que conforman un sitio web.
+//            this.analisisBusiness.cantidadElementos(this.tareaSelected.getUrl());//Crea un sitio y le asigna la cantidad de los elementos de este tipo de analisis
+//            this.sitio = this.analisisBusiness.getSitio();
+//            this.jtaResultado.append("Enlaces: " + this.sitio.getEnlaces() + "\n"
+//                    + "Imagenes: " + this.sitio.getImagenes() + "\n"
+//                    + "Titulos: " + this.sitio.getTitulos() + "\n"
+//                    + "Subtitulos: " + this.sitio.getSubtitulos() + "\n"
+//                    + "Tablas: " + this.sitio.getTablas() + "\n"
+//                    + "Videos: " + this.sitio.getVideos());
+//            
+//        } else if (this.tareaSelected.isAnalisis1()) {//Análisis de elementos y extracción. seleccionan img y/o enlaces
+//            this.analisisBusiness.descargarImagenEnlaces(this.tareaSelected.getUrl());//Busca imagenes y enlace
+//            if (this.tareaSelected.isImagenes()) {//si se pidió imagenes
+//                this.jtaResultado.append("Imagenes: " + this.sitio.getImagenes());
+//            } else if (this.tareaSelected.isEnlaces()) {//si se pidieron enlaces
+//                this.jtaResultado.append("Enlaces: " + this.sitio.getEnlaces());
+//            }
+//            
+//        } else if (this.tareaSelected.isAnalisis2()) {//Análisis de extracción y comparación
+//            this.analisisBusiness.ExtraerElementos();
+//            this.jtaResultado.append("Productos: " + this.sitio.getProductos() + "\n");
+//        }
+//        
+//        this.tareaBusiness.cambiarEstado(this.tareaSelected.getUrl());
+//        JOptionPane.showMessageDialog(this, "Se analizó correctamente");
+//        this.sitioBusiness.guardarSitio(this.sitio);//guarda en xml los datos del sitio
+//        //Elimina del combobox y del array la página que ya ha sido analizada
+//        this.tareas.remove(this.jcbTareasPendientes.getSelectedIndex());
+//        this.jcbTareasPendientes.removeItemAt(this.jcbTareasPendientes.getSelectedIndex());
+//        jtaResultado.setText("");
+//        }catch(NullPointerException ex){
+//            JOptionPane.showMessageDialog(this, "Error "+ex);
+//        } catch (IOException ex) {
+//            Logger.getLogger(JIFRealizarAnalisis.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }//GEN-LAST:event_jbtnAnalizarActionPerformed
 
 

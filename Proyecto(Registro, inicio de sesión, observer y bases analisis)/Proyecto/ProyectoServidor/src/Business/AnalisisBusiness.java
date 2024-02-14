@@ -7,9 +7,8 @@ package Business;
 import Data.AnalisisData;
 import Domain.Sitio;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.jdom.JDOMException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  *
@@ -18,27 +17,29 @@ import org.jdom.JDOMException;
 public class AnalisisBusiness {
     private AnalisisData ad;
 
-    public AnalisisBusiness(String url) {
-        try {
-            this.ad = new AnalisisData(url);
-        } catch (JDOMException ex) {
-            Logger.getLogger(AnalisisBusiness.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(AnalisisBusiness.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public AnalisisBusiness() {
+        this.ad = new AnalisisData();
     }
     
-    
-    public void CantElementos(){
-        ad.CantElementos();
+    //Análisis de elementos que conforman un sitio web.
+     public void cantidadElementos(String url) throws NoSuchAlgorithmException, KeyManagementException {
+        ad.cantidadElementos(url);
     }
     
-    public void BuscarElementos(String tipo){ //busca imagenes o enlaces
-        ad.BuscarElementos(tipo);
+    //Análisis de elementos y extracción. seleccionan img y/o enlaces
+    //Buscar y devolver enlaces
+    public void extraerEnlaces(String url){
+         ad.extraerEnlaces(url);
+     }
+    
+    //descargar imágenes
+    public void descargarImagen(String url) throws IOException {
+        ad.descargarImagen(url);
     }
     
-    public void ExtraerElementos(){
-        ad.ExtraerElementos();
+    //Buscar precios
+    public void precios(String url) {
+        ad.precios(url);
     }
     
     public Sitio getSitio() {

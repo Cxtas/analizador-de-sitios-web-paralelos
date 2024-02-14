@@ -10,9 +10,9 @@ package Domain;
  */
 public class ProductoServicio {
     private String nombre;
-    private int precio;
+    private String precio;
 
-    public ProductoServicio(String nombre, int precio) {
+    public ProductoServicio(String nombre, String precio) {
         this.nombre = nombre;
         this.precio = precio;
     }
@@ -25,11 +25,11 @@ public class ProductoServicio {
         this.nombre = nombre;
     }
 
-    public int getPrecio() {
+    public String getPrecio() {
         return precio;
     }
 
-    public void setPrecio(int precio) {
+    public void setPrecio(String precio) {
         this.precio = precio;
     }
     

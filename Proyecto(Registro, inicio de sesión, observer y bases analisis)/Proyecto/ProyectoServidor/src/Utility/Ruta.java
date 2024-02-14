@@ -15,4 +15,5 @@ public class Ruta {
     public static final String RUTAURLS = "URLs.xml";
     public static final String RUTATAREAS = "tareas.xml";
     public static final String RUTASITIOS = "sitios.xml";
+    public static final String RUTAANALISIS = "analisis.xml";
 }
