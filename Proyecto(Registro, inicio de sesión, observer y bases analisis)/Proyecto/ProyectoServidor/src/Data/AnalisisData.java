@@ -53,17 +53,19 @@ public class AnalisisData {
     private Elements imagenes;
     private Elements enlaces;
     private Elements titulos;
-    
+
     public AnalisisData() {
         this.imagenesURL = new ArrayList<>();
         this.aEnlaces = new ArrayList<>();
     }
-    
+
     //Análisis de elementos que conforman un sitio web.
     public void cantidadElementos(String url) throws NoSuchAlgorithmException, KeyManagementException {
         try {
             //Crea un sitio para almacenar la siguiente información
-            this.sitio = new Sitio(url);
+            if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
+                this.sitio = new Sitio(url);
+            }
             // Desactivar la verificación del certificado SSL
             desactivarCertificado();
 
@@ -155,25 +157,27 @@ public class AnalisisData {
             e.printStackTrace();
         }
     }
+
     //Análisis de elementos y extracción. seleccionan img y/o enlaces
     //Enlaces
-    public void extraerEnlaces(String url){
-        this.sitio = new Sitio(url);
+    public void extraerEnlaces(String url) {
+        if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
+            this.sitio = new Sitio(url);
+        }
+
         try {
             // Desactivar la verificación del certificado SSL
             desactivarCertificado();
-        
             Document doc = Jsoup.connect(url).get();
-        
-         //recoge los enlaces
-        this.enlaces = doc.select("a");
-        int it = 0;//ponerle número al enlace
-        for (Element enlace : this.enlaces) {
-            this.aEnlaces.add("Enlace "+it+enlace.attr("href"));
-            it++;
-        }
-        this.sitio.setaEnlaces(this.aEnlaces);
-        
+            //recoge los enlaces
+            this.enlaces = doc.select("a");
+            int it = 0;//ponerle número al enlace
+            for (Element enlace : this.enlaces) {
+                this.aEnlaces.add(enlace.attr("href"));
+                it++;
+            }
+            this.sitio.setaEnlaces(this.aEnlaces);
+
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
         } catch (KeyManagementException ex) {
@@ -181,13 +185,15 @@ public class AnalisisData {
         } catch (IOException ex) {
             Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
     //Descarga imágenes
     public void descargarImagen(String url) throws IOException {
         //Crea un sitio para almacenar la siguiente información
+        if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
             this.sitio = new Sitio(url);
+        }
         try {
             // Desactivar la verificación del certificado SSL
             desactivarCertificado();
@@ -196,54 +202,58 @@ public class AnalisisData {
         } catch (KeyManagementException ex) {
             Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
         }
-            
+
         Document doc = Jsoup.connect(url).get();
-        
+
         this.titulos = doc.select("title");
         for (Element titulo : this.titulos) {
-            this.titulo= titulo.text();
+            this.titulo = titulo.text();
         }
-        
+
         this.imagenes = doc.select("img");
         for (Element imagen : this.imagenes) {
-            this.imagenesURL.add( imagen.attr("src"));
+            this.imagenesURL.add(imagen.attr("src"));
         }
-        
-       //Descarga imágenes
+
+        //Descarga imágenes
         ArrayList<DescargaArchivo> hiloDescarga = new ArrayList<>();
-        
-        for (int i = 0; i < this.imagenesURL.size(); i++) {
-            String linea = this.imagenesURL.get(i);
-            int format = linea.lastIndexOf(".");
-            String formato = linea.substring(format);
-            switch (formato) {
-                case ".png"->hiloDescarga.add( new DescargaArchivo(linea, this.titulo+"/"+i+".png"));
-                case ".jpg"->hiloDescarga.add( new DescargaArchivo(linea, this.titulo+"/"+i+".jpg"));
-                case ".jpeg"->hiloDescarga.add( new DescargaArchivo(linea, this.titulo+"/"+i+".jpeg"));
-                case ".gif"->hiloDescarga.add( new DescargaArchivo(linea, this.titulo+"/"+i+".gif"));
-                    
-                default -> throw new AssertionError();
-            }//switch
-}
-        for (int i = 0; i < hiloDescarga.size(); i++) {
-            hiloDescarga.get(i).start();
+        File carpeta = new File(this.titulo + "/");
+        System.out.println(this.titulo + "/");
+        boolean crear = carpeta.mkdirs();//crea la carpeta cada vez
+        System.out.println(crear);//si se crea o no la carpeta
+        if (carpeta.exists()) {//valida que haya una carpeta para guardar las imágenes
+            for (int i = 0; i < this.imagenesURL.size(); i++) {
+                String linea = this.imagenesURL.get(i);
+                //busca el formato que tiene la imagen
+                int format = linea.lastIndexOf(".");
+                String formato = linea.substring(format);
+                System.out.println(linea);//links de imagenes
+                hiloDescarga.add(new DescargaArchivo(linea, carpeta.getName()+"/"  + i + formato));//Le da a hilo los datos para descargar
+            }
+            for (int i = 0; i < hiloDescarga.size(); i++) {
+                hiloDescarga.get(i).start();//empiezan las descargas
+            }
+
+        } else {
+            System.out.println("La carpeta no se creó");
         }
-        
     }//método
 
     public void precios(String url) {//, BufferedWriter writer
         try {
             //Crea un sitio para almacenar la siguiente información
-            this.sitio = new Sitio(url);
+            if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
+                this.sitio = new Sitio(url);
+            }
             // Obtener el documento HTML de una página web
             Document doc = Jsoup.connect(url).get();
-
             // Buscar elementos que contengan precios
             Elements allElements = doc.getAllElements();
             Elements priceElements = new Elements();
             for (Element element : allElements) {
                 String text = element.text();
                 if (containsPrice(text)) {
+                    System.out.println(element);
                     priceElements.add(element);
                 }
             }
@@ -257,6 +267,7 @@ public class AnalisisData {
                 Matcher matcher = pattern.matcher(text);
                 while (matcher.find()) {
                     String price = matcher.group();
+//                    System.out.println(price);
                     //writer.write("  <precio>" + price + "</precio>\n");
                     this.sitio.addProductos("nombre", price);//guarda cada producto
                 }
@@ -301,7 +312,6 @@ public class AnalisisData {
         HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
     }
 
-
     private void guardarXML() throws FileNotFoundException, IOException {
         XMLOutputter xMLOutputter = new XMLOutputter();
         xMLOutputter.output(this.document, new PrintWriter(Ruta.RUTAANALISIS));
@@ -310,7 +320,5 @@ public class AnalisisData {
     public Sitio getSitio() {
         return sitio;
     }
-    
-    
 
 }//fin clase
