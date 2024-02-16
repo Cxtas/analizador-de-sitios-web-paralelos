@@ -57,6 +57,7 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
     public void run() {
         while (true) {
             this.tareaSelected = this.tareaBusiness.buscarTarea(jcbTareasPendientes.getSelectedItem().toString());
+            this.jtaResultado.setText("");
             actualizarDetalle();
         }
     }
@@ -217,51 +218,71 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
     }//GEN-LAST:event_jbtnVolverActionPerformed
 
     private void jbtnAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAnalizarActionPerformed
-        try{
-        jtaResultado.setText("");
-        this.analisisBusiness = new AnalisisBusiness();
-        
-        if (this.tareaSelected.isAnalisis0()) { //Análisis de elementos que conforman un sitio web.
-            this.analisisBusiness.cantidadElementos(this.tareaSelected.getUrl());//Crea un sitio y le asigna la cantidad de los elementos de este tipo de analisis
-            this.sitio = this.analisisBusiness.getSitio();
-            this.jtaResultado.append("Enlaces: " + this.sitio.getEnlaces() + "\n"
-                    + "Imagenes: " + this.sitio.getImagenes() + "\n"
-                    + "Titulos: " + this.sitio.getTitulos() + "\n"
-                    + "Subtitulos: " + this.sitio.getSubtitulos() + "\n"
-                    + "Tablas: " + this.sitio.getTablas() + "\n"
-                    + "Videos: " + this.sitio.getVideos()+"\n");
-            
-        }//analisis1
-        
-        if (this.tareaSelected.isAnalisis1()) {//Análisis de elementos y extracción. seleccionan img y/o enlaces
-            if (this.tareaSelected.isImagenes()) {//si se pidió imagenes
-                 this.analisisBusiness.descargarImagen(this.tareaSelected.getUrl());
-            }//imagenes
-            
-            if (this.tareaSelected.isEnlaces()) {//si se pidieron enlaces
-                this.analisisBusiness.extraerEnlaces(this.tareaSelected.getUrl());//Crea un sitio y le asigna la cantidad de los elementos de este tipo de analisis
-                this.sitio = this.analisisBusiness.getSitio();
-                this.jtaResultado.append("Enlaces: " + this.sitio.getaEnlaces()+"\n");
-            }//enlaces
-            
-        }//analisis2
-        
-        if (this.tareaSelected.isAnalisis2()) {//Análisis de extracción y comparación
-            this.analisisBusiness.precios(this.tareaSelected.getUrl());
-            this.sitio = this.analisisBusiness.getSitio();
-            this.jtaResultado.append("Productos: " + this.sitio.getProductos() + "\n");
-        }//analisis3
-        
-        //no descomentar hasta que funcionen los métodos, ya que cambia el estado de la tarea en el xml
-//        this.tareaBusiness.cambiarEstado(this.tareaSelected.getUrl());
-//        JOptionPane.showMessageDialog(this, "Se analizó correctamente");
-//        this.sitioBusiness.guardarSitio(this.sitio);//guarda en xml los datos del sitio
-//        //Elimina del combobox y del array la página que ya ha sido analizada
-//        this.tareas.remove(this.jcbTareasPendientes.getSelectedIndex());
-//        this.jcbTareasPendientes.removeItemAt(this.jcbTareasPendientes.getSelectedIndex());
-//        jtaResultado.setText("");
-        }catch(NullPointerException ex){
-            JOptionPane.showMessageDialog(this, "Error "+ex);
+        try {
+            boolean hecho1 = true, hecho2 = true, hecho3 = true, hecho4 = true;
+
+            jtaResultado.setText("");
+            this.analisisBusiness = new AnalisisBusiness();
+
+            if (this.tareaSelected.isAnalisis0()) { //Análisis de elementos que conforman un sitio web.
+                hecho1 = this.analisisBusiness.cantidadElementos(this.tareaSelected.getUrl());//Crea un sitio y le asigna la cantidad de los elementos de este tipo de analisis
+                if (hecho1) {
+                    this.sitio = this.analisisBusiness.getSitio();
+                    this.jtaResultado.append("Enlaces: " + this.sitio.getEnlaces() + "\n"
+                            + "Imagenes: " + this.sitio.getImagenes() + "\n"
+                            + "Titulos: " + this.sitio.getTitulos() + "\n"
+                            + "Subtitulos: " + this.sitio.getSubtitulos() + "\n"
+                            + "Tablas: " + this.sitio.getTablas() + "\n"
+                            + "Videos: " + this.sitio.getVideos() + "\n");
+                } else {
+                    JOptionPane.showMessageDialog(this, "No se pudo contar los elementos");
+                }
+            }//analisis1
+
+            if (this.tareaSelected.isAnalisis1()) {//Análisis de elementos y extracción. seleccionan img y/o enlaces
+                if (this.tareaSelected.isImagenes()) {//si se pidió imagenes
+                    hecho2 = this.analisisBusiness.descargarImagen(this.tareaSelected.getUrl());
+                    if (hecho2) {
+                        JOptionPane.showMessageDialog(this, "Se descargaron las imagenes, revise la carpeta con el nombre de la pagina.");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "No se pudo descargar las imagenes o no las hay");
+                    }
+                }//imagenes
+
+                if (this.tareaSelected.isEnlaces()) {//si se pidieron enlaces
+                    hecho3 = this.analisisBusiness.extraerEnlaces(this.tareaSelected.getUrl());//Crea un sitio y le asigna la cantidad de los elementos de este tipo de analisis
+                    if (hecho3) {
+                        this.sitio = this.analisisBusiness.getSitio();
+                        this.jtaResultado.append("Enlaces: " + this.sitio.getaEnlaces() + "\n");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "No se pudo extraer los enlaces o no se encontraron.");
+                    }
+                }//enlaces
+
+            }//analisis2
+
+            if (this.tareaSelected.isAnalisis2()) {//Análisis de extracción y comparación
+                hecho4 = this.analisisBusiness.precios(this.tareaSelected.getUrl());
+                if (hecho4) {
+                    this.sitio = this.analisisBusiness.getSitio();
+                    this.jtaResultado.append("Productos: " + this.sitio.getProductos() + "\n");
+                    this.jtaResultado.append("Precios: " + this.sitio.getPrecios()+ "\n");
+                } else {
+                    JOptionPane.showMessageDialog(this, "No se pudo extraer los productos o la pagina no contiene");
+                }
+            }//analisis3
+
+            if (hecho1 && hecho2 && hecho3 && hecho4) {
+                this.tareaBusiness.cambiarEstado(this.tareaSelected.getUrl());
+                this.sitioBusiness.guardarSitio(this.sitio);//guarda en xml los datos del sitio
+                //Elimina del combobox y del array la página que ya ha sido analizada
+                this.tareas.remove(this.jcbTareasPendientes.getSelectedIndex());
+                this.jcbTareasPendientes.removeItemAt(this.jcbTareasPendientes.getSelectedIndex());
+                jtaResultado.setText("");
+            }
+
+        } catch (NullPointerException ex) {
+            JOptionPane.showMessageDialog(this, "Error " + ex);
         } catch (IOException ex) {
             Logger.getLogger(JIFRealizarAnalisis.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchAlgorithmException ex) {
@@ -269,6 +290,8 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
         } catch (KeyManagementException ex) {
             Logger.getLogger(JIFRealizarAnalisis.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+
     }//GEN-LAST:event_jbtnAnalizarActionPerformed
 
 

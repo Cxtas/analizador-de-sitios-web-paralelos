@@ -22,24 +22,24 @@ public class AnalisisBusiness {
     }
     
     //Análisis de elementos que conforman un sitio web.
-     public void cantidadElementos(String url) throws NoSuchAlgorithmException, KeyManagementException {
-        ad.cantidadElementos(url);
+     public boolean cantidadElementos(String url) throws NoSuchAlgorithmException, KeyManagementException {
+        return ad.cantidadElementos(url);
     }
     
     //Análisis de elementos y extracción. seleccionan img y/o enlaces
     //Buscar y devolver enlaces
-    public void extraerEnlaces(String url){
-         ad.extraerEnlaces(url);
+    public boolean extraerEnlaces(String url){
+        return ad.extraerEnlaces(url);
      }
     
     //descargar imágenes
-    public void descargarImagen(String url) throws IOException {
-        ad.descargarImagen(url);
+    public boolean descargarImagen(String url) throws IOException {
+       return ad.descargarImagen(url);
     }
     
     //Buscar precios
-    public void precios(String url) {
-        ad.precios(url);
+    public boolean precios(String url) {
+       return ad.precios(url);
     }
     
     public Sitio getSitio() {

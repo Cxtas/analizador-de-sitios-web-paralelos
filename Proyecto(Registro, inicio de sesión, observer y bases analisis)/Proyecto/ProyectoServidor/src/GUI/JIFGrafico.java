@@ -7,7 +7,9 @@ package GUI;
 import Business.TareaBusiness;
 import Domain.Sitio;
 import Domain.Tarea;
+import Domain.Usuario;
 import java.util.ArrayList;
+import java.util.Iterator;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartPanel;
@@ -25,19 +27,32 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
      */
     private TareaBusiness tareaBusiness;
     private ArrayList<Tarea> tareas;
+    private Usuario usuario;
     
-    public JIFGrafico() {
+    public JIFGrafico(Usuario usuario) {
         this.tareaBusiness = new TareaBusiness();
         this.tareas = new ArrayList<>();
+        this.usuario = usuario;
         this.tareas = this.tareaBusiness.obtenerTareas();//obtiene todas las tareas registradas
         initComponents();
-        for (Tarea tareaTempo : this.tareas) {
-            this.jcbSitios.addItem(tareaTempo.getUrl());//Llena el combobox con las tareas registradas
-        }
+        agregarTareas();
         //this.sitio=new Sitio();
     }//constructor
     
+ //Agrega las tareas que pertenecen al analista que inició sesión al combobox
+    private void agregarTareas() {
+        Iterator<Tarea> iterator = this.tareas.iterator();
+        while (iterator.hasNext()) {
+            Tarea tarea = iterator.next();
+            if ((!tarea.getAnalista().equals(this.usuario.getUser())) || tarea.getEstado().equals("en proceso")) {//Si la tarea no tiene el analista que inició sesión y si no está en proceso ya está asignada
+                iterator.remove(); // se elimina la tarea del arrayList
+            }
+        }
+        for (Tarea tarea : this.tareas) {
+            this.jcbSitios.addItem(tarea.getUrl());
+        }
 
+    }//asignarTareas
 
     /**
      * This method is called from within the constructor to initialize the form.

@@ -60,7 +60,7 @@ public class AnalisisData {
     }
 
     //Análisis de elementos que conforman un sitio web.
-    public void cantidadElementos(String url) throws NoSuchAlgorithmException, KeyManagementException {
+    public boolean cantidadElementos(String url) throws NoSuchAlgorithmException, KeyManagementException {
         try {
             //Crea un sitio para almacenar la siguiente información
             if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
@@ -155,17 +155,21 @@ public class AnalisisData {
 //            System.out.println("Datos extraídos y almacenados en 'datos_extraidos.xml'");
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     //Análisis de elementos y extracción. seleccionan img y/o enlaces
     //Enlaces
-    public void extraerEnlaces(String url) {
-        if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
-            this.sitio = new Sitio(url);
-        }
-
+    public boolean extraerEnlaces(String url) {
         try {
+            if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
+                this.sitio = new Sitio(url);
+            }
             // Desactivar la verificación del certificado SSL
             desactivarCertificado();
             Document doc = Jsoup.connect(url).get();
@@ -180,110 +184,190 @@ public class AnalisisData {
 
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         } catch (KeyManagementException ex) {
             Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         } catch (IOException ex) {
             Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (NullPointerException ex) {
+            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
-
+        return true;
     }
 
     //Descarga imágenes
-    public void descargarImagen(String url) throws IOException {
-        //Crea un sitio para almacenar la siguiente información
-        if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
-            this.sitio = new Sitio(url);
-        }
-        try {
-            // Desactivar la verificación del certificado SSL
-            desactivarCertificado();
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (KeyManagementException ex) {
-            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public boolean descargarImagen(String url) throws IOException {
 
-        Document doc = Jsoup.connect(url).get();
-
-        this.titulos = doc.select("title");
-        for (Element titulo : this.titulos) {
-            this.titulo = titulo.text();
-        }
-
-        this.imagenes = doc.select("img");
-        for (Element imagen : this.imagenes) {
-            this.imagenesURL.add(imagen.attr("src"));
-        }
-
-        //Descarga imágenes
-        ArrayList<DescargaArchivo> hiloDescarga = new ArrayList<>();
-        File carpeta = new File(this.titulo + "/");
-        System.out.println(this.titulo + "/");
-        boolean crear = carpeta.mkdirs();//crea la carpeta cada vez
-        System.out.println(crear);//si se crea o no la carpeta
-        if (carpeta.exists()) {//valida que haya una carpeta para guardar las imágenes
-            for (int i = 0; i < this.imagenesURL.size(); i++) {
-                String linea = this.imagenesURL.get(i);
-                //busca el formato que tiene la imagen
-                int format = linea.lastIndexOf(".");
-                String formato = linea.substring(format);
-                System.out.println(linea);//links de imagenes
-                hiloDescarga.add(new DescargaArchivo(linea, carpeta.getName()+"/"  + i + formato));//Le da a hilo los datos para descargar
-            }
-            for (int i = 0; i < hiloDescarga.size(); i++) {
-                hiloDescarga.get(i).start();//empiezan las descargas
-            }
-
-        } else {
-            System.out.println("La carpeta no se creó");
-        }
-    }//método
-
-    public void precios(String url) {//, BufferedWriter writer
         try {
             //Crea un sitio para almacenar la siguiente información
             if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
                 this.sitio = new Sitio(url);
             }
-            // Obtener el documento HTML de una página web
+            // Desactivar la verificación del certificado SSL
+            desactivarCertificado();
+
             Document doc = Jsoup.connect(url).get();
-            // Buscar elementos que contengan precios
-            Elements allElements = doc.getAllElements();
-            Elements priceElements = new Elements();
-            for (Element element : allElements) {
-                String text = element.text();
-                if (containsPrice(text)) {
-                    System.out.println(element);
-                    priceElements.add(element);
+
+            this.titulos = doc.select("title");
+            for (Element titulo : this.titulos) {
+                this.titulo = titulo.text();
+            }
+
+            this.imagenes = doc.select("img");
+            for (Element imagen : this.imagenes) {
+                this.imagenesURL.add(imagen.attr("src"));
+            }
+
+            //Descarga imágenes
+            ArrayList<DescargaArchivo> hiloDescarga = new ArrayList<>();
+            File carpeta = new File(this.titulo + "/");
+            boolean crear = carpeta.mkdirs();//crea la carpeta cada vez
+            if (carpeta.exists()) {//valida que haya una carpeta para guardar las imágenes
+                for (int i = 0; i < this.imagenesURL.size(); i++) {
+                    String linea = this.imagenesURL.get(i);
+                    //busca el formato que tiene la imagen
+                    int format = linea.lastIndexOf(".");
+                    String formato = linea.substring(format);
+//                System.out.println(linea);//links de imagenes
+                    hiloDescarga.add(new DescargaArchivo(linea, carpeta.getName() + "/" + i + formato));//Le da a hilo los datos para descargar
+                }
+                for (int i = 0; i < hiloDescarga.size(); i++) {
+                    hiloDescarga.get(i).start();//empiezan las descargas
+                }
+
+            } else {
+                return false;
+            }
+
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (KeyManagementException ex) {
+            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (NullPointerException ex) {
+            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return true;
+    }//método
+
+    public boolean precios(String url) {//, BufferedWriter writer
+        try {
+            //Crea un sitio para almacenar la siguiente información
+            if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
+                this.sitio = new Sitio(url);
+            }
+
+            Document doc = Jsoup.connect(url).get();
+
+            Elements spansPrice = doc.select("span.price");//selecciona los que contengan span.price
+            ArrayList<String> precios = new ArrayList<>();
+
+            for (Element span : spansPrice) {
+                String priceText = span.text();//toma el texto de la etiqueta
+                if (!priceText.equals("")) {//si no está vacio
+                    if (esPrecio(priceText))//si es un precio
+                    {
+                        precios.add(priceText);//se agrega al array
+                    }
                 }
             }
 
-            // Extraer y almacenar los precios en el archivo XML
-            for (Element element : priceElements) {
-                // Extraer el texto del elemento
-                String text = element.text();
-                // Utilizar expresiones regulares para encontrar el precio
-                Pattern pattern = Pattern.compile("[€$£¥:]\\s*\\d+(\\.\\d+)?");
-                Matcher matcher = pattern.matcher(text);
-                while (matcher.find()) {
-                    String price = matcher.group();
-//                    System.out.println(price);
-                    //writer.write("  <precio>" + price + "</precio>\n");
-                    this.sitio.addProductos("nombre", price);//guarda cada producto
+            if (precios.isEmpty()) {//si no funcionó el anterior y el array está vacio
+                Elements spans = doc.select("span"); //se prueba con el span solito
+                for (Element spanOne : spans) {
+                    if (spanOne.children().isEmpty()) {//algunos precios vienen con el span solito <span></span>
+                        String priceText = spanOne.text();//toma el texto
+                        if (!priceText.equals("")) //si no está vacio
+                        {
+                            if (esPrecio(priceText))//si es un precio
+                            {
+                                precios.add(priceText);//se añade
+                            }
+                        }
+                    }
+                }
+            }//empty
+
+            //mostrar precios
+            for (int i = 0; i < precios.size(); i++) {
+                System.out.println("Precio: " + precios.get(i));
+            }
+
+            //nombres
+            Elements aTitle = doc.select("a");//los que tengan <a>
+            ArrayList<String> productosN = new ArrayList<>();
+
+            String ptitle = "";
+            for (Element title : aTitle) {
+                if (title.hasClass("product-item-link") || title.hasClass("product-name")) {//los que tengan algunas estas clases
+                    ptitle = title.text();
+                }
+                //evita que se guarden datos en blanco o repetidos
+                if (!ptitle.equals("")) {
+                    if (!productosN.contains(ptitle)) {
+                        productosN.add(ptitle);
+                    }
                 }
             }
+            //se muestran los nombres
+            for (int i = 0; i < productosN.size(); i++) {
+                System.out.println("Producto: " + productosN.get(i));
+            }
+
+            //añade los precios y nombres al array de sitio
+            this.sitio.setProductos(productosN);
+            this.sitio.setPrecios(precios);
+//            // Obtener el documento HTML de una página web
+//            Document doc = Jsoup.connect(url).get();
+//            // Buscar elementos que contengan precios
+//            Elements allElements = doc.getAllElements();
+//            Elements priceElements = new Elements();
+//            for (Element element : allElements) {
+//                String text = element.text();
+//                if (containsPrice(text)) {
+//                    System.out.println(element);
+//                    priceElements.add(element);
+//                }
+//            }
+//
+//            // Extraer y almacenar los precios en el archivo XML
+//            for (Element element : priceElements) {
+//                // Extraer el texto del elemento
+//                String text = element.text();
+//                // Utilizar expresiones regulares para encontrar el precio
+//                Pattern pattern = Pattern.compile("[€$£¥:]\\s*\\d+(\\.\\d+)?");
+//                Matcher matcher = pattern.matcher(text);
+//                while (matcher.find()) {
+//                    String price = matcher.group();
+////                    System.out.println(price);
+//                    //writer.write("  <precio>" + price + "</precio>\n");
+//                    this.sitio.addProductos("nombre", price);//guarda cada producto
+//                }
+//            }
 
 //            System.out.println("Precios extraídos y almacenados en 'datos_extraidos.xml'");
         } catch (IOException e) {
             // Manejo de cualquier excepción de entrada/salida
             System.out.println("Ocurrió un error al procesar la solicitud HTTP: " + e.getMessage());
             e.printStackTrace();
+            return false;
+        }catch (NullPointerException ex) {
+            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
+        return true;
     }
 
-    // Método para verificar si una cadena contiene un precio
-    private static boolean containsPrice(String text) {
-        return text.matches(".[€$£¥:]\\s\\d+(\\.\\d+)?.*");
+    public static boolean esPrecio(Object obj) {//verifica que sea un precio
+        String text = String.valueOf(obj);
+        Pattern pattern = Pattern.compile("[₡€$£¥:]?\\s?\\d{1,3}(\\s?\\d{3})*(\\s?,\\s?\\d+)?");
+        Matcher matcher = pattern.matcher(text);
+        return matcher.matches();
     }
 
     private static void desactivarCertificado() throws NoSuchAlgorithmException, KeyManagementException {
