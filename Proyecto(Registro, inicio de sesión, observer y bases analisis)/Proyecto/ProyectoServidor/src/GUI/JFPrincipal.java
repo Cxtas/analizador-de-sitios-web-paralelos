@@ -288,15 +288,21 @@ public class JFPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jmAnalisisActionPerformed
 
     private void jmiGraficoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiGraficoActionPerformed
-        JIFGrafico grafico = new JIFGrafico();
+        JIFGrafico grafico = new JIFGrafico(this.usuario);
         this.jDesktopPane1.add(grafico);
         centrar(grafico);
     }//GEN-LAST:event_jmiGraficoActionPerformed
 
     private void jmiPDFenviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiPDFenviarActionPerformed
-        JIFGenerarPDF generar = new JIFGenerarPDF();
-        this.jDesktopPane1.add(generar);
-        centrar(generar);
+        try {
+            JIFGenerarPDF generar = new JIFGenerarPDF();
+            this.jDesktopPane1.add(generar);
+            centrar(generar);
+        } catch (IOException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JDOMException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jmiPDFenviarActionPerformed
 
     private void jmiCambioUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiCambioUsuarioActionPerformed
@@ -312,9 +318,15 @@ public class JFPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jmiSalirActionPerformed
 
     private void jmiAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiAnalizarActionPerformed
-       JIFRealizarAnalisis analisis = new JIFRealizarAnalisis(this.usuario);//se le envía el usuario que inicia sesión
-        this.jDesktopPane1.add(analisis);
-        centrar(analisis);
+        try {
+            JIFRealizarAnalisis analisis = new JIFRealizarAnalisis(this.usuario);//se le envía el usuario que inicia sesión
+            this.jDesktopPane1.add(analisis);
+            centrar(analisis);
+        } catch (IOException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JDOMException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jmiAnalizarActionPerformed
 
     private void jmiCorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiCorreoActionPerformed

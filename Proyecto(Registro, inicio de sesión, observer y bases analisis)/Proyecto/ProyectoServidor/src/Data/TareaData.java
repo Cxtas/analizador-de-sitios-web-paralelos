@@ -109,7 +109,7 @@ public class TareaData {
             tareas.add(tarea);
         }//for
         return tareas;
-    }//obtenerAdmins
+    }//obtenerTareas
     
     //se les asigna un analista cambiando el atributo analista de null al user del analista asignado
      public boolean asignarAnalista(String userAnalista, String url) throws IOException {
@@ -120,6 +120,27 @@ public class TareaData {
             if (eTareaActual.getChild("url").getValue().equals(url)) {
                 eTareaActual.getChild("analista").removeContent();
                 eTareaActual.getChild("analista").addContent(userAnalista);
+                hecho=true;
+            }
+        }//for
+        if (hecho) {
+            this.guardarXML();
+            return true;
+        }
+        return false;
+    }//asignar
+     
+     //se les asigna un analista cambiando el atributo analista de null al user del analista asignado
+     public boolean cambiarEstado(String url) throws IOException {
+        List elementList = this.root.getChildren();
+        boolean hecho = false;
+        for (Object object : elementList) {
+            Element eTareaActual = (Element) object;
+            if (eTareaActual.getChild("url").getValue().equals(url)) {
+                eTareaActual.getChild("estado").removeContent();
+                eTareaActual.getChild("estado").addContent("finalizado");
+                eTareaActual.getChild("porcentajeAvance").removeContent();
+                eTareaActual.getChild("porcentajeAvance").addContent("100");
                 hecho=true;
             }
         }//for
