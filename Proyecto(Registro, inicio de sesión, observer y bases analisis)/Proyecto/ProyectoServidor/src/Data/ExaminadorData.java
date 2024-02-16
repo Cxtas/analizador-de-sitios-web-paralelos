@@ -1,12 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Data;
 
 import Domain.Examinador;
 import Domain.Sitio;
-import Domain.Tarea;
 import Utility.Ruta;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,7 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;

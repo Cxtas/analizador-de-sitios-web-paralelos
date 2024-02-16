@@ -1,4 +1,3 @@
-
 package Domain;
 
 import java.util.ArrayList;
@@ -9,14 +8,17 @@ import java.util.ArrayList;
  */
 public class Sitio {
     
-    private String url="";
+    private String url;
     private int imagenes;
     private int enlaces;
     private int videos;
     private int titulos;
     private int subtitulos;
     private int tablas;
-    ArrayList <ProductoServicio> productos;
+    ArrayList <String> aEnlaces;
+    ArrayList <String> productos;
+    ArrayList <String> precios;
+    
 
     public Sitio(String url) {
         this.imagenes = 0;
@@ -26,8 +28,24 @@ public class Sitio {
         this.subtitulos = 0;
         this.tablas = 0;
         this.productos=new ArrayList<>();
+        this.precios=new ArrayList<>();
+        this.url = url;
     }
 
+    public Sitio(String url,int imagenes, int enlaces, int videos, int titulos, int subtitulos, int tablas, ArrayList<String> aEnlaces, 
+            ArrayList<String> productos, ArrayList<String> precios) {
+        this.url = url;
+        this.imagenes = imagenes;
+        this.enlaces = enlaces;
+        this.videos = videos;
+        this.titulos = titulos;
+        this.subtitulos = subtitulos;
+        this.tablas = tablas;
+        this.productos = productos;
+        this.precios = precios;
+        this.aEnlaces = aEnlaces;
+    }
+    
     public String getUrl() {
         return url;
     }
@@ -35,14 +53,23 @@ public class Sitio {
     public void setUrl(String url) {
         this.url = url;
     }
-    
-    public ArrayList<ProductoServicio> getProductos() {
+
+    public ArrayList<String> getProductos() {
         return productos;
     }
 
-    public void setProductos(ArrayList<ProductoServicio> productos) {
+    public void setProductos(ArrayList<String> productos) {
         this.productos = productos;
     }
+
+    public ArrayList<String> getPrecios() {
+        return precios;
+    }
+
+    public void setPrecios(ArrayList<String> precios) {
+        this.precios = precios;
+    }
+    
     
     public int getImagenes() {
         return imagenes;
@@ -91,5 +118,15 @@ public class Sitio {
     public void setTablas(int tablas) {
         this.tablas = tablas;
     }
+
+    public ArrayList<String> getaEnlaces() {
+        return aEnlaces;
+    }
+
+    public void setaEnlaces(ArrayList<String> aEnlaces) {
+        this.aEnlaces = aEnlaces;
+    }
+    
+    
     
 }//fin clase

@@ -1,23 +1,26 @@
-
 package Data;
 
-import Domain.Analisis;
-import Utility.GestionXML;
-import Domain.ProductoServicio;
+import Domain.DescargaArchivo;
 import Domain.Sitio;
+import Utility.Ruta;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import org.jdom.JDOMException;
+import org.jdom.output.XMLOutputter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -28,157 +31,257 @@ import org.jsoup.select.Elements;
  * @author author
  */
 public class AnalisisData {
-    private GestionXML manejo;
-    private Analisis a;
-    //private String url;
+
+    private int imagenCont = 0;
+    private int tituloCOnt = 0;
+    private int subtituloCont = 0;
+    private int enlanceCont = 0;
+    private int tablaCont = 0;
+    private int videoCOnt = 0;
     private Sitio sitio;
-    private int cont;
-    private ArrayList<Sitio> sitios;
-    
-    public AnalisisData(String url) throws JDOMException, IOException {
-        a= new Analisis();
-        //this.url=url;
-        this.manejo= new GestionXML();
-        this.sitio= new Sitio(url);
+    private org.jdom.Document document;
+    private org.jdom.Element root;
+    private ArrayList<String> imagenesURL;
+    private ArrayList<String> aEnlaces;
+    private String titulo;
+    private Elements imagenes;
+    private Elements enlaces;
+    private Elements titulos;
+
+    public AnalisisData() {
+        this.imagenesURL = new ArrayList<>();
+        this.aEnlaces = new ArrayList<>();
     }
-    
-    public void CantElementos() throws IOException{
-        BuscarElementos("imagen");
-        this.sitio.setImagenes(this.cont);
-        this.cont=0;
-        
-        BuscarElementos("enlace");
-        this.sitio.setEnlaces(this.cont);
-        this.cont=0;
-        
-        BuscarElementos("video");
-        this.sitio.setVideos(this.cont);
-        this.cont=0;
-        
-        BuscarElementos("titulo");
-        this.sitio.setTitulos(this.cont);
-        this.cont=0;
-        
-        BuscarElementos("tabla");
-        this.sitio.setTablas(this.cont);
-        this.cont=0;
-        
-        System.out.println("Imagenes: "+ this.sitio.getImagenes());
-        System.out.println("Enlaces: "+ this.sitio.getEnlaces());
-        System.out.println("Titulos: "+ this.sitio.getTitulos());
-        System.out.println("Videos: "+ this.sitio.getVideos());
-        System.out.println("Tablas: "+ this.sitio.getTablas());
-        
-    }
-    
-    public void BuscarElementos(String tipo) throws IOException{ //String url = "https://www.facebook.com/?locale=es_LA";
-        String et="";
-        if(tipo.equalsIgnoreCase("enlace")){
-            et="a";
-            tipo="abs:href";
-        }
-        if(tipo.equalsIgnoreCase("imagen")){
-            et="img";
-            tipo="abs:src";
-        }
-        if(tipo.equalsIgnoreCase("tabla")){
-            et="table";
-            tipo="abs:summary";
-        }
-        if(tipo.equalsIgnoreCase("titulo")){
-            et="title";
-            tipo="h1";
-        }
-        if(tipo.equalsIgnoreCase("video")){
-            et="video";
-            tipo="abs:width";
-        }
-        //MEJORAR CON ENUM
+
+    //Análisis de elementos que conforman un sitio web.
+    public boolean cantidadElementos(String url) throws NoSuchAlgorithmException, KeyManagementException {
         try {
+            //Crea un sitio para almacenar la siguiente información
+            if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
+                this.sitio = new Sitio(url);
+            }
+            // Desactivar la verificación del certificado SSL
             desactivarCertificado();
+
+            // Obtener el documento HTML de una página web
+            Document doc = Jsoup.connect(url).get();
+
+            // Extraer imágenes
+            this.imagenes = doc.select("img");
+            this.sitio.setImagenes(imagenes.size());
+
+            // Extraer títulos
+            this.titulos = doc.select("title");
+            this.sitio.setTitulos(titulos.size());
+
+            // Extraer subtítulos (h2, h3, etc.)
+            Elements subtitulos = doc.select("h2, h3, h4, h5, h6");
+            this.sitio.setSubtitulos(subtitulos.size());
+
+            // Extraer enlaces
+            this.enlaces = doc.select("a");
+            this.sitio.setEnlaces(enlaces.size());
+
+            // Extraer tablas
+            Elements tablas = doc.select("table");
+            this.sitio.setTablas(tablas.size());
+
+            // Extraer videos
+            Elements videos = doc.select("video");
+            this.sitio.setVideos(videos.size());
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    //Análisis de elementos y extracción. seleccionan img y/o enlaces
+    //Enlaces
+    public boolean extraerEnlaces(String url) {
+        try {
+            if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
+                this.sitio = new Sitio(url);
+            }
+            // Desactivar la verificación del certificado SSL
+            desactivarCertificado();
+            Document doc = Jsoup.connect(url).get();
+            //recoge los enlaces
+            this.enlaces = doc.select("a");
+            int it = 0;//ponerle número al enlace
+            for (Element enlace : this.enlaces) {
+                this.aEnlaces.add(enlace.attr("href"));
+                it++;
+            }
+            this.sitio.setaEnlaces(this.aEnlaces);
+
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         } catch (KeyManagementException ex) {
             Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-        }//try - catch interno//try - catch interno//try - catch interno//try - catch interno
-        Document document = Jsoup.connect(this.sitio.getUrl()).get();
-        Elements links = document.select(et);//IMPORTANTE selecciona la etiqueta a bucar
-        for (Element link : links) {//busca links en una coleccion de links hasta que no haya mas
-            System.out.println(link.attr(tipo));// IMPORTANTE abs= absolute (el atributo absoluto)
-            this.cont++;
-        }//for each
-    }
-    
-    public void ExtraerElementos(Sitio sitio){
-        //yo ya tengo el sitio, solo pido la url y empiezo a buscar las cosas
-        ArrayList<ProductoServicio> productos= new ArrayList<>();
-        ArrayList<String> nombres= new ArrayList<>();
-        ArrayList<String> precios= new ArrayList<>();
-        String precioP="";
-        String nombreP="";
-        String temp="";
-        int p=0;
-        int IPunto=0;
-        int IComa=0;
-        try {
-            String url = "https://extremetechcr.com/tienda/32-combos-gaming";
-            
-            try {
-                desactivarCertificado();
-            } catch (NoSuchAlgorithmException ex) {
-                Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (KeyManagementException ex) {
-                Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-            }//try - catch interno
-            
-            Document document = Jsoup.connect(url).get();
-            
-            System.out.println(document.outerHtml());
-            Elements links = document.select("a");//selecciona la etiqueta a bucar //a
-            
-            System.out.println("PRODUCTOS");
-            for (Element link : links) {//busca links en una coleccion de links hasta que no haya mas
-                if(temp.equals(link.attr("abs:href")))
-                    System.out.println("");
-                else if(link.attr("abs:href").contains(".html")){
-                    System.out.println(link.attr("abs:href"));//abs= absolute (el atributo absoluto) //href
-                    temp=link.attr("abs:href");
-                    nombres.add(temp);
-                    }
-            }//for each
-            
-            temp="";
-            Elements spans = document.select("span");//para buscar precios
-            System.out.println("PRECIOS");
-            for (Element span : spans) {//busca links en una coleccion de links hasta que no haya mas
-                if(span.text().contains(",")){
-                    System.out.println(span.text());//abs= absolute (el atributo absoluto) //href
-                    precios.add(span.text());
-                }//if interno
-            }//for each
-            
-            p=45;
-            for (int i = 0; i < nombres.size(); i++) {
-                IPunto=nombres.get(i).indexOf('.', p);
-                IComa=precios.get(i).indexOf(',');
-                if(IPunto>-1){
-                    nombreP=nombres.get(i).substring(p, IPunto);
-                    precioP=precios.get(i).replace(',', precios.get(i).charAt(IComa-1));
-                }
-                productos.add(new ProductoServicio(nombreP, Integer.parseInt(precioP.substring(3))));
-            }
-            
-            for (int i = 0; i < productos.size(); i++) {
-                System.out.println(productos.get(i).toString());
-            }
-            
-           
-                    
+            return false;
         } catch (IOException ex) {
             Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
-        }//try - catch
+            return false;
+        } catch (NullPointerException ex) {
+            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return true;
     }
-    
+
+    //Descarga imágenes
+    public boolean descargarImagen(String url) throws IOException {
+
+        try {
+             // Desactivar la verificación del certificado SSL
+            desactivarCertificado();
+            //Crea un sitio para almacenar la siguiente información
+            if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
+                this.sitio = new Sitio(url);
+            }
+           
+
+            Document doc = Jsoup.connect(url).get();
+
+            this.titulos = doc.select("title");
+            for (Element titulo : this.titulos) {
+                this.titulo = titulo.text();
+            }
+
+            this.imagenes = doc.select("img");
+            for (Element imagen : this.imagenes) {
+                this.imagenesURL.add(imagen.attr("src"));
+            }
+
+            //Descarga imágenes
+            ArrayList<DescargaArchivo> hiloDescarga = new ArrayList<>();
+            File carpeta = new File(this.titulo + "/");
+            boolean crear = carpeta.mkdirs();//crea la carpeta cada vez
+            if (carpeta.exists()) {//valida que haya una carpeta para guardar las imágenes
+                for (int i = 0; i < this.imagenesURL.size(); i++) {
+                    String linea = this.imagenesURL.get(i);
+                    //busca el formato que tiene la imagen
+                    int format = linea.lastIndexOf(".");
+                    String formato = linea.substring(format);
+//                System.out.println(linea);//links de imagenes
+                    hiloDescarga.add(new DescargaArchivo(linea, carpeta.getName() + "/" + i + formato));//Le da a hilo los datos para descargar
+                }
+                for (int i = 0; i < hiloDescarga.size(); i++) {
+                    hiloDescarga.get(i).start();//empiezan las descargas
+                }
+
+            } else {
+                return false;
+            }
+
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (KeyManagementException ex) {
+            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (NullPointerException ex) {
+            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return true;
+    }//método
+
+    public boolean precios(String url) throws NoSuchAlgorithmException, KeyManagementException {
+        try {
+            desactivarCertificado();
+            //Crea un sitio para almacenar la siguiente información
+            if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
+                this.sitio = new Sitio(url);
+            }
+
+            Document doc = Jsoup.connect(url).get();
+
+            Elements spansPrice = doc.select("span.price");//selecciona los que contengan span.price
+            ArrayList<String> precios = new ArrayList<>();
+
+            for (Element span : spansPrice) {
+                String priceText = span.text();//toma el texto de la etiqueta
+                if (!priceText.equals("")) {//si no está vacio
+                    if (esPrecio(priceText))//si es un precio
+                    {
+                        precios.add(priceText);//se agrega al array
+                    }
+                }
+            }
+
+            if (precios.isEmpty()) {//si no funcionó el anterior y el array está vacio
+                Elements spans = doc.select("span"); //se prueba con el span solito
+                for (Element spanOne : spans) {
+                    if (spanOne.children().isEmpty()) {//algunos precios vienen con el span solito <span></span>
+                        String priceText = spanOne.text();//toma el texto
+                        if (!priceText.equals("")) //si no está vacio
+                        {
+                            if (esPrecio(priceText))//si es un precio
+                            {
+                                precios.add(priceText);//se añade
+                            }
+                        }
+                    }
+                }
+            }//empty
+
+            //mostrar precios
+            for (int i = 0; i < precios.size(); i++) {
+                System.out.println("Precio: " + precios.get(i));
+            }
+
+            //nombres
+            Elements aTitle = doc.select("a");//los que tengan <a>
+            ArrayList<String> productosN = new ArrayList<>();
+
+            String ptitle = "";
+            for (Element title : aTitle) {
+                if (title.hasClass("product-item-link") || title.hasClass("product-name")) {//los que tengan algunas estas clases
+                    ptitle = title.text();
+                }
+                //evita que se guarden datos en blanco o repetidos
+                if (!ptitle.equals("")) {
+                    if (!productosN.contains(ptitle)) {
+                        productosN.add(ptitle);
+                    }
+                }
+            }
+            //se muestran los nombres
+            for (int i = 0; i < productosN.size(); i++) {
+                System.out.println("Producto: " + productosN.get(i));
+            }
+
+            //añade los precios y nombres al array de sitio
+            this.sitio.setProductos(productosN);
+            this.sitio.setPrecios(precios);
+
+        } catch (IOException e) {
+            // Manejo de cualquier excepción de entrada/salida
+            System.out.println("Ocurrió un error al procesar la solicitud HTTP: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }catch (NullPointerException ex) {
+            Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean esPrecio(Object obj) {//verifica que sea un precio
+        String text = String.valueOf(obj);
+        Pattern pattern = Pattern.compile("[₡€$£¥:]?\\s?\\d{1,3}(\\s?\\d{3})*(\\s?,\\s?\\d+)?");
+        Matcher matcher = pattern.matcher(text);
+        return matcher.matches();
+    }
+
     private static void desactivarCertificado() throws NoSuchAlgorithmException, KeyManagementException {
         // Crear un administrador de confianza que no realice ninguna validación del certificado
         TrustManager[] trustAllCerts = new TrustManager[]{
@@ -204,5 +307,14 @@ public class AnalisisData {
         HostnameVerifier allHostsValid = (hostname, session) -> true;
         HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
     }
-    
+
+    private void guardarXML() throws FileNotFoundException, IOException {
+        XMLOutputter xMLOutputter = new XMLOutputter();
+        xMLOutputter.output(this.document, new PrintWriter(Ruta.RUTAANALISIS));
+    }
+
+    public Sitio getSitio() {
+        return sitio;
+    }
+
 }//fin clase

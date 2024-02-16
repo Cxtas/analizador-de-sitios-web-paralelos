@@ -1,4 +1,7 @@
-
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package Domain;
 
 /**
@@ -9,11 +12,14 @@ public class Usuario {
     
     private String user;
     private String contrasenia;
-    private String tipo;
+    private String tipoUsuario;
+    private boolean activo;
 
-    public Usuario(String user, String contrasenia) {
+    public Usuario(String user, String contrasenia, String tipoUsuario, boolean activo) {
         this.user = user;
         this.contrasenia = contrasenia;
+        this.tipoUsuario = tipoUsuario;
+        this.activo = activo;
     }
 
     public String getUser() {
@@ -24,13 +30,16 @@ public class Usuario {
         return contrasenia;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getTipoUsuario() {
+        return tipoUsuario;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public boolean isActivo() {
+        return activo;
     }
-    
-    
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
 }

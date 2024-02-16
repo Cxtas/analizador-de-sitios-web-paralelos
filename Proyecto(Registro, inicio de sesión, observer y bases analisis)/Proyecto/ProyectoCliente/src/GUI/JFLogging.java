@@ -4,47 +4,41 @@
  */
 package GUI;
 
+import Business.AdministradorBusiness;
+import Business.ExaminadorBusiness;
 import Domain.Administrador;
-import Domain.ClienteSingleton;
 import Domain.Examinador;
 import Domain.Usuario;
 import Utility.GestionXML;
 import Utility.MyUtil;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 
 /**
  * @author Estephanie
  *
  */
-public class JFLogging extends javax.swing.JFrame implements Observer, Runnable {
+public class JFLogging extends javax.swing.JFrame {
 
     /**
      * Creates new form JFLogging
      */
-    private ClienteSingleton clienteSingleton;
-    private boolean verificado;
-    private boolean hilo;
     private Usuario usuario;
-    private String tipoUsuario;
-    private Thread thread;
 
-    public JFLogging() {
-        this.verificado = false;
-        this.hilo = true;
-        this.thread = new Thread(this);
-        this.usuario=null;
-        this.tipoUsuario = "";
-        clienteSingleton = ClienteSingleton.getInstance();
-        clienteSingleton.addObserver(this);
+    public JFLogging(){
+        this.usuario = null;
         initComponents();
-        this.thread.start();
+        setLocationRelativeTo(null);
     }
+    
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -120,12 +114,6 @@ public class JFLogging extends javax.swing.JFrame implements Observer, Runnable 
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(20, 218, Short.MAX_VALUE)
-                .addComponent(jbtnIngresar)
-                .addGap(176, 176, 176)
-                .addComponent(jbtnSalir)
-                .addGap(23, 23, 23))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(37, 37, 37)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -141,8 +129,15 @@ public class JFLogging extends javax.swing.JFrame implements Observer, Runnable 
                 .addContainerGap(182, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(108, 108, 108))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jbtnIngresar)
+                        .addGap(176, 176, 176)
+                        .addComponent(jbtnSalir)
+                        .addGap(23, 23, 23))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(108, 108, 108))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -187,27 +182,42 @@ public class JFLogging extends javax.swing.JFrame implements Observer, Runnable 
     }//GEN-LAST:event_jcbUsuarioActionPerformed
 
     private void jbtnIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnIngresarActionPerformed
-        Element eProtocolo;
-
         try {
-            if (this.jcbUsuario.getSelectedItem().equals("Administrador")) {
-                eProtocolo = GestionXML.agregarAdministrador("autenticarA", new Administrador(this.jtfUsuario.getText(),
-                        MyUtil.obtenerContraseniaCifrada(String.valueOf(this.jtfContrasenia.getPassword()), MyUtil.MD2)));
-                this.tipoUsuario = "administrador";
-                System.out.println(this.tipoUsuario);
-            } else {
-                eProtocolo = GestionXML.agregarExaminador("autenticarE", new Examinador(this.jtfUsuario.getText(),
-                        MyUtil.obtenerContraseniaCifrada(String.valueOf(this.jtfContrasenia.getPassword()), MyUtil.MD2)));
-                this.tipoUsuario = "examinador";
-                System.out.println(this.tipoUsuario);
-            }
+            AdministradorBusiness administradorBusiness = new AdministradorBusiness();
+            ExaminadorBusiness examinadorBusiness = new ExaminadorBusiness();
 
-            clienteSingleton.enviarDatos(GestionXML.xmlToString(eProtocolo));
-            
-        } catch (NoSuchAlgorithmException ex) {
+            if (this.jcbUsuario.getSelectedItem().equals("Administrador")) {//si es un administrador
+                Administrador verificado = administradorBusiness.buscarAdministrador(this.jtfUsuario.getText());//se busca a ver si está registrado
+                if (verificado != null && verificado.isActivo()) { // sí está registrado y activo
+                    this.usuario = verificado;//se guarda
+                    JFPrincipal ventana = new JFPrincipal(this.usuario);//se llama la ventana principal y se le pasa por parámetro el usuario que inició sesión
+                    this.setVisible(false);//se cierra esta
+                    ventana.setVisible(true);//se abre la ventana
+                } else { //si no, se envía un mensaje
+                    JOptionPane.showMessageDialog(this, "Datos invalidos");
+                    //se elimina la información de los campos
+                    this.jtfUsuario.setText("");
+                    this.jtfContrasenia.setText("");
+                }
+            } else {//entonces es examinador
+                Examinador verificado = examinadorBusiness.buscarExaminador(this.jtfUsuario.getText());//se busca en el archivo a ver si está registrado
+                if (verificado != null && verificado.isActivo()) {//sí está registrado y activo
+                    this.usuario = verificado; //se guarda el usuario
+                    JFPrincipal ventana = new JFPrincipal(this.usuario);//se llama la ventana principal y se le pasa por parámetro el usuario que inició sesión
+                    this.setVisible(false);//se cierra esta
+                    ventana.setVisible(true);//se abre la ventana
+                } else {//si no se valida, se notifica
+                    JOptionPane.showMessageDialog(this, "Datos invalidos");
+                    //se elimina la información de los campos
+                    this.jtfUsuario.setText("");
+                    this.jtfContrasenia.setText("");
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(JFLogging.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JDOMException ex) {
             Logger.getLogger(JFLogging.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }//GEN-LAST:event_jbtnIngresarActionPerformed
 
     private void jtfUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfUsuarioActionPerformed
@@ -216,7 +226,9 @@ public class JFLogging extends javax.swing.JFrame implements Observer, Runnable 
     }//GEN-LAST:event_jtfUsuarioActionPerformed
 
     private void jbtnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnSalirActionPerformed
+       //se cierra el programa
         this.dispose();
+        System.exit(0);
     }//GEN-LAST:event_jbtnSalirActionPerformed
 
     /**
@@ -233,17 +245,31 @@ public class JFLogging extends javax.swing.JFrame implements Observer, Runnable 
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JFLogging.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JFLogging.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(JFLogging.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JFLogging.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(JFLogging.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JFLogging.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(JFLogging.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JFLogging.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
@@ -269,49 +295,4 @@ public class JFLogging extends javax.swing.JFrame implements Observer, Runnable 
     private javax.swing.JTextField jtfUsuario;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public void update(Observable o, Object arg) {
-        
-        Element eProtocolo=(Element) arg;
-        
-      if (eProtocolo.getChild("dato").getValue().equals("null")) {
-        }else{
-          if(this.tipoUsuario.equals("administrador")){
-            this.usuario = GestionXML.xmlAAdministrador(eProtocolo);
-            this.usuario.setTipo("administrador");
-          }else{
-            this.usuario = GestionXML.xmlAExaminador(eProtocolo);
-            this.usuario.setTipo("examinador");
-      }
-      }
-        
-        this.verificado = true;
-    }
-
-    @Override
-    public void run() {
-        while (this.hilo) {
-            
-            try {
-                if (this.verificado) {
-                    if (this.usuario!=null) {
-                        JFPrincipal ventana = new JFPrincipal(this.usuario);
-                        ventana.setVisible(true);
-                        this.hilo=false;
-                        this.setVisible(false);
-//                        JIFRegistroUsuario.hilo=false;
-                        
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Datos invalidos");
-                        this.verificado = false;
-                    }
-                }
-                
-                Thread.sleep(10);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(JFLogging.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-    }
 }

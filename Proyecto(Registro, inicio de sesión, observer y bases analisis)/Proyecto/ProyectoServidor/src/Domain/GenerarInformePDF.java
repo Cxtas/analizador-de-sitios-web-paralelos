@@ -1,15 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Domain;
 
-import Utility.Ruta;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
 
 /**
  *
@@ -23,10 +17,6 @@ public class GenerarInformePDF extends Thread {
         this.sitio = sitio;
     }
 
-//    @Override
-//    public void run() {
-//        generarInforme();
-//    }
 
     public void generarInforme(Sitio sitio) {
         Document document = new Document();

@@ -6,6 +6,13 @@ package GUI;
 
 import Domain.Examinador;
 import Domain.Usuario;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JInternalFrame;
+import org.jdom.JDOMException;
 
 /**
  *
@@ -17,25 +24,46 @@ public class JFPrincipal extends javax.swing.JFrame {
      * Creates new form JFPrincipal
      */
     private Usuario usuario;
-    public JFPrincipal(Usuario usuario) {
-        this.usuario = usuario;
+
+    public JFPrincipal(Usuario usuario) {//recibe el usuario que inició sesión
+        this.usuario = usuario;//se guarda el usuario
         initComponents();
+        setLocationRelativeTo(null);
         permisos();
     }
     
-    //Este método abre los menús depende del tipo y rol de cada usuario
-    private void permisos(){
-        if(this.usuario.getTipo().equals("examinador")){
-            this.jmiNuevoUsuario.enable(false);
-            Examinador examinador = (Examinador)this.usuario;
-            switch (examinador.getRol()) {
-                case "digitador"->{this.jmiAnalisis.setEnabled(true);}
-                case "gestor"->{this.jmiGrafico.setEnabled(false);}
-                case "analista"->{}
-                    
-            }
-        }
+    //permite que el internal se muestre en el centro del desktop
+    private void centrar(JInternalFrame frame){
+        Dimension desktopSize = jDesktopPane1.getSize();
+        Dimension FrameSize = frame.getSize();
+        frame.setLocation((desktopSize.width - FrameSize.width)/2, (desktopSize.height- FrameSize.height)/2);
+        frame.show();
     }
+
+    //Este método abre los menús depende del tipo y rol de cada usuario
+    private void permisos() {
+        if (this.usuario.getTipoUsuario().equals("examinador")) {
+            this.jmRegistrar.setEnabled(false);//Los examinadores no pueden registrar usuarios
+            Examinador examinador = (Examinador) this.usuario;//establecer el usuario como examinador
+            switch (examinador.getRol()) { //depende del rol tiene acceso a distintos menús
+                case "digitador" -> {
+                    this.jmDatos.setEnabled(true);//ingresa urls
+                    this.jmTareas.setEnabled(false);//información sobre tareas
+                }
+                case "gestor" -> {
+                    this.jmResultados.setEnabled(false);//pdf, correo y estadísticas
+                    this.jmiGSolicitudes.setEnabled(true);//asigna tareas
+                }
+                case "analista" -> {
+                    this.jmAnalisis.setEnabled(true);//Solo el analista puede analizar las páginas
+                }
+
+            }
+        }else{//si es administrador solo ingresa al menu de registro
+            this.jmTareas.setEnabled(false);
+            this.jmResultados.setEnabled(false);
+        }
+    }//permisos
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -46,15 +74,28 @@ public class JFPrincipal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuItem1 = new javax.swing.JMenuItem();
         jDesktopPane1 = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
+        jmRegistrar = new javax.swing.JMenu();
         jmiNuevoUsuario = new javax.swing.JMenuItem();
-        jmiAsignarRol = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        jmiAnalisis = new javax.swing.JMenuItem();
-        jMenu3 = new javax.swing.JMenu();
+        jmiEliminarUsuarios = new javax.swing.JMenuItem();
+        jmDatos = new javax.swing.JMenu();
+        jmiIngresarDatos = new javax.swing.JMenuItem();
+        jmTareas = new javax.swing.JMenu();
+        jmiGSolicitudes = new javax.swing.JMenuItem();
+        jmiEstadoTareas = new javax.swing.JMenuItem();
+        jmAnalisis = new javax.swing.JMenu();
+        jmiAnalizar = new javax.swing.JMenuItem();
+        jmResultados = new javax.swing.JMenu();
         jmiGrafico = new javax.swing.JMenuItem();
+        jmiPDFenviar = new javax.swing.JMenuItem();
+        jmiCorreo = new javax.swing.JMenuItem();
+        jmSesion = new javax.swing.JMenu();
+        jmiCambioUsuario = new javax.swing.JMenuItem();
+        jmiSalir = new javax.swing.JMenuItem();
+
+        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -62,14 +103,14 @@ public class JFPrincipal extends javax.swing.JFrame {
         jDesktopPane1.setLayout(jDesktopPane1Layout);
         jDesktopPane1Layout.setHorizontalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 520, Short.MAX_VALUE)
+            .addGap(0, 800, Short.MAX_VALUE)
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 302, Short.MAX_VALUE)
+            .addGap(0, 577, Short.MAX_VALUE)
         );
 
-        jMenu1.setText("Registrar");
+        jmRegistrar.setText("Registrar");
 
         jmiNuevoUsuario.setText("Nuevo usuario");
         jmiNuevoUsuario.addActionListener(new java.awt.event.ActionListener() {
@@ -77,37 +118,117 @@ public class JFPrincipal extends javax.swing.JFrame {
                 jmiNuevoUsuarioActionPerformed(evt);
             }
         });
-        jMenu1.add(jmiNuevoUsuario);
+        jmRegistrar.add(jmiNuevoUsuario);
 
-        jmiAsignarRol.setText("Asignar roles");
-        jmiAsignarRol.addActionListener(new java.awt.event.ActionListener() {
+        jmiEliminarUsuarios.setText("Eliminar usuarios");
+        jmiEliminarUsuarios.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jmiAsignarRolActionPerformed(evt);
+                jmiEliminarUsuariosActionPerformed(evt);
             }
         });
-        jMenu1.add(jmiAsignarRol);
+        jmRegistrar.add(jmiEliminarUsuarios);
 
-        jMenuBar1.add(jMenu1);
+        jMenuBar1.add(jmRegistrar);
 
-        jMenu2.setText("Analisis");
+        jmDatos.setText("Datos");
+        jmDatos.setEnabled(false);
 
-        jmiAnalisis.setText("Establecer datos para el análisis");
-        jmiAnalisis.setEnabled(false);
-        jmiAnalisis.addActionListener(new java.awt.event.ActionListener() {
+        jmiIngresarDatos.setText("Establecer datos para el análisis");
+        jmiIngresarDatos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jmiAnalisisActionPerformed(evt);
+                jmiIngresarDatosActionPerformed(evt);
             }
         });
-        jMenu2.add(jmiAnalisis);
+        jmDatos.add(jmiIngresarDatos);
 
-        jMenuBar1.add(jMenu2);
+        jMenuBar1.add(jmDatos);
 
-        jMenu3.setText("Estadísticas");
+        jmTareas.setText("Tareas");
+
+        jmiGSolicitudes.setText("Gestionar solicitudes");
+        jmiGSolicitudes.setEnabled(false);
+        jmiGSolicitudes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiGSolicitudesActionPerformed(evt);
+            }
+        });
+        jmTareas.add(jmiGSolicitudes);
+
+        jmiEstadoTareas.setText("Estado de tareas");
+        jmiEstadoTareas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiEstadoTareasActionPerformed(evt);
+            }
+        });
+        jmTareas.add(jmiEstadoTareas);
+
+        jMenuBar1.add(jmTareas);
+
+        jmAnalisis.setText("Analisis");
+        jmAnalisis.setEnabled(false);
+        jmAnalisis.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmAnalisisActionPerformed(evt);
+            }
+        });
+
+        jmiAnalizar.setText("Analizar páginas");
+        jmiAnalizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiAnalizarActionPerformed(evt);
+            }
+        });
+        jmAnalisis.add(jmiAnalizar);
+
+        jMenuBar1.add(jmAnalisis);
+
+        jmResultados.setText("Resultados");
 
         jmiGrafico.setText("Gráfico");
-        jMenu3.add(jmiGrafico);
+        jmiGrafico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiGraficoActionPerformed(evt);
+            }
+        });
+        jmResultados.add(jmiGrafico);
 
-        jMenuBar1.add(jMenu3);
+        jmiPDFenviar.setText("Generar PDF");
+        jmiPDFenviar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiPDFenviarActionPerformed(evt);
+            }
+        });
+        jmResultados.add(jmiPDFenviar);
+
+        jmiCorreo.setText("Enviar correo");
+        jmiCorreo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiCorreoActionPerformed(evt);
+            }
+        });
+        jmResultados.add(jmiCorreo);
+
+        jMenuBar1.add(jmResultados);
+
+        jmSesion.setText("Sesión");
+
+        jmiCambioUsuario.setText("Cambiar de usuario");
+        jmiCambioUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiCambioUsuarioActionPerformed(evt);
+            }
+        });
+        jmSesion.add(jmiCambioUsuario);
+
+        jmiSalir.setText("Salir");
+        jmiSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiSalirActionPerformed(evt);
+            }
+        });
+        jmSesion.add(jmiSalir);
+
+        jMenuBar1.add(jmSesion);
 
         setJMenuBar(jMenuBar1);
 
@@ -125,23 +246,94 @@ public class JFPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //Se abren las ventanas depende del menú seleccionado
     private void jmiNuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiNuevoUsuarioActionPerformed
         JIFRegistroUsuario ventanaR = new JIFRegistroUsuario();
         this.jDesktopPane1.add(ventanaR);
-        ventanaR.setVisible(true);
+        centrar(ventanaR);
     }//GEN-LAST:event_jmiNuevoUsuarioActionPerformed
 
-    private void jmiAnalisisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiAnalisisActionPerformed
+    private void jmiIngresarDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiIngresarDatosActionPerformed
         JIFDatosAnalisis ventana = new JIFDatosAnalisis();
         this.jDesktopPane1.add(ventana);
-        ventana.setVisible(true);
-    }//GEN-LAST:event_jmiAnalisisActionPerformed
+        centrar(ventana);
+    }//GEN-LAST:event_jmiIngresarDatosActionPerformed
 
-    private void jmiAsignarRolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiAsignarRolActionPerformed
-        JIFAsignarRol ventana = new JIFAsignarRol();
+    private void jmiEliminarUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiEliminarUsuariosActionPerformed
+        JIFEliminarUsuarios ventana = new JIFEliminarUsuarios();
         this.jDesktopPane1.add(ventana);
-        ventana.setVisible(true);
-    }//GEN-LAST:event_jmiAsignarRolActionPerformed
+        centrar(ventana);
+    }//GEN-LAST:event_jmiEliminarUsuariosActionPerformed
+
+    private void jmiGSolicitudesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiGSolicitudesActionPerformed
+        try {
+            JIFAsignarTarea tarea = new JIFAsignarTarea();
+            this.jDesktopPane1.add(tarea);
+            centrar(tarea);
+        } catch (IOException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JDOMException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jmiGSolicitudesActionPerformed
+
+    private void jmiEstadoTareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiEstadoTareasActionPerformed
+        JIFEstadoTareas tarea = new JIFEstadoTareas();
+        this.jDesktopPane1.add(tarea);
+        centrar(tarea);
+
+    }//GEN-LAST:event_jmiEstadoTareasActionPerformed
+
+    private void jmAnalisisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmAnalisisActionPerformed
+    }//GEN-LAST:event_jmAnalisisActionPerformed
+
+    private void jmiGraficoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiGraficoActionPerformed
+        JIFGrafico grafico = new JIFGrafico(this.usuario);
+        this.jDesktopPane1.add(grafico);
+        centrar(grafico);
+    }//GEN-LAST:event_jmiGraficoActionPerformed
+
+    private void jmiPDFenviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiPDFenviarActionPerformed
+        try {
+            JIFGenerarPDF generar = new JIFGenerarPDF();
+            this.jDesktopPane1.add(generar);
+            centrar(generar);
+        } catch (IOException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JDOMException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jmiPDFenviarActionPerformed
+
+    private void jmiCambioUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiCambioUsuarioActionPerformed
+        this.setVisible(false);
+        JFLogging logging = new JFLogging();
+        logging.setVisible(true);
+    }//GEN-LAST:event_jmiCambioUsuarioActionPerformed
+
+    private void jmiSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiSalirActionPerformed
+      //se cierra el programa
+        this.dispose();
+        System.exit(0);
+    }//GEN-LAST:event_jmiSalirActionPerformed
+
+    private void jmiAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiAnalizarActionPerformed
+        try {
+            JIFRealizarAnalisis analisis = new JIFRealizarAnalisis(this.usuario);//se le envía el usuario que inicia sesión
+            this.jDesktopPane1.add(analisis);
+            centrar(analisis);
+        } catch (IOException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JDOMException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jmiAnalizarActionPerformed
+
+    private void jmiCorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiCorreoActionPerformed
+        JIFEnviarCorreo ec= new JIFEnviarCorreo();
+        this.jDesktopPane1.add(ec);
+        centrar(ec);
+    }//GEN-LAST:event_jmiCorreoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -169,6 +361,9 @@ public class JFPrincipal extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(JFPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -178,15 +373,27 @@ public class JFPrincipal extends javax.swing.JFrame {
         });
     }
 
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane jDesktopPane1;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jmiAnalisis;
-    private javax.swing.JMenuItem jmiAsignarRol;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenu jmAnalisis;
+    private javax.swing.JMenu jmDatos;
+    private javax.swing.JMenu jmRegistrar;
+    private javax.swing.JMenu jmResultados;
+    private javax.swing.JMenu jmSesion;
+    private javax.swing.JMenu jmTareas;
+    private javax.swing.JMenuItem jmiAnalizar;
+    private javax.swing.JMenuItem jmiCambioUsuario;
+    private javax.swing.JMenuItem jmiCorreo;
+    private javax.swing.JMenuItem jmiEliminarUsuarios;
+    private javax.swing.JMenuItem jmiEstadoTareas;
+    private javax.swing.JMenuItem jmiGSolicitudes;
     private javax.swing.JMenuItem jmiGrafico;
+    private javax.swing.JMenuItem jmiIngresarDatos;
     private javax.swing.JMenuItem jmiNuevoUsuario;
+    private javax.swing.JMenuItem jmiPDFenviar;
+    private javax.swing.JMenuItem jmiSalir;
     // End of variables declaration//GEN-END:variables
 }

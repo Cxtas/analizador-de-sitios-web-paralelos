@@ -20,8 +20,8 @@ public class Servidor {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws JDOMException, IOException, NoSuchAlgorithmException, KeyManagementException {
-//        JFLogging logging = new JFLogging();
-//         logging.setVisible(true);
+        JFLogging logging = new JFLogging();
+         logging.setVisible(true);
     }
     
 }
