@@ -288,9 +288,15 @@ public class JFPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jmAnalisisActionPerformed
 
     private void jmiGraficoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiGraficoActionPerformed
-        JIFGrafico grafico = new JIFGrafico(this.usuario);
-        this.jDesktopPane1.add(grafico);
-        centrar(grafico);
+        try {
+            JIFGrafico grafico = new JIFGrafico(this.usuario);
+            this.jDesktopPane1.add(grafico);
+            centrar(grafico);
+        } catch (IOException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JDOMException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jmiGraficoActionPerformed
 
     private void jmiPDFenviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiPDFenviarActionPerformed

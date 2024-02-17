@@ -161,10 +161,10 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnGraficarPastelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGraficarPastelActionPerformed
-
+        this.sitio = this.sitioBusiness.obtenerSitio((String)this.jcbSitios.getSelectedItem());
         if(this.sitioBusiness!=null && this.sitio!=null){
             DefaultPieDataset pieDataset = new DefaultPieDataset();
-            this.sitio = this.sitioBusiness.obtenerSitio(this.jcbSitios.toString());
+           
 
             pieDataset.setValue("Enlaces", this.sitio.getEnlaces());
             pieDataset.setValue("Imagenes", this.sitio.getImagenes());
@@ -191,9 +191,10 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jbtnVolverActionPerformed
 
     private void jbtnBarrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnBarrasActionPerformed
+        this.sitio = this.sitioBusiness.obtenerSitio((String)this.jcbSitios.getSelectedItem());
         if(this.sitioBusiness!=null && this.sitio!=null){
             DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-            this.sitio = this.sitioBusiness.obtenerSitio(this.jcbSitios.toString());
+            
             dataset.setValue(this.sitio.getEnlaces(), "Cantidad", "Enlaces");
             dataset.setValue(this.sitio.getImagenes(), "Cantidad", "Imagenes");
             dataset.setValue(this.sitio.getSubtitulos(), "Cantidad", "Subtitulos");
