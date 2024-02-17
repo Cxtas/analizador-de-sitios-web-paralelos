@@ -96,63 +96,6 @@ public class AnalisisData {
             Elements videos = doc.select("video");
             this.sitio.setVideos(videos.size());
 
-//            // Almacenar los datos en un archivo
-//            try (BufferedWriter writer = new BufferedWriter(new FileWriter("datos_extraidos.xml"))) {
-//                writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-//                writer.write("<datos>\n");
-//                writer.write("  <num_imagenes>" + imagenCont + "</num_imagenes>\n");
-//                writer.write("  <num_titulos>" + tituloCOnt + "</num_titulos>\n");
-//                writer.write("  <num_subtitulos>" + subtituloCont + "</num_subtitulos>\n");
-//                writer.write("  <num_enlaces>" + enlanceCont + "</num_enlaces>\n");
-//                writer.write("  <num_tablas>" + tablaCont + "</num_tablas>\n");
-//                writer.write("  <num_videos>" + videoCOnt + "</num_videos>\n\n");
-//
-//                writer.write("  <imagenes>\n");
-//                for (Element imagen : imagenes) {
-////                    writer.write("    <imagen src=\"" + imagen.attr("src") + "\" />\n");
-//                    this.imagenesURL.add( imagen.attr("src"));
-//                }
-////                writer.write("  </imagenes>\n");
-////
-////                writer.write("  <titulos>\n");
-//                for (Element titulo : titulos) {
-////                    writer.write("    <titulo>" + titulo.text() + "</titulo>\n");
-//                   this.titulo= titulo.text();
-//                }
-////                writer.write("  </titulos>\n");
-////
-////                writer.write("  <subtitulos>\n");
-////                for (Element subtitulo : subtitulos) {
-////                    writer.write("    <subtitulo>" + subtitulo.text() + "</subtitulo>\n");
-////                }
-////                writer.write("  </subtitulos>\n");
-////
-////                writer.write("  <enlaces>\n");
-//                for (Element enlace : enlaces) {
-////                    writer.write("    <enlace href=\"" + enlace.attr("href") + "\" />\n");
-//                    writer.write("    <enlace href=\"" + enlace.attr("href") + "\" />\n");
-//                }
-//                writer.write("  </enlaces>\n");
-//
-//                writer.write("  <tablas>\n");
-//                for (Element tabla : tablas) {
-//                    writer.write("    <tabla>" + tabla.outerHtml() + "</tabla>\n");
-//                }
-//                writer.write("  </tablas>\n");
-//
-//                writer.write("  <videos>\n");
-//                for (Element video : videos) {
-//                    writer.write("    <video src=\"" + video.attr("src") + "\" />\n");
-//                }
-//                writer.write("  </videos>\n");
-//
-//                // Llamar al método precios para guardar los precios
-//                precios(url, writer);
-//
-//                writer.write("</datos>");
-//            }
-//
-//            System.out.println("Datos extraídos y almacenados en 'datos_extraidos.xml'");
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -175,11 +118,10 @@ public class AnalisisData {
             Document doc = Jsoup.connect(url).get();
             //recoge los enlaces
             this.enlaces = doc.select("a");
-            int it = 0;//ponerle número al enlace
             for (Element enlace : this.enlaces) {
                 this.aEnlaces.add(enlace.attr("href"));
-                it++;
             }
+
             this.sitio.setaEnlaces(this.aEnlaces);
 
         } catch (NoSuchAlgorithmException ex) {
@@ -223,23 +165,23 @@ public class AnalisisData {
 
             //Descarga imágenes
             ArrayList<DescargaArchivo> hiloDescarga = new ArrayList<>();
-            File carpeta = new File(this.titulo + "/");
+            String tituloSinSignos = this.titulo.replaceAll("\\p{Punct}", "");//quita los signos para evitar que no se cree la carpeta
+            File carpeta = new File(tituloSinSignos + "/");
             boolean crear = carpeta.mkdirs();//crea la carpeta cada vez
-            if (carpeta.exists()) {//valida que haya una carpeta para guardar las imágenes
+            if (carpeta.exists()) {
                 for (int i = 0; i < this.imagenesURL.size(); i++) {
                     String linea = this.imagenesURL.get(i);
                     //busca el formato que tiene la imagen
                     int format = linea.lastIndexOf(".");
-                    String formato = linea.substring(format);
-//                System.out.println(linea);//links de imagenes
+                    String formato = ".jpg";
+                    if (format != -1) {//evita que haya error si no se encuentra el .formato
+                        formato = linea.substring(format);
+                    }
                     hiloDescarga.add(new DescargaArchivo(linea, carpeta.getName() + "/" + i + formato));//Le da a hilo los datos para descargar
                 }
                 for (int i = 0; i < hiloDescarga.size(); i++) {
                     hiloDescarga.get(i).start();//empiezan las descargas
                 }
-
-            } else {
-                return false;
             }
 
         } catch (NoSuchAlgorithmException ex) {
@@ -269,29 +211,45 @@ public class AnalisisData {
 
             for (Element span : spansPrice) {
                 String priceText = span.text();//toma el texto de la etiqueta
-                if (!priceText.equals("")) {//si no está vacio
-                    if (esPrecio(priceText))//si es un precio
-                    {
+                if ((!priceText.equals("")) && (esPrecio(priceText))) {//si no está vacio
+                    String soloNum = priceText.replaceAll("[^0-9]", "");//para verificar que sea mayor a 0
+                    int precioInt = Integer.parseInt(soloNum);
+                    if (precioInt > 0) {
                         precios.add(priceText);//se agrega al array
                     }
                 }
             }
-
+            
             if (precios.isEmpty()) {//si no funcionó el anterior y el array está vacio
                 Elements spans = doc.select("span"); //se prueba con el span solito
                 for (Element spanOne : spans) {
-                    if (spanOne.children().isEmpty()) {//algunos precios vienen con el span solito <span></span>
+                    if (spanOne.hasClass("price") || spanOne.hasClass("price product-price") || spanOne.hasClass("woocommerce-Price-currencySymbol")) {//si span solito tiene la clase price
                         String priceText = spanOne.text();//toma el texto
-                        if (!priceText.equals("")) //si no está vacio
-                        {
-                            if (esPrecio(priceText))//si es un precio
-                            {
-                                precios.add(priceText);//se añade
+                        if ((!priceText.equals("")) && (esPrecio(priceText))) { //si no está vacio
+                            String soloNum = priceText.replaceAll("[^0-9]", "");//para verificar que sea mayor a 0
+                            int precioInt = Integer.parseInt(soloNum);
+                            if (precioInt > 0) {
+                                precios.add(priceText);//se agrega al array
                             }
                         }
                     }
                 }
-            }//empty
+            }
+
+            if (precios.isEmpty()) {
+                for (Element span : spansPrice) {
+                    String priceText = span.text();
+                    precios.add(priceText);
+                }
+            }
+            
+            if (precios.isEmpty()) {//si no funcionó el anterior y el array está vacio
+                Elements bdis = doc.select("bdi"); //se prueba con el span solito
+                for (Element bdi : bdis) {
+                    String priceText = bdi.text();//toma el texto
+                    precios.add(priceText);//se agrega al array
+                }
+            }
 
             //mostrar precios
             for (int i = 0; i < precios.size(); i++) {
@@ -304,7 +262,7 @@ public class AnalisisData {
 
             String ptitle = "";
             for (Element title : aTitle) {
-                if (title.hasClass("product-item-link") || title.hasClass("product-name")) {//los que tengan algunas estas clases
+                if (title.hasClass("product-item-link") || title.hasClass("product-name") || title.hasClass("title")) {//los que tengan algunas estas clases
                     ptitle = title.text();
                 }
                 //evita que se guarden datos en blanco o repetidos
@@ -313,7 +271,17 @@ public class AnalisisData {
                         productosN.add(ptitle);
                     }
                 }
+            }//for
+
+            if (productosN.isEmpty()) {
+                Elements productos2 = doc.select("[class~=product-title]");
+                // Si hay elementos que tienen la clase "product-title"
+                for (Element elemento : productos2) {
+                    ptitle = elemento.text();
+                    System.out.println(ptitle);
+                }
             }
+
             //se muestran los nombres
             for (int i = 0; i < productosN.size(); i++) {
                 System.out.println("Producto: " + productosN.get(i));
@@ -322,41 +290,13 @@ public class AnalisisData {
             //añade los precios y nombres al array de sitio
             this.sitio.setProductos(productosN);
             this.sitio.setPrecios(precios);
-//            // Obtener el documento HTML de una página web
-//            Document doc = Jsoup.connect(url).get();
-//            // Buscar elementos que contengan precios
-//            Elements allElements = doc.getAllElements();
-//            Elements priceElements = new Elements();
-//            for (Element element : allElements) {
-//                String text = element.text();
-//                if (containsPrice(text)) {
-//                    System.out.println(element);
-//                    priceElements.add(element);
-//                }
-//            }
-//
-//            // Extraer y almacenar los precios en el archivo XML
-//            for (Element element : priceElements) {
-//                // Extraer el texto del elemento
-//                String text = element.text();
-//                // Utilizar expresiones regulares para encontrar el precio
-//                Pattern pattern = Pattern.compile("[€$£¥:]\\s*\\d+(\\.\\d+)?");
-//                Matcher matcher = pattern.matcher(text);
-//                while (matcher.find()) {
-//                    String price = matcher.group();
-////                    System.out.println(price);
-//                    //writer.write("  <precio>" + price + "</precio>\n");
-//                    this.sitio.addProductos("nombre", price);//guarda cada producto
-//                }
-//            }
 
-//            System.out.println("Precios extraídos y almacenados en 'datos_extraidos.xml'");
         } catch (IOException e) {
             // Manejo de cualquier excepción de entrada/salida
             System.out.println("Ocurrió un error al procesar la solicitud HTTP: " + e.getMessage());
             e.printStackTrace();
             return false;
-        }catch (NullPointerException ex) {
+        } catch (NullPointerException ex) {
             Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }

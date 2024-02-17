@@ -57,7 +57,7 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
     public void run() {
         while (true) {
             this.tareaSelected = this.tareaBusiness.buscarTarea(jcbTareasPendientes.getSelectedItem().toString());
-            this.jtaResultado.setText("");
+//            this.jtaResultado.setText("");
             actualizarDetalle();
         }
     }
@@ -278,7 +278,6 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
                 //Elimina del combobox y del array la página que ya ha sido analizada
                 this.tareas.remove(this.jcbTareasPendientes.getSelectedIndex());
                 this.jcbTareasPendientes.removeItemAt(this.jcbTareasPendientes.getSelectedIndex());
-                jtaResultado.setText("");
             }
 
         } catch (NullPointerException ex) {

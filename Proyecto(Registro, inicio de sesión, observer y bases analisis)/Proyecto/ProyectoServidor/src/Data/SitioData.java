@@ -79,7 +79,7 @@ public class SitioData {
             Element eaEnlace = new Element("enlace");
             eaEnlace.addContent(sitio.getaEnlaces().get(i));
 
-            eaEnlace.addContent(eaEnlace);
+            eaEnlaces.addContent(eaEnlace);
         }
 
         Element eProductos = new Element("productos");
@@ -110,7 +110,7 @@ public class SitioData {
         eSitio.addContent(eTablas);
         eSitio.addContent(eaEnlaces);
         eSitio.addContent(eProductos);
-        eSitio.addContent(eProductos);
+        eSitio.addContent(ePrecios);
 
         this.root.addContent(eSitio);
         guardarXML();
