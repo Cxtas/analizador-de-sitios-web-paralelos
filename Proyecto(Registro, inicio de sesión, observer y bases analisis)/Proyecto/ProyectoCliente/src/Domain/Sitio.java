@@ -126,6 +126,11 @@ public class Sitio {
     public void setaEnlaces(ArrayList<String> aEnlaces) {
         this.aEnlaces = aEnlaces;
     }
+
+    @Override
+    public String toString() {
+        return "Sitio{" + "url=" + url + ", imagenes=" + imagenes + ", enlaces=" + enlaces + ", videos=" + videos + ", titulos=" + titulos + ", subtitulos=" + subtitulos + ", tablas=" + tablas + ", aEnlaces=" + aEnlaces + ", productos=" + productos + ", precios=" + precios + '}';
+    }
     
     
     

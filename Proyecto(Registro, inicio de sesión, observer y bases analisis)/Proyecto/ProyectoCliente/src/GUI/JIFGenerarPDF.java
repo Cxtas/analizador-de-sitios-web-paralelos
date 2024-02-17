@@ -157,7 +157,7 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed
-        this.setVisible(false);
+        this.dispose();
     }//GEN-LAST:event_jbtnVolverActionPerformed
 
     private void jcbTareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbTareasActionPerformed
@@ -166,7 +166,8 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
 
     private void jbtnGenerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGenerarActionPerformed
         Sitio sitio = this.sitioBusiness.obtenerSitio(this.jcbTareas.getSelectedItem().toString());
-        gipdf.generarInforme(sitio);
+        System.out.println(sitio);
+//        gipdf.generarInforme(sitio);
     }//GEN-LAST:event_jbtnGenerarActionPerformed
 
 

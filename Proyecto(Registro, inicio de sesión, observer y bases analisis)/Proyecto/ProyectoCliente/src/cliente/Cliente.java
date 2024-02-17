@@ -4,7 +4,12 @@
  */
 package cliente;
 
+import Data.SitioData;
+import Domain.Sitio;
 import GUI.JFLogging;
+import java.io.IOException;
+import java.util.ArrayList;
+import org.jdom.JDOMException;
 
 /**
  *
@@ -13,10 +18,16 @@ import GUI.JFLogging;
 public class Cliente {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, JDOMException {
 
-            JFLogging ventana = new JFLogging();
-            ventana.setVisible(true);
+//            JFLogging ventana = new JFLogging();
+//            ventana.setVisible(true);
+            SitioData sitioData= new SitioData();
+            ArrayList<Sitio>sitios= sitioData.obtenerSitios();
+            for (int i = 0; i < sitios.size(); i++) {
+                System.out.println(sitios.get(i));
+            
+        }
         }
     }
 

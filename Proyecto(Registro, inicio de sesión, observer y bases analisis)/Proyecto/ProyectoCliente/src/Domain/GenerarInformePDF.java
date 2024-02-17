@@ -11,10 +11,10 @@ import java.io.FileOutputStream;
  */
 public class GenerarInformePDF extends Thread {
     
-    private Sitio sitio;
+    
 
     public GenerarInformePDF () {//Sitio sitio
-        this.sitio = sitio;
+       
     }
 
 
@@ -22,7 +22,7 @@ public class GenerarInformePDF extends Thread {
         Document document = new Document();
         try {
             int contador = 1;
-            String nombreArchivo = "InformeAnalisis_" + contador + ".pdf";
+            String nombreArchivo = "InformeAnalisis_" + sitio.getUrl() + ".pdf";
             PdfWriter.getInstance(document, new FileOutputStream(nombreArchivo));
             document.open();
 //            for (Sitio sitio : sitios) {

@@ -57,7 +57,7 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
     public void run() {
         while (true) {
             this.tareaSelected = this.tareaBusiness.buscarTarea(jcbTareasPendientes.getSelectedItem().toString());
-            this.jtaResultado.setText("");
+            this.jtaResultado.getText();
             actualizarDetalle();
         }
     }
@@ -231,9 +231,13 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
             this.analisisBusiness = new AnalisisBusiness();
 
             if (this.tareaSelected.isAnalisis0()) { //Análisis de elementos que conforman un sitio web.
+              
+                
                 hecho1 = this.analisisBusiness.cantidadElementos(this.tareaSelected.getUrl());//Crea un sitio y le asigna la cantidad de los elementos de este tipo de analisis
+//                System.out.println(hecho1);
                 if (hecho1) {
                     this.sitio = this.analisisBusiness.getSitio();
+                    System.out.println(this.sitio);
                     this.jtaResultado.append("Enlaces: " + this.sitio.getEnlaces() + "\n"
                             + "Imagenes: " + this.sitio.getImagenes() + "\n"
                             + "Titulos: " + this.sitio.getTitulos() + "\n"
@@ -244,7 +248,7 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
                     JOptionPane.showMessageDialog(this, "No se pudo contar los elementos");
                 }
             }//analisis1
-
+            
             if (this.tareaSelected.isAnalisis1()) {//Análisis de elementos y extracción. seleccionan img y/o enlaces
                 if (this.tareaSelected.isImagenes()) {//si se pidió imagenes
                     hecho2 = this.analisisBusiness.descargarImagen(this.tareaSelected.getUrl());

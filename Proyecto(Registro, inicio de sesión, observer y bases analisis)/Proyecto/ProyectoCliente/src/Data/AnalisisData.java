@@ -162,7 +162,8 @@ public class AnalisisData {
 
             //Descarga imágenes
             ArrayList<DescargaArchivo> hiloDescarga = new ArrayList<>();
-            File carpeta = new File(this.titulo + "/");
+            String tituloSinSignos= this.titulo.replaceAll("\\p{Punct}", "");
+            File carpeta = new File(tituloSinSignos + "/");
             boolean crear = carpeta.mkdirs();//crea la carpeta cada vez
             if (carpeta.exists()) {//valida que haya una carpeta para guardar las imágenes
                 for (int i = 0; i < this.imagenesURL.size(); i++) {
@@ -235,7 +236,7 @@ public class AnalisisData {
 
             //mostrar precios
             for (int i = 0; i < precios.size(); i++) {
-                System.out.println("Precio: " + precios.get(i));
+//                System.out.println("Precio: " + precios.get(i));
             }
 
             //nombres
@@ -256,7 +257,7 @@ public class AnalisisData {
             }
             //se muestran los nombres
             for (int i = 0; i < productosN.size(); i++) {
-                System.out.println("Producto: " + productosN.get(i));
+//                System.out.println("Producto: " + productosN.get(i));
             }
 
             //añade los precios y nombres al array de sitio

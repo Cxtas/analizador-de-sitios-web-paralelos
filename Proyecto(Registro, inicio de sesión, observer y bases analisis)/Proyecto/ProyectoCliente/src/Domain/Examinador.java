@@ -29,14 +29,5 @@ public class Examinador extends Usuario{
         this.tareas.add(tarea);
     }
     
-//    public void verificarRol(){
-//        if(this.rol.equals("analista"))
-//            this.tareas= new ArrayList<>();
-//            new AnalisisBusiness();
-//        if(this.rol.equals("gestor"))
-//            this.tareas= new ArrayList<>();
-//        if(this.rol.equals("digitador"))    
-//            this.sitios=new ArrayList<>();
-//    }//rol
     
 }//fin clase

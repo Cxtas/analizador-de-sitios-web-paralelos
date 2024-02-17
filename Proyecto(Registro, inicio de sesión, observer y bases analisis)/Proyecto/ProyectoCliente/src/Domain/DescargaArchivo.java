@@ -15,7 +15,7 @@ public class DescargaArchivo extends Thread {
     private String url;
     private String destino;
 
-    public DescargaArchivo(String url, String destino) {
+     public DescargaArchivo(String url, String destino) {
         this.url = url;
         this.destino = destino;
     }
@@ -34,11 +34,11 @@ public class DescargaArchivo extends Thread {
                         fileOutputStream.write(buffer, 0, bytesRead);
                     }
 
-                    System.out.println("Descarga completada: " + destino);
+//                    System.out.println("Descarga completada: " + destino);
                 }
 
             } catch (IOException e) {
-                System.err.println("Error al descargar " + url + ": " + e.getMessage());
+//                System.err.println("Error al descargar " + url + ": " + e.getMessage());
             }
 //        }
     }
