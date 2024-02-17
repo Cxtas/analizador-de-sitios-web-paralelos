@@ -22,14 +22,15 @@ public class Sitio {
 
     public Sitio(String url) {
         this.imagenes = 0;
-        this.enlaces = 0;
-        this.videos = 0;
-        this.titulos = 0;
-        this.subtitulos = 0;
-        this.tablas = 0;
-        this.productos=new ArrayList<>();
-        this.precios=new ArrayList<>();
-        this.url = url;
+    this.enlaces = 0;
+    this.videos = 0;
+    this.titulos = 0;
+    this.subtitulos = 0;
+    this.tablas = 0;
+    this.productos = new ArrayList<>();
+    this.precios = new ArrayList<>();
+    this.aEnlaces = new ArrayList<>();
+    this.url = url;
     }
 
     public Sitio(String url,int imagenes, int enlaces, int videos, int titulos, int subtitulos, int tablas, ArrayList<String> aEnlaces, 

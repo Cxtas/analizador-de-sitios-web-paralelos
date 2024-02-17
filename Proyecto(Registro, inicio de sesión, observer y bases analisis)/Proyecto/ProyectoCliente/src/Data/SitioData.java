@@ -153,13 +153,9 @@ public class SitioData {
                 return sitios.get(i);
             }
  
-                
-            
-            
         }
         return null;
         
-//
     }//obtenerSitio
 
 }
