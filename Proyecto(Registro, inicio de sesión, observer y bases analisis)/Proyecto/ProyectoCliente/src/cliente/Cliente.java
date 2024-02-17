@@ -20,14 +20,9 @@ public class Cliente {
 
     public static void main(String[] args) throws IOException, JDOMException {
 
-//            JFLogging ventana = new JFLogging();
-//            ventana.setVisible(true);
-            SitioData sitioData= new SitioData();
-            ArrayList<Sitio>sitios= sitioData.obtenerSitios();
-            for (int i = 0; i < sitios.size(); i++) {
-                System.out.println(sitios.get(i));
-            
-        }
+            JFLogging ventana = new JFLogging();
+            ventana.setVisible(true);
+         
         }
     }
 

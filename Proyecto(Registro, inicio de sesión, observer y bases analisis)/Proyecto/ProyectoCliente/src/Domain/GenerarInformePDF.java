@@ -22,7 +22,7 @@ public class GenerarInformePDF extends Thread {
         Document document = new Document();
         try {
             int contador = 1;
-            String nombreArchivo = "InformeAnalisis_" + sitio.getUrl() + ".pdf";
+            String nombreArchivo = "InformeAnalisis_" +contador + ".pdf";
             PdfWriter.getInstance(document, new FileOutputStream(nombreArchivo));
             document.open();
 //            for (Sitio sitio : sitios) {

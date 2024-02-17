@@ -167,7 +167,7 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
     private void jbtnGenerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGenerarActionPerformed
         Sitio sitio = this.sitioBusiness.obtenerSitio(this.jcbTareas.getSelectedItem().toString());
         System.out.println(sitio);
-//        gipdf.generarInforme(sitio);
+        gipdf.generarInforme(sitio);
     }//GEN-LAST:event_jbtnGenerarActionPerformed
 
 

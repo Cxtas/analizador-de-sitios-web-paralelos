@@ -115,92 +115,37 @@ public class SitioData {
 
     //se obtienen todas los sitios
     public ArrayList<Sitio> obtenerSitios() {
-        ArrayList<Sitio> sitios = new ArrayList<>();
-        
-        List eSitios = this.root.getChildren();
-
-        for (Object objetoActual : eSitios) {
-            Element eActual = (Element) objetoActual;
-
-            //buscar los enlaces del sitio
-            ArrayList<String> aEnlaces = new ArrayList<>();
-            List listaEnlaces = eActual.getChild("enlaces").getChildren();
-            for (Object object1 : listaEnlaces) {
-                Element enlaceActu = (Element) object1;
-
-                aEnlaces.add(enlaceActu.getChild("enlace").getValue());
-            }
-            
-                
-            
-            //buscar los productos del sitio
-            ArrayList<String> productos = new ArrayList<>();
-            List listaProductos = eActual.getChild("productos").getChildren();
-            for (Object object1 : listaProductos) {
-                Element productoActual = (Element) object1;
-                productos.add(productoActual.getChild("producto").getValue());
-            }
-            
-            //buscar los precios del sitio
-            ArrayList<String> precios = new ArrayList<>();
-            List listaPrecios = eActual.getChild("precios").getChildren();
-            for (Object object1 : listaPrecios) {
-                Element precioActual = (Element) object1;
-                productos.add(precioActual.getChild("precio").getValue());
-            }
-
-            Sitio sitio = new Sitio(eActual.getChild("url").getValue(), Integer.parseInt(eActual.getChild("imagenes").getValue()),
-                    Integer.parseInt(eActual.getChild("enlaces").getValue()), Integer.parseInt(eActual.getChild("videos").getValue()),
-                    Integer.parseInt(eActual.getChild("titulos").getValue()), Integer.parseInt(eActual.getChild("subtitulos").getValue()),
-                    Integer.parseInt(eActual.getChild("tablas").getValue()), aEnlaces, productos, precios);
-            sitios.add(sitio);
-        }//for
+         ArrayList<Sitio> sitios = new ArrayList<>();
+        for (Object sitioa : this.root.getChildren("sitio")) {
+            Element sitio=(Element) sitioa;
+            Sitio nuevoSitio = new Sitio(
+                sitio.getChildText("url"),
+                Integer.parseInt(sitio.getChildText("imagenes")),
+                Integer.parseInt(sitio.getChildText("enlaces")),
+                Integer.parseInt(sitio.getChildText("videos")),
+                Integer.parseInt(sitio.getChildText("titulos")),
+                Integer.parseInt(sitio.getChildText("subtitulos")),
+                Integer.parseInt(sitio.getChildText("tablas")),
+                extraerArrayListDeElement(sitio.getChild("eanlaces").getChildren("enlace")),
+                extraerArrayListDeElement(sitio.getChild("productos").getChildren("producto")),
+                extraerArrayListDeElement(sitio.getChild("precios").getChildren("precio"))
+            );
+            sitios.add(nuevoSitio);
+        }
         return sitios;
     }//obtenerSitios
+    
+    
+
+    private ArrayList<String> extraerArrayListDeElement(List<Element> elementos) {
+        ArrayList<String> lista = new ArrayList<>();
+        for (Element elemento : elementos) {
+            lista.add(elemento.getText());
+        }
+        return lista;
+    }
 
     public Sitio obtenerSitio(String url) {
-//        List elementList = this.root.getChildren();
-//
-//        for (Object object : elementList) {
-//            Element eSitioTemp = (Element) object;
-//
-//            //buscar los enlaces del sitio
-//            ArrayList<String> aEnlaces = new ArrayList<>();
-//            List listaEnlaces = eSitioTemp.getChild("enlaces").getChildren();
-//            for (Object object1 : listaEnlaces) {
-//                
-//                Element enlaceActu = (Element) object1;
-//
-//                aEnlaces.add(enlaceActu.getChild("enlace").getValue());
-//            }
-//
-//            //buscar los productos del sitio
-//            ArrayList<String> productos = new ArrayList<>();
-//            List listaProductos = eSitioTemp.getChild("productos").getChildren();
-//            System.out.println(eSitioTemp);
-//            for (Object object1 : listaProductos) {
-//                Element productoActual = (Element) object1;
-//                productos.add(productoActual.getChild("producto").getValue());
-//            }
-//            
-//            
-//            //buscar los precios del sitio
-//            ArrayList<String> precios = new ArrayList<>();
-//            List listaPrecios = eSitioTemp.getChild("precios").getChildren();
-//            for (Object object1 : listaPrecios) {
-//                Element precioActual = (Element) object1;
-//                productos.add(precioActual.getChild("precio").getValue());
-//            }
-//            
-//            Sitio sitio = new Sitio(eSitioTemp.getChild("url").getValue(), Integer.parseInt(eSitioTemp.getChild("imagenes").getValue()),
-//                    Integer.parseInt(eSitioTemp.getChild("enlaces").getValue()), Integer.parseInt(eSitioTemp.getChild("videos").getValue()),
-//                    Integer.parseInt(eSitioTemp.getChild("titulos").getValue()), Integer.parseInt(eSitioTemp.getChild("subtitulos").getValue()),
-//                    Integer.parseInt(eSitioTemp.getChild("tablas").getValue()), aEnlaces, productos, precios);
-//            if (sitio.getUrl().equals(url)) {
-//                return sitio;
-//            }
-//
-//        }//for 
 
         ArrayList<Sitio> sitios= obtenerSitios();
         for (int i = 0; i < sitios.size(); i++) {
