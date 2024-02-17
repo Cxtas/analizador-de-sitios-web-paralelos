@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JInternalFrame.java to edit this template
- */
+
 package GUI;
 
 import Business.AnalisisBusiness;
@@ -54,13 +51,14 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
 
     //Al ser un hilo permite darse cuenta al momento que se selecciona otra tarea permitiendo cambiar el detalle en tiempo real
     @Override
-    public void run() {
-        while (true) {
-            this.tareaSelected = this.tareaBusiness.buscarTarea(jcbTareasPendientes.getSelectedItem().toString());
-            this.jtaResultado.getText();
+  public void run() {
+    while (true) {
+        Object selectedItem = jcbTareasPendientes.getSelectedItem();
+        if (selectedItem != null) {
+            this.tareaSelected = this.tareaBusiness.buscarTarea(selectedItem.toString());
             actualizarDetalle();
         }
-
+    }
     }
 
     //Agrega las tareas que pertenecen al analista que inició sesión al combobox

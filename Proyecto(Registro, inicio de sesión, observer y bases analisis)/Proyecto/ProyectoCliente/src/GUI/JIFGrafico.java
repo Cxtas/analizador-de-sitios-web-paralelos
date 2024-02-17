@@ -4,16 +4,21 @@
  */
 package GUI;
 
+import Business.SitioBusiness;
 import Business.TareaBusiness;
 import Domain.Sitio;
 import Domain.Tarea;
 import Domain.Usuario;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.jdom.JDOMException;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
 /**
@@ -28,9 +33,13 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
     private TareaBusiness tareaBusiness;
     private ArrayList<Tarea> tareas;
     private Usuario usuario;
+    private SitioBusiness sitioBusiness;
+    private Sitio sitio;
     
-    public JIFGrafico(Usuario usuario) {
+    public JIFGrafico(Usuario usuario) throws IOException, JDOMException {
         this.tareaBusiness = new TareaBusiness();
+        this.sitioBusiness= new SitioBusiness();
+        
         this.tareas = new ArrayList<>();
         this.usuario = usuario;
         this.tareas = this.tareaBusiness.obtenerTareas();//obtiene todas las tareas registradas
@@ -91,6 +100,11 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
         });
 
         jbtnBarras.setText("Graficar");
+        jbtnBarras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnBarrasActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Pastel");
 
@@ -147,31 +161,62 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnGraficarPastelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGraficarPastelActionPerformed
-        Sitio sitio= (Sitio) this.jcbSitios.getSelectedItem();
-        DefaultPieDataset pieDataset= new DefaultPieDataset();
 
-        pieDataset.setValue("Enlaces", sitio.getEnlaces());
-        pieDataset.setValue("Imagenes", sitio.getImagenes());
-        pieDataset.setValue("Videos", sitio.getVideos());
-        pieDataset.setValue("Titulos", sitio.getTitulos());
-        pieDataset.setValue("Subtitulos", sitio.getSubtitulos());
-        pieDataset.setValue("Tablas", sitio.getTablas());
+        if(this.sitioBusiness!=null && this.sitio!=null){
+            DefaultPieDataset pieDataset = new DefaultPieDataset();
+            this.sitio = this.sitioBusiness.obtenerSitio(this.jcbSitios.toString());
 
-        JFreeChart chart= ChartFactory.createPieChart(
-            "Elecciones generales",
-            pieDataset,
-            true,
-            true,
-            false);
+            pieDataset.setValue("Enlaces", this.sitio.getEnlaces());
+            pieDataset.setValue("Imagenes", this.sitio.getImagenes());
+            pieDataset.setValue("Videos", this.sitio.getVideos());
+            pieDataset.setValue("Titulos", this.sitio.getTitulos());
+            pieDataset.setValue("Subtitulos", this.sitio.getSubtitulos());
+            pieDataset.setValue("Tablas", this.sitio.getTablas());
 
-        ChartFrame frame= new ChartFrame("Grafico circular", chart);
+            JFreeChart chart = ChartFactory.createPieChart(
+                    "Elementos de: " + this.jcbSitios.getSelectedItem().toString(),
+                    pieDataset,
+                    true,
+                    true,
+                    false);
+
+            ChartFrame frame = new ChartFrame("Gráfico de Pastel", chart);
         frame.pack();
         frame.setVisible(true);
+        }
     }//GEN-LAST:event_jbtnGraficarPastelActionPerformed
 
     private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed
         this.setVisible(false);
     }//GEN-LAST:event_jbtnVolverActionPerformed
+
+    private void jbtnBarrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnBarrasActionPerformed
+        if(this.sitioBusiness!=null && this.sitio!=null){
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            this.sitio = this.sitioBusiness.obtenerSitio(this.jcbSitios.toString());
+            dataset.setValue(this.sitio.getEnlaces(), "Cantidad", "Enlaces");
+            dataset.setValue(this.sitio.getImagenes(), "Cantidad", "Imagenes");
+            dataset.setValue(this.sitio.getSubtitulos(), "Cantidad", "Subtitulos");
+            dataset.setValue(this.sitio.getTablas(), "Cantidad", "Tablas");
+            dataset.setValue(this.sitio.getTitulos(), "Cantidad", "Titulos");
+            dataset.setValue(this.sitio.getVideos(), "Cantidad", "Videos");
+
+            JFreeChart chart = ChartFactory.createBarChart(
+                    "Elementos de: " + this.jcbSitios.getSelectedItem().toString(),
+                    "Elementos",
+                    "Cantidad",
+                    dataset,
+                    PlotOrientation.VERTICAL,
+                    true,
+                    false,
+                    false);
+
+            ChartFrame frame = new ChartFrame("Elementos del sitio", chart);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        }//if
+    }//GEN-LAST:event_jbtnBarrasActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
