@@ -1,4 +1,3 @@
-
 package GUI;
 
 import Business.AnalisisBusiness;
@@ -277,14 +276,15 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
             }//analisis3
 
             if (hecho1 && hecho2 && hecho3 && hecho4) {
-                this.tareaBusiness.cambiarEstado(this.tareaSelected.getUrl());
-                this.sitioBusiness.guardarSitio(this.sitio);//guarda en xml los datos del sitio
-                //Elimina del combobox y del array la página que ya ha sido analizada
-                this.tareas.remove(this.jcbTareasPendientes.getSelectedIndex());
-                this.jcbTareasPendientes.removeItemAt(this.jcbTareasPendientes.getSelectedIndex());
+            if (!this.tareas.isEmpty() && jcbTareasPendientes.getSelectedIndex() >= 0 && 
+                    jcbTareasPendientes.getSelectedIndex() < this.tareas.size()) {
+                this.tareas.remove(jcbTareasPendientes.getSelectedIndex());
+                jcbTareasPendientes.removeItemAt(jcbTareasPendientes.getSelectedIndex());
                 jtaResultado.setText("");
             }
-
+            this.tareaBusiness.cambiarEstado(this.tareaSelected.getUrl());
+            this.sitioBusiness.guardarSitio(this.sitio);//guarda en xml los datos del sitio
+        }
         } catch (NullPointerException ex) {
             System.out.println("Error " + ex);
         } catch (IOException ex) {
