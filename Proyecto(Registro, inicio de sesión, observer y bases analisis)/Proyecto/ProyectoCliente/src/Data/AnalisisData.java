@@ -170,7 +170,10 @@ public class AnalisisData {
                     String linea = this.imagenesURL.get(i);
                     //busca el formato que tiene la imagen
                     int format = linea.lastIndexOf(".");
-                    String formato = linea.substring(format);
+                    String formato="";
+                    if (format!=-1) {
+                        formato = linea.substring(format);
+                    }else
 //                System.out.println(linea);//links de imagenes
                     hiloDescarga.add(new DescargaArchivo(linea, carpeta.getName() + "/" + i + formato));//Le da a hilo los datos para descargar
                 }

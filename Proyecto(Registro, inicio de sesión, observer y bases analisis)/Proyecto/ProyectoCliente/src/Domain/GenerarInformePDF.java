@@ -4,28 +4,29 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import java.io.FileOutputStream;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author catas
  */
-public class GenerarInformePDF extends Thread {
-    
+public class GenerarInformePDF {
+    private int contador;
     
 
-    public GenerarInformePDF () {//Sitio sitio
-       
+    public GenerarInformePDF (int contador) {//Sitio sitio
+       this.contador= contador;
     }
 
 
     public void generarInforme(Sitio sitio) {
         Document document = new Document();
         try {
-            int contador = 1;
+            
             String nombreArchivo = "InformeAnalisis_" +contador + ".pdf";
             PdfWriter.getInstance(document, new FileOutputStream(nombreArchivo));
             document.open();
-//            for (Sitio sitio : sitios) {
+            
                 document.add(new Paragraph("Análisis del Sitio Web: " + sitio.getUrl()));
                 document.add(new Paragraph("Cantidad de Imágenes: " + sitio.getImagenes()));
                 document.add(new Paragraph("Cantidad de Enlaces: " + sitio.getEnlaces()));
@@ -33,9 +34,10 @@ public class GenerarInformePDF extends Thread {
                 document.add(new Paragraph("Cantidad de Titulos: " + sitio.getTitulos()));
                 document.add(new Paragraph("Cantidad de Tablas: " + sitio.getTablas()));
                 document.add(new Paragraph("-----------------------------------------------"));
-//            }
+                document.add(new Paragraph("Enlaces"+ sitio.getaEnlaces()));
+                
             document.close();
-            System.out.println("Informe PDF generado exitosamente: " + nombreArchivo);
+            JOptionPane.showMessageDialog(null, "Informe PDF generado exitosamente: " + nombreArchivo);
             contador++; // Incrementar el contador para el próximo informe
         } catch (Exception e) {
             e.printStackTrace();

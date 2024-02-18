@@ -35,7 +35,7 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
         this.sitioBusiness = new SitioBusiness();
         this.tareaBusiness = new TareaBusiness();
         this.tareas = new ArrayList<>();
-        this.gipdf = new GenerarInformePDF();
+        this.gipdf = new GenerarInformePDF(1);
         initComponents();
         agregarTareas();
     }//constructor
