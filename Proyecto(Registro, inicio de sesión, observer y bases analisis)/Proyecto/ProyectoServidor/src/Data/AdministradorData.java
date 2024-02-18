@@ -48,9 +48,11 @@ public class AdministradorData {
         ArrayList<Administrador> administradores = obtenerAdministradores();//se obtinen los administradores registrados
 
         if (administradores.size() > 0) {//si hay administradores
-            boolean repetido = verificarUsuario(administrador.getUser());//se verifica que no tenga el mismo user el que se va a registrar
-            if (repetido) {//si ya está registrado el user se devulve false
-                return false;
+            for (int i = 0; i < administradores.size(); i++) {
+                if (administradores.get(i).getUser().equals(administrador.getUser())) {
+                    return false;
+                }
+                
             }
         }
 
@@ -93,20 +95,20 @@ public class AdministradorData {
     }//obtenerAdmins
 
     //se verifica que no tengan el mismo user
-    public boolean verificarUsuario(String nombreUsuario) {
+    public Administrador verificarUsuario(String nombreUsuario, String contrasenia) {
         List elementList = this.root.getChildren();
 
         for (Object object : elementList) {
             Element eAdminTemp = (Element) object;
             Administrador admin = new Administrador(eAdminTemp.getChild("user").getValue(), eAdminTemp.getChild("contrasenia").getValue(),
                     eAdminTemp.getChild("tipoUsuario").getValue(), Boolean.parseBoolean(eAdminTemp.getChild("activo").getValue()));
-            if (admin.getUser().equals(nombreUsuario) && admin.isActivo()) {
-                return true;
+            if (admin.getUser().equals(nombreUsuario) && admin.isActivo() && admin.getContrasenia().equals(contrasenia)) {
+                return admin;
             }
 
         }
 
-        return false;
+        return null;
     }//verificar usuario
 
     //se desactiva un administrador cambiando el atributo activo de false a true

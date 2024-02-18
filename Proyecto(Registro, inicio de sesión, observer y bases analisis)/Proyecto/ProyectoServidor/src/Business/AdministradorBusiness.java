@@ -36,8 +36,8 @@ public class AdministradorBusiness {
         return null;
     }//buscar administrador por user
     
-    public boolean verificarUsuario(String nombreUsuario) {
-        return this.administradorData.verificarUsuario(nombreUsuario);
+    public Administrador verificarUsuario(String nombreUsuario,String contrasenia) {
+        return this.administradorData.verificarUsuario(nombreUsuario,contrasenia);
     }//verificar que los usuarios no se registren repetidos
     
     public boolean desactivarAdministrador(Administrador administrador) throws IOException {

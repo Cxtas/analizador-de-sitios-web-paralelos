@@ -5,6 +5,7 @@
 package cliente;
 
 import Data.SitioData;
+import Domain.ClienteSingleton;
 import Domain.Sitio;
 import GUI.JFLogging;
 import java.io.IOException;
@@ -17,13 +18,13 @@ import org.jdom.JDOMException;
  */
 public class Cliente {
 
-
     public static void main(String[] args) throws IOException, JDOMException {
-
+        ClienteSingleton cliente = ClienteSingleton.getInstance();
+        if (cliente != null) {
             JFLogging ventana = new JFLogging();
+            cliente.addObserver(ventana);
             ventana.setVisible(true);
-         
         }
+
     }
-
-
+}

@@ -4,12 +4,13 @@
  */
 package GUI;
 
-import Business.AdministradorBusiness;
-import Business.ExaminadorBusiness;
+
 import Domain.Administrador;
+import Domain.ClienteSingleton;
 import Domain.Examinador;
 import Domain.Usuario;
 import Utility.GestionXML;
+import Utility.Observer;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.IOException;
@@ -24,34 +25,32 @@ import org.jdom.JDOMException;
  *
  * @author Estephanie
  */
-public class JIFEliminarUsuarios extends javax.swing.JInternalFrame {
+public class JIFEliminarUsuarios extends javax.swing.JInternalFrame implements Observer{
 
     /**
      * Creates new form JIFEliminarUsuarios
      */
     private ArrayList<Usuario> usuarios;
-    private AdministradorBusiness administradorBusiness;
-    private ExaminadorBusiness examinadorBusiness;
-
+    private ClienteSingleton clienteSingleton;
+    private Usuario remove;
+    private int recibos;
     public JIFEliminarUsuarios() {
-        try {
-            this.administradorBusiness = new AdministradorBusiness();
-            this.examinadorBusiness = new ExaminadorBusiness();
             initComponents();
             this.usuarios = new ArrayList<>();
             solicitarUsuarios();
-        } catch (IOException ex) {
-            Logger.getLogger(JIFEliminarUsuarios.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (JDOMException ex) {
-            Logger.getLogger(JIFEliminarUsuarios.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            this.remove=null;
+            this.recibos=0;
+            this.clienteSingleton=ClienteSingleton.getInstance();
+            GestionXML gestionXML=new GestionXML();
+            
+            this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("AllExaminadores", "")));
+            this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("AllAdministradores", "")));
     }
 
    
     private void solicitarUsuarios() {
         //se obtienen tanto administradores como examinadores para el combobox
-        this.usuarios.addAll(this.examinadorBusiness.obtenerExaminadores());
-        this.usuarios.addAll(this.administradorBusiness.obtenerAdministradores());
+        
         for (int i = 0; i < this.usuarios.size(); i++) {
             if (this.usuarios.get(i).isActivo()) {//si el usuario está activo
                 this.jcbUsuarios.addItem(this.usuarios.get(i).getUser());//se ingresa al combobox
@@ -143,24 +142,18 @@ public class JIFEliminarUsuarios extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnEliminarActionPerformed
+        GestionXML gestionXML=new GestionXML();
         try {
             int pos = jcbUsuarios.getSelectedIndex();//posicion del usuario seleccionado
             this.usuarios.get(pos).setActivo(false);//se cambia el activo a false
             if (this.usuarios.get(pos).getTipoUsuario().equals("administrador")) {//si es administrador cambia el xml de admins
-                if (this.administradorBusiness.desactivarAdministrador((Administrador) this.usuarios.get(pos))) {//se le pasa el usuario seleccionado
-                    //mensajes de aviso de la acción
-                    JOptionPane.showMessageDialog(this, "Se eliminó correctamente"); 
-                } else {
-                    JOptionPane.showMessageDialog(this, "No se pudo eliminar");
-                }
+                this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.administradorAXML("eliminarAdministrador", (Administrador) this.usuarios.get(pos))));
+                this.remove=this.usuarios.get(pos);
             } else {
                 //busca en el xml de examinadores
-                if (this.examinadorBusiness.desactivarExaminador((Examinador) this.usuarios.get(pos))) {//se le pasa el usuario
-                    //y depende del éxito igual se notifica
-                    JOptionPane.showMessageDialog(this, "Se eliminó correctamente");
-                } else {
-                    JOptionPane.showMessageDialog(this, "No se pudo eliminar");
-                }
+                
+                 this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.examinadorAXML("eliminarExaminador",  (Examinador) this.usuarios.get(pos) )));
+                 this.remove=this.usuarios.get(pos);
             }
         } catch (IOException ex) {
             Logger.getLogger(JIFEliminarUsuarios.class.getName()).log(Level.SEVERE, null, ex);
@@ -180,4 +173,52 @@ public class JIFEliminarUsuarios extends javax.swing.JInternalFrame {
     private javax.swing.JButton jbtnVolver;
     private javax.swing.JComboBox<String> jcbUsuarios;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void update(String dato) {
+        
+        try {
+            GestionXML gestionXML = new GestionXML();
+            Element eProtocolo = gestionXML.stringToXML(dato);
+            String accion = eProtocolo.getAttributeValue("accion");
+            
+            
+            if (accion.equals("Examinadores")) {
+                
+                this.usuarios.addAll(gestionXML.xmlAExaminadores(eProtocolo));
+                this.recibos++;
+                for (int i = 0; i < usuarios.size(); i++) {
+                    System.out.println(usuarios.get(i));
+                    
+                }
+                System.out.println(recibos);
+                if (this.recibos==2) {
+                     solicitarUsuarios();
+                }
+               
+            }
+             if (accion.equals("Administradores")) {
+                 
+                this.usuarios.addAll(gestionXML.xmlAAdministradores(eProtocolo));
+                 this.recibos++;
+                
+                if (this.recibos==2) {
+                     solicitarUsuarios();
+                }
+            }
+             if(accion.equals("eliminado")){
+                  JOptionPane.showMessageDialog(this, "Se eliminó correctamente");
+                  this.usuarios.remove(this.remove);
+                  this.jcbUsuarios.removeAllItems();
+                  solicitarUsuarios();
+             }
+             if (accion.equals("falloEliminacion")) {
+                JOptionPane.showMessageDialog(this, "No se pudo eliminar");
+            }
+        } catch (JDOMException ex) {
+            Logger.getLogger(JIFEliminarUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(JIFEliminarUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

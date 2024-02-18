@@ -4,13 +4,14 @@
  */
 package GUI;
 
-import Business.AdministradorBusiness;
-import Business.ExaminadorBusiness;
+
 import Domain.Administrador;
+import Domain.ClienteSingleton;
 import Domain.Examinador;
 import Domain.Usuario;
 import Utility.GestionXML;
 import Utility.MyUtil;
+import Utility.Observer;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.IOException;
@@ -25,20 +26,18 @@ import org.jdom.JDOMException;
  * @author Estephanie
  *
  */
-public class JFLogging extends javax.swing.JFrame {
+public class JFLogging extends javax.swing.JFrame implements Observer {
 
     /**
      * Creates new form JFLogging
      */
     private Usuario usuario;
 
-    public JFLogging(){
+    public JFLogging() {
         this.usuario = null;
         initComponents();
         setLocationRelativeTo(null);
     }
-    
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -182,42 +181,41 @@ public class JFLogging extends javax.swing.JFrame {
     }//GEN-LAST:event_jcbUsuarioActionPerformed
 
     private void jbtnIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnIngresarActionPerformed
-        try {
-            AdministradorBusiness administradorBusiness = new AdministradorBusiness();
-            ExaminadorBusiness examinadorBusiness = new ExaminadorBusiness();
 
-            if (this.jcbUsuario.getSelectedItem().equals("Administrador")) {//si es un administrador
-                Administrador verificado = administradorBusiness.buscarAdministrador(this.jtfUsuario.getText());//se busca a ver si está registrado
-                if (verificado != null && verificado.isActivo()) { // sí está registrado y activo
-                    this.usuario = verificado;//se guarda
-                    JFPrincipal ventana = new JFPrincipal(this.usuario);//se llama la ventana principal y se le pasa por parámetro el usuario que inició sesión
-                    this.setVisible(false);//se cierra esta
-                    ventana.setVisible(true);//se abre la ventana
-                } else { //si no, se envía un mensaje
-                    JOptionPane.showMessageDialog(this, "Datos invalidos");
-                    //se elimina la información de los campos
-                    this.jtfUsuario.setText("");
-                    this.jtfContrasenia.setText("");
-                }
-            } else {//entonces es examinador
-                Examinador verificado = examinadorBusiness.buscarExaminador(this.jtfUsuario.getText());//se busca en el archivo a ver si está registrado
-                if (verificado != null && verificado.isActivo()) {//sí está registrado y activo
-                    this.usuario = verificado; //se guarda el usuario
-                    JFPrincipal ventana = new JFPrincipal(this.usuario);//se llama la ventana principal y se le pasa por parámetro el usuario que inició sesión
-                    this.setVisible(false);//se cierra esta
-                    ventana.setVisible(true);//se abre la ventana
-                } else {//si no se valida, se notifica
-                    JOptionPane.showMessageDialog(this, "Datos invalidos");
-                    //se elimina la información de los campos
-                    this.jtfUsuario.setText("");
-                    this.jtfContrasenia.setText("");
-                }
+        ClienteSingleton clienteSingleton = ClienteSingleton.getInstance();
+
+        if (this.jcbUsuario.getSelectedItem().equals("Administrador")) {
+
+            //si es un administrador
+            Element mensaje;
+            try {
+                mensaje = GestionXML.agregarAdministrador("autenticarAdministrador",
+                        new Administrador(this.jtfUsuario.getText(),
+                                MyUtil.obtenerContraseniaCifrada(String.valueOf(this.jtfContrasenia.getPassword()),
+                                        MyUtil.MD2), "administrador", true));
+
+                clienteSingleton.enviarDatos(GestionXML.xmlToString(mensaje));
+            } catch (NoSuchAlgorithmException ex) {
+                Logger.getLogger(JFLogging.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(JFLogging.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (JDOMException ex) {
-            Logger.getLogger(JFLogging.class.getName()).log(Level.SEVERE, null, ex);
+
+        } else {//entonces es examinador
+            Element mensaje;
+            try {
+                mensaje = GestionXML.agregarExaminador("autenticarExaminador",
+                        new Examinador(this.jtfUsuario.getText(),
+                                MyUtil.obtenerContraseniaCifrada(String.valueOf(this.jtfContrasenia.getPassword()),
+                                        MyUtil.MD2), "pepe", "digitador", true));
+                clienteSingleton.enviarDatos(GestionXML.xmlToString(mensaje));
+
+            } catch (NoSuchAlgorithmException ex) {
+                Logger.getLogger(JFLogging.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+           
         }
+
+
     }//GEN-LAST:event_jbtnIngresarActionPerformed
 
     private void jtfUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfUsuarioActionPerformed
@@ -226,7 +224,7 @@ public class JFLogging extends javax.swing.JFrame {
     }//GEN-LAST:event_jtfUsuarioActionPerformed
 
     private void jbtnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnSalirActionPerformed
-       //se cierra el programa
+        //se cierra el programa
         this.dispose();
         System.exit(0);
     }//GEN-LAST:event_jbtnSalirActionPerformed
@@ -294,5 +292,39 @@ public class JFLogging extends javax.swing.JFrame {
     private javax.swing.JPasswordField jtfContrasenia;
     private javax.swing.JTextField jtfUsuario;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void update(String dato) {
+        try {
+            GestionXML gestionXML = new GestionXML();
+            Element eProtocolo = gestionXML.stringToXML(dato);
+            String accion = eProtocolo.getAttributeValue("accion");
+
+            System.out.println(eProtocolo);
+
+            if (accion.equals("validadoA")) {
+                this.usuario = gestionXML.xmlAAdministrador(eProtocolo);
+                JFPrincipal ventana = new JFPrincipal(this.usuario);//se llama la ventana principal y se le pasa por parámetro el usuario que inició sesión
+                this.setVisible(false);//se cierra esta
+                ventana.setVisible(true);//se abre la ventana
+            }
+            if (accion.equals("validadoE")) {
+                this.usuario = gestionXML.xmlAExaminador(eProtocolo);
+                JFPrincipal ventana = new JFPrincipal(this.usuario);//se llama la ventana principal y se le pasa por parámetro el usuario que inició sesión
+                this.setVisible(false);//se cierra esta
+                ventana.setVisible(true);//se abre la ventana
+            } 
+            if (accion.equals("denegado")){
+                JOptionPane.showMessageDialog(this, "Datos invalidos");
+                //se elimina la información de los campos
+                this.jtfUsuario.setText("");
+                this.jtfContrasenia.setText("");
+            }
+        } catch (JDOMException ex) {
+            Logger.getLogger(JFLogging.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(JFLogging.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
 }

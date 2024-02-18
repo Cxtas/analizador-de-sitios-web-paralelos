@@ -28,6 +28,8 @@ public class Examinador extends Usuario{
     public void addTareas(Tarea tarea){
         this.tareas.add(tarea);
     }
+
+ 
     
     
 }//fin clase

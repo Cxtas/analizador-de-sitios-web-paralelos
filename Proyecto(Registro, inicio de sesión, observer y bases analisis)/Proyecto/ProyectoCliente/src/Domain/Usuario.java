@@ -42,4 +42,9 @@ public class Usuario {
         this.activo = activo;
     }
 
+    @Override
+    public String toString() {
+        return "Usuario{" + "user=" + user + ", contrasenia=" + contrasenia + ", tipoUsuario=" + tipoUsuario + ", activo=" + activo + '}';
+    }
+
 }

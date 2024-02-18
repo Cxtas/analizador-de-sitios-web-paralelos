@@ -4,6 +4,7 @@
  */
 package GUI;
 
+import Domain.ClienteSingleton;
 import Domain.Examinador;
 import Domain.Usuario;
 import java.awt.Dimension;
@@ -249,6 +250,8 @@ public class JFPrincipal extends javax.swing.JFrame {
     //Se abren las ventanas depende del menú seleccionado
     private void jmiNuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiNuevoUsuarioActionPerformed
         JIFRegistroUsuario ventanaR = new JIFRegistroUsuario();
+        ClienteSingleton clienteSingleton=ClienteSingleton.getInstance();
+        clienteSingleton.addObserver(ventanaR);
         this.jDesktopPane1.add(ventanaR);
         centrar(ventanaR);
     }//GEN-LAST:event_jmiNuevoUsuarioActionPerformed
@@ -261,6 +264,8 @@ public class JFPrincipal extends javax.swing.JFrame {
 
     private void jmiEliminarUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiEliminarUsuariosActionPerformed
         JIFEliminarUsuarios ventana = new JIFEliminarUsuarios();
+        ClienteSingleton clienteSingleton=ClienteSingleton.getInstance();
+        clienteSingleton.addObserver(ventana);
         this.jDesktopPane1.add(ventana);
         centrar(ventana);
     }//GEN-LAST:event_jmiEliminarUsuariosActionPerformed
@@ -268,6 +273,8 @@ public class JFPrincipal extends javax.swing.JFrame {
     private void jmiGSolicitudesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiGSolicitudesActionPerformed
         try {
             JIFAsignarTarea tarea = new JIFAsignarTarea();
+            ClienteSingleton clienteSingleton=ClienteSingleton.getInstance();
+            clienteSingleton.addObserver(tarea);
             this.jDesktopPane1.add(tarea);
             centrar(tarea);
         } catch (IOException ex) {

@@ -9,6 +9,7 @@ import Domain.Examinador;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.List;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -46,7 +47,8 @@ public class GestionXML {
 
     } // xmlToString
 
-    public static Element administradorAXML(Administrador administrador) throws IOException {
+    public static Element administradorAXML(String accion,Administrador administrador) throws IOException {
+        Element eDato=new Element("dato");
         Element eAdministrador = new Element("administrador");//<administrador>
 
         Element eUser = new Element("user");
@@ -57,12 +59,20 @@ public class GestionXML {
         
         Element eTipoUsuario = new Element("tipoUsuario");
         eTipoUsuario.addContent(administrador.getTipoUsuario());
+        
+        Element eActivo=new Element("activo");
+        eActivo.addContent(String.valueOf(administrador.isActivo()));
 
         eAdministrador.addContent(eUser);
         eAdministrador.addContent(eContrasenia);
         eAdministrador.addContent(eTipoUsuario);
+        eAdministrador.addContent(eActivo);
 
-        return eAdministrador;
+        eDato.addContent(eAdministrador);
+        
+         Element eProtocolo = crearMensajeProtocolo(accion);
+        eProtocolo.addContent(eDato);
+        return eProtocolo;
     }//crearElAdministrador
 
     public static Administrador xmlAAdministrador(Element element) {
@@ -84,10 +94,18 @@ public class GestionXML {
 
         Element eContrasenia = new Element("contrasenia");
         eContrasenia.addContent(administradores.get(i).getContrasenia());
+        
+        Element eTipoUsuario = new Element("tipoUsuario");
+        eTipoUsuario.addContent(administradores.get(i).getTipoUsuario());
+        
+        Element eActivo=new Element("activo");
+        eActivo.addContent(String.valueOf(administradores.get(i).isActivo()));
 
         eAdministrador.addContent(eUser);
         eAdministrador.addContent(eContrasenia);
-        edato.addContent(eAdministrador);
+         eAdministrador.addContent(eTipoUsuario);
+        eAdministrador.addContent(eActivo);
+         edato.addContent(eAdministrador);
 
         }
 
@@ -96,7 +114,46 @@ public class GestionXML {
         return eProtocolo;
     }//agregarAdministradores
     
-    public static Element examinadorAXML(Examinador examinador) throws IOException {
+       public static ArrayList<Examinador> xmlAExaminadores(Element element){
+         ArrayList<Examinador> examinadores=new ArrayList<>();
+          List<Element> examinadorElements = element.getChildren("examinador");
+
+            for (Element examinadorElement : examinadorElements) {
+                String user = examinadorElement.getChildText("user");
+                String contrasenia = examinadorElement.getChildText("contrasenia");
+                String rol = examinadorElement.getChildText("rol");
+                String tipoUsuario=examinadorElement.getChildText("tipoUsuario");
+                boolean activo= Boolean.parseBoolean(String.valueOf(examinadorElement.getChild("activo")));
+
+                System.out.println(activo);
+                Examinador examinador = new Examinador(user, contrasenia, rol,tipoUsuario ,activo);
+                examinadores.add(examinador);
+            }
+        
+
+        return examinadores;
+    }
+      
+       public static ArrayList<Administrador> xmlAAdministradores(Element element){
+        ArrayList<Administrador> administradores=new ArrayList<>();
+        List EAdminList=element.getChildren();
+        
+        for (Object object : EAdminList) {
+            Element adminActual=(Element) object;
+            
+            Administrador administrador=new Administrador(adminActual.getChild("user").getValue(),
+                    adminActual.getChild("contrasenia").getValue(), 
+                    adminActual.getChild("tipoUsuario").getValue(), 
+                    Boolean.parseBoolean(String.valueOf(adminActual.getChild("activo").getValue())));
+            
+            administradores.add(administrador);
+            
+        }
+        return administradores;
+    }
+    
+     public static Element examinadorAXML(String accion,Examinador examinador) throws IOException {
+        Element eDato=new Element("dato");
         Element eExaminador = new Element("examinador");//<examinador>
 
         Element eUser = new Element("user");
@@ -107,10 +164,10 @@ public class GestionXML {
 
         Element eRol = new Element("rol");
         eRol.addContent(examinador.getRol());
-        
+
         Element eTipoUsuario = new Element("tipoUsuario");
         eTipoUsuario.addContent(examinador.getTipoUsuario());
-        
+
         Element eActivo = new Element("activo");
         eActivo.addContent(String.valueOf(examinador.isActivo()));
 
@@ -120,7 +177,11 @@ public class GestionXML {
         eExaminador.addContent(eTipoUsuario);
         eExaminador.addContent(eActivo);
 
-        return eExaminador;
+         eDato.addContent(eExaminador);
+        
+         Element eProtocolo = crearMensajeProtocolo(accion);
+        eProtocolo.addContent(eDato);
+        return eProtocolo;
     }//crearElExaminador
 
     public static Examinador xmlAExaminador(Element element) {
@@ -148,10 +209,18 @@ public class GestionXML {
 
         Element eRol = new Element("rol");
         eRol.addContent(examinadores.get(i).getRol());
+        
+         Element eTipoUsuario = new Element("tipoUsuario");
+        eTipoUsuario.addContent(examinadores.get(i).getTipoUsuario());
+        
+        Element eActivo = new Element("activo");
+        eActivo.addContent(String.valueOf(examinadores.get(i).isActivo()));
 
         eExaminador.addContent(eUser);
         eExaminador.addContent(eContrasenia);
         eExaminador.addContent(eRol);
+        eExaminador.addContent(eActivo);
+        eExaminador.addContent(eTipoUsuario);
         edato.addContent(eExaminador);
 
         }

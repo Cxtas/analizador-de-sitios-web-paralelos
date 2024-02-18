@@ -1,6 +1,7 @@
 package servidor;
 
 
+import Domain.ServidorSingleton;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -16,7 +17,8 @@ public class Servidor {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws JDOMException, IOException, NoSuchAlgorithmException, KeyManagementException {
+    public static void main(String[] args)  {
+        ServidorSingleton.getInstance();
 
     }
     

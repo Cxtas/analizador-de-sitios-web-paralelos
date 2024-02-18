@@ -4,29 +4,36 @@
  */
 package GUI;
 
-import Business.AdministradorBusiness;
-import Business.ExaminadorBusiness;
 import Domain.Administrador;
+import Domain.ClienteSingleton;
 import Domain.Examinador;
+import Utility.GestionXML;
 import Utility.MyUtil;
+import Utility.Observer;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import org.jdom.Element;
 import org.jdom.JDOMException;
 
 /**
  *
  * @author Estephanie
  */
-public class JIFRegistroUsuario extends javax.swing.JInternalFrame {
+public class JIFRegistroUsuario extends javax.swing.JInternalFrame implements Observer {
 
     /**
      * Creates new form JIFRegistroUsuario
      */
+    private ClienteSingleton clienteSingleton;
+
     public JIFRegistroUsuario() {
         initComponents();
+        this.clienteSingleton = ClienteSingleton.getInstance();
     }
 
     /**
@@ -196,41 +203,43 @@ public class JIFRegistroUsuario extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jtfUserActionPerformed
 
     private void btnResgistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResgistrarActionPerformed
-        try {
-            if (this.jcbTipoUsuario.getSelectedIndex() == 0) {//0 es administrador
-                AdministradorBusiness administradorBusiness = new AdministradorBusiness();
-                boolean registrado = administradorBusiness.insertarAdministrador(new Administrador(this.jtfUser.getText(),
-                        MyUtil.obtenerContraseniaCifrada(String.valueOf(this.jtfContrasenia.getPassword()), MyUtil.MD2),
-                        "administrador", true));
-                if (registrado) {
-                    JOptionPane.showMessageDialog(this, "Usuario registrado");
-                    borrarDatos();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Ya existe un usuario con ese nombre");
-                    borrarDatos();
+        if (this.jtfContrasenia.getPassword().equals("") || this.jtfUser.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Por favor rellene todos los espacios");
+            return;
+        }
+            GestionXML gestionXML=new GestionXML();
+            if (this.jcbTipoUsuario.getSelectedIndex() == 0) {try {
+                try {
+                    //0 es administrador
+                    this.clienteSingleton.enviarDatos(gestionXML.xmlToString(
+                            gestionXML.administradorAXML("registrarAdministrador", new Administrador(this.jtfUser.getText(),
+                                    MyUtil.obtenerContraseniaCifrada(String.valueOf(this.jtfContrasenia.getPassword()), MyUtil.MD2),
+                                    "administrador", true))));
+                } catch (NoSuchAlgorithmException ex) {
+                    Logger.getLogger(JIFRegistroUsuario.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                } catch (IOException ex) {
+                    Logger.getLogger(JIFRegistroUsuario.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {//examinador
                 if (getSelectedRol() != null) {
-                    ExaminadorBusiness examinadorBusiness = new ExaminadorBusiness();
-                    boolean registrado = examinadorBusiness.insertarExaminador(new Examinador(this.jtfUser.getText(),
-                            MyUtil.obtenerContraseniaCifrada(String.valueOf(this.jtfContrasenia.getPassword()), MyUtil.MD2),
-                            this.getSelectedRol(), "examinador", true));
-                    if (registrado) {
-                        JOptionPane.showMessageDialog(this, "Usuario registrado");
-                        borrarDatos();
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Ya existe un usuario con ese nombre.");
-                        borrarDatos();
+                    try {
+                        try {
+                            this.clienteSingleton.enviarDatos(gestionXML.xmlToString(
+                                    gestionXML.examinadorAXML("registrarExaminador", new Examinador(this.jtfUser.getText(),
+                                            MyUtil.obtenerContraseniaCifrada(String.valueOf(this.jtfContrasenia.getPassword()), MyUtil.MD2),
+                                            this.getSelectedRol(), "examinador", true))));
+                        } catch (NoSuchAlgorithmException ex) {
+                            Logger.getLogger(JIFRegistroUsuario.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(JIFRegistroUsuario.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
                     JOptionPane.showMessageDialog(this, "Debe seleccionar un rol.");
                 }
             }
-        } catch (NoSuchAlgorithmException | IOException | JDOMException ex) {
-            java.util.logging.Logger.getLogger(JIFRegistroUsuario.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (NullPointerException ex) {
-            JOptionPane.showMessageDialog(this, "Debe llenar todos los espacios");
-        }
+        
 
     }//GEN-LAST:event_btnResgistrarActionPerformed
 
@@ -244,8 +253,8 @@ public class JIFRegistroUsuario extends javax.swing.JInternalFrame {
         }
         return null;
     }//getSelectedRol
-    
-    private void borrarDatos(){
+
+    private void borrarDatos() {
         this.jtfUser.setText("");
         this.jtfContrasenia.setText("");
         this.jrbAnalista.setSelected(false);
@@ -265,7 +274,7 @@ public class JIFRegistroUsuario extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_jcbTipoUsuarioActionPerformed
 
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup bgRolUsuario;
     private javax.swing.JButton btnResgistrar;
@@ -283,4 +292,28 @@ public class JIFRegistroUsuario extends javax.swing.JInternalFrame {
     private javax.swing.JTextField jtfUser;
     // End of variables declaration//GEN-END:variables
 
+    @Override
+    public void update(String dato) {
+
+        try {
+            GestionXML gestionXML = new GestionXML();
+            Element eProtocolo = gestionXML.stringToXML(dato);
+            String accion = eProtocolo.getAttributeValue("accion");
+
+            if (accion.equals("RegistroExitoso")) {
+                JOptionPane.showMessageDialog(this, "Usuario registrado");
+                borrarDatos();
+            }
+            
+            if (accion.equals("falloRegistro")) {
+                JOptionPane.showMessageDialog(this, "Ya existe un usuario con ese nombre.");
+                borrarDatos();
+            }
+        } catch (JDOMException ex) {
+            Logger.getLogger(JIFRegistroUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(JIFRegistroUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 }

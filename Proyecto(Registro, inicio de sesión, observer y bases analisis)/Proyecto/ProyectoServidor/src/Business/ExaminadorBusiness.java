@@ -27,10 +27,10 @@ public class ExaminadorBusiness {
         return this.examinadorData.obtenerExaminadores();
     }//obtenerExaminadores
     
-    public Examinador buscarExaminador(String user){
+    public Examinador buscarExaminador(String user, String contrasenia){
         ArrayList<Examinador> examinadores = obtenerExaminadores();
         for (int i = 0; i < examinadores.size(); i++) {
-            if(examinadores.get(i).getUser().equals(user)){
+            if(examinadores.get(i).getUser().equals(user) && examinadores.get(i).getContrasenia().equals(contrasenia)){
                 return examinadores.get(i);
             }
         }

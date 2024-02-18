@@ -4,27 +4,31 @@
  */
 package GUI;
 
-import Business.ExaminadorBusiness;
+
 import Business.TareaBusiness;
+import Domain.ClienteSingleton;
 import Domain.Examinador;
 import Domain.Tarea;
+import Utility.GestionXML;
+import Utility.Observer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import org.jdom.Element;
 import org.jdom.JDOMException;
 
 /**
  *
  * @author catas
  */
-public class JIFAsignarTarea extends javax.swing.JInternalFrame {
+public class JIFAsignarTarea extends javax.swing.JInternalFrame implements Observer {
 
     private ArrayList<Examinador> analistas;
     private Examinador analista;
-    private ExaminadorBusiness examinadorBusiness;
+
     private TareaBusiness tareaBusiness;
     private ArrayList<Tarea> tareas;//Tareas Por Analizar
     private Tarea tarea; //tarea seleccionada
@@ -35,21 +39,24 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
      * @throws java.io.IOException
      * @throws org.jdom.JDOMException
      */
+    private ClienteSingleton clienteSingleton;
     public JIFAsignarTarea() throws IOException, JDOMException {
-        this.examinadorBusiness = new ExaminadorBusiness();
+
         this.tareaBusiness = new TareaBusiness();
         initComponents();
         this.analista = null;
         this.tarea = null;
         this.analistas = new ArrayList<>();
         this.tareas = new ArrayList<>();
-        solicitarAnalista();
+        this.clienteSingleton=ClienteSingleton.getInstance();
+        
+        GestionXML gestionXML=new GestionXML();
+        this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("AllExaminadores", "")));
         agregarTareas();
     }//constructor
 
     //Busca entre el arrayList se usuarios solo a los analistas y descarta los otros roles
     private void solicitarAnalista() {
-        this.analistas = this.examinadorBusiness.obtenerExaminadores();//obtiene los examinadores
         Iterator<Examinador> iterator = this.analistas.iterator(); //se necesita un iterador para no alterar el índice
         while (iterator.hasNext()) {
             Examinador examinador = iterator.next();
@@ -194,4 +201,26 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox<String> jcbAnalistas;
     private javax.swing.JComboBox<String> jcbTareas;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void update(String dato) {
+        try {
+            GestionXML gestionXML = new GestionXML();
+            Element eProtocolo = gestionXML.stringToXML(dato);
+            String accion = eProtocolo.getAttributeValue("accion");
+            
+ 
+            
+            if (accion.equals("Examinadores")) {
+                this.analistas=gestionXML.xmlAExaminadores(eProtocolo);
+                solicitarAnalista();
+               
+            }
+        } catch (JDOMException ex) {
+            Logger.getLogger(JIFAsignarTarea.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(JIFAsignarTarea.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
+
