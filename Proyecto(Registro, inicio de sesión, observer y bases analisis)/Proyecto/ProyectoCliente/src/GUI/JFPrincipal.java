@@ -297,6 +297,8 @@ public class JFPrincipal extends javax.swing.JFrame {
     private void jmiGraficoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiGraficoActionPerformed
         try {
             JIFGrafico grafico = new JIFGrafico(this.usuario);
+            ClienteSingleton clienteSingleton=ClienteSingleton.getInstance();
+            clienteSingleton.addObserver(grafico);
             this.jDesktopPane1.add(grafico);
             centrar(grafico);
         } catch (IOException ex) {
@@ -309,6 +311,8 @@ public class JFPrincipal extends javax.swing.JFrame {
     private void jmiPDFenviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiPDFenviarActionPerformed
         try {
             JIFGenerarPDF generar = new JIFGenerarPDF();
+            ClienteSingleton clienteSingleton=ClienteSingleton.getInstance();
+            clienteSingleton.addObserver(generar);
             this.jDesktopPane1.add(generar);
             centrar(generar);
         } catch (IOException ex) {
@@ -333,6 +337,8 @@ public class JFPrincipal extends javax.swing.JFrame {
     private void jmiAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiAnalizarActionPerformed
         try {
             JIFRealizarAnalisis analisis = new JIFRealizarAnalisis(this.usuario);//se le envía el usuario que inicia sesión
+            ClienteSingleton clienteSingleton=ClienteSingleton.getInstance();
+            clienteSingleton.addObserver(analisis);
             this.jDesktopPane1.add(analisis);
             centrar(analisis);
         } catch (IOException ex) {

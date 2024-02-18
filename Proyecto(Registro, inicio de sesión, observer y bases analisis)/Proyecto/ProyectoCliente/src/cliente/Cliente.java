@@ -4,12 +4,9 @@
  */
 package cliente;
 
-import Data.SitioData;
 import Domain.ClienteSingleton;
-import Domain.Sitio;
 import GUI.JFLogging;
 import java.io.IOException;
-import java.util.ArrayList;
 import org.jdom.JDOMException;
 
 /**

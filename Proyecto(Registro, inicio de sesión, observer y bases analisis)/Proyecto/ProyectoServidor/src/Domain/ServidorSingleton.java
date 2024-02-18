@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Diego
+ * 
  */
 public class ServidorSingleton extends Thread {
 

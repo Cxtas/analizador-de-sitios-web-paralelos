@@ -6,6 +6,7 @@ package Utility;
 
 import Domain.Administrador;
 import Domain.Examinador;
+import Domain.Sitio;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -309,4 +310,106 @@ public class GestionXML {
         return eProtocolo;
     }//agregarAccionSimple
 
+         public static Element SitioAXml(String accion,Sitio sitio){
+        Element edato = new Element("dato");
+        
+        Element eSitio = new Element("sitio");
+
+        Element eURL = new Element("url");
+        eURL.addContent(sitio.getUrl());
+
+        Element eImagenes = new Element("imagenes");
+        eImagenes.addContent(String.valueOf(sitio.getImagenes()));
+
+        Element eEnlaces = new Element("enlaces");
+        eEnlaces.addContent(String.valueOf(sitio.getEnlaces()));
+
+        Element eVideos = new Element("videos");
+        eVideos.addContent(String.valueOf(sitio.getVideos()));
+
+        Element eTitulos = new Element("titulos");
+        eTitulos.addContent(String.valueOf(sitio.getTitulos()));
+
+        Element eSubtitulos = new Element("subtitulos");
+        eSubtitulos.addContent(String.valueOf(sitio.getSubtitulos()));
+
+        Element eTablas = new Element("tablas");
+        eTablas.addContent(String.valueOf(sitio.getTablas()));
+
+        Element eaEnlaces = new Element("eanlaces");
+
+        //for para añadir el array de enlaces al archivo
+        for (int i = 0; i < sitio.getaEnlaces().size(); i++) {
+            Element eaEnlace = new Element("enlace");
+            eaEnlace.addContent(sitio.getaEnlaces().get(i));
+
+            eaEnlaces.addContent(eaEnlace);
+        }
+
+        Element eProductos = new Element("productos");
+
+        //for para añadir productos al archivo
+        for (int i = 0; i < sitio.getProductos().size(); i++) {
+            Element eProducto = new Element("producto");
+            eProducto.addContent(sitio.getProductos().get(i));
+
+            eProductos.addContent(eProducto);
+        }
+
+        Element ePrecios = new Element("precios");
+        //for para añadir precios al archivo
+        for (int i = 0; i < sitio.getPrecios().size(); i++) {
+            Element ePrecio = new Element("precio");
+            ePrecio.addContent(sitio.getPrecios().get(i));
+
+            ePrecios.addContent(ePrecio);
+        }
+
+        eSitio.addContent(eURL);
+        eSitio.addContent(eImagenes);
+        eSitio.addContent(eEnlaces);
+        eSitio.addContent(eVideos);
+        eSitio.addContent(eTitulos);
+        eSitio.addContent(eSubtitulos);
+        eSitio.addContent(eTablas);
+        eSitio.addContent(eaEnlaces);
+        eSitio.addContent(eProductos);
+        eSitio.addContent(ePrecios);
+        
+         edato.addContent(eSitio);
+
+        Element eProtocolo = crearMensajeProtocolo(accion);
+        eProtocolo.addContent(edato);
+        return eProtocolo;
+    }
+    
+         
+         
+  public static Sitio xmlASitio(Element element) {
+        Element eSitio = element.getChild("dato").getChild("sitio");
+
+        String url = eSitio.getChildText("url");
+        int imagenes = Integer.parseInt(eSitio.getChildText("imagenes"));
+        int enlaces = Integer.parseInt(eSitio.getChildText("enlaces"));
+        int videos = Integer.parseInt(eSitio.getChildText("videos"));
+        int titulos = Integer.parseInt(eSitio.getChildText("titulos"));
+        int subtitulos = Integer.parseInt(eSitio.getChildText("subtitulos"));
+        int tablas = Integer.parseInt(eSitio.getChildText("tablas"));
+
+        ArrayList<String> enlacesList = obtenerElementos(eSitio, "eanlaces", "enlace");
+        ArrayList<String> productosList = obtenerElementos(eSitio, "productos", "producto");
+        ArrayList<String> preciosList = obtenerElementos(eSitio, "precios", "precio");
+
+        return new Sitio(url, imagenes, enlaces, videos, titulos, subtitulos, tablas, enlacesList, productosList, preciosList);
+    }
+
+    private static ArrayList<String> obtenerElementos(Element eSitio, String nombreLista, String nombreElemento) {
+        List<Element> elementos = eSitio.getChild(nombreLista).getChildren(nombreElemento);
+        ArrayList<String> lista = new ArrayList<>();
+        for (Element elemento : elementos) {
+            lista.add(elemento.getText());
+        }
+        return lista;
+    }
+    
 }

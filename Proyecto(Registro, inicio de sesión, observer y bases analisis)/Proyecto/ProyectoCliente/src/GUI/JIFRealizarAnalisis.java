@@ -1,11 +1,14 @@
 package GUI;
 
 import Business.AnalisisBusiness;
-import Business.SitioBusiness;
+
 import Business.TareaBusiness;
+import Domain.ClienteSingleton;
 import Domain.Sitio;
 import Domain.Tarea;
 import Domain.Usuario;
+import Utility.GestionXML;
+import Utility.Observer;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -14,29 +17,29 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import org.jdom.Element;
 import org.jdom.JDOMException;
 
 /**
  *
  * @author Estephanie
  */
-public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements Runnable {
+public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements Runnable, Observer {
 
     /**
      * Creates new form JIFRealizarAnalisis
      */
     private AnalisisBusiness analisisBusiness;
     private TareaBusiness tareaBusiness;
-    private SitioBusiness sitioBusiness;
     private ArrayList<Tarea> tareas;
     private Usuario usuario;
     private Tarea tareaSelected;
     private Sitio sitio;
+    private ClienteSingleton clienteSingleton;
 
     public JIFRealizarAnalisis(Usuario usuario) throws IOException, JDOMException {//permite saber cuál es el usuario que inició sesión
         this.usuario = usuario;//se guarda el usuario
         this.tareaBusiness = new TareaBusiness();
-        this.sitioBusiness = new SitioBusiness();
         this.tareas = new ArrayList<>();
         this.sitio = null;
         initComponents();
@@ -45,6 +48,7 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
         agregarTareas();//se agregan las tareas al combobox
         Thread thread = new Thread(this);
         thread.start();//se inicia el hilo para cambiar de tarea
+        this.clienteSingleton=ClienteSingleton.getInstance();
 
     }
 
@@ -283,7 +287,9 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
                 jtaResultado.setText("");
             }
             this.tareaBusiness.cambiarEstado(this.tareaSelected.getUrl());
-            this.sitioBusiness.guardarSitio(this.sitio);//guarda en xml los datos del sitio
+            
+            GestionXML gestionXML=new GestionXML();
+            this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.SitioAXml("guardarSitio", this.sitio)));
         }
         } catch (NullPointerException ex) {
             System.out.println("Error " + ex);
@@ -317,4 +323,21 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
     private javax.swing.JTextArea jtaDetalleTarea;
     private javax.swing.JTextArea jtaResultado;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void update(String dato) {
+        try {
+            GestionXML gestionXML = new GestionXML();
+            Element eProtocolo = gestionXML.stringToXML(dato);
+            String accion = eProtocolo.getAttributeValue("accion");
+
+            if (accion.equals("sitioAgregado")) {
+                JOptionPane.showMessageDialog(this, "analisis finalizado con exito");
+            }
+        } catch (JDOMException ex) {
+            Logger.getLogger(JIFRealizarAnalisis.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(JIFRealizarAnalisis.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

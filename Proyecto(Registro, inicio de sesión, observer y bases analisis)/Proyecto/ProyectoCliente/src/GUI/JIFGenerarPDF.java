@@ -4,38 +4,47 @@
  */
 package GUI;
 
-import Business.SitioBusiness;
+
 import Business.TareaBusiness;
 import Data.AnalisisData;
+import Domain.ClienteSingleton;
 import Domain.GenerarInformePDF;
 import Domain.Sitio;
 import Domain.Tarea;
+import Utility.GestionXML;
+import Utility.Observer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jdom.Element;
 import org.jdom.JDOMException;
 
 /**
  *
  * @author Estephanie
  */
-public class JIFGenerarPDF extends javax.swing.JInternalFrame {
+public class JIFGenerarPDF extends javax.swing.JInternalFrame implements Observer {
 
     /**
      * Creates new form JIFGenerarPDFenviar
      */
     private AnalisisData ad;
-    private SitioBusiness sitioBusiness;
+ 
     private Sitio s;
     private GenerarInformePDF gipdf;
     private TareaBusiness tareaBusiness;
     private ArrayList<Tarea> tareas;
     
+    private ClienteSingleton clienteSingleton;
+    
     public JIFGenerarPDF() throws IOException, JDOMException {
-        this.sitioBusiness = new SitioBusiness();
+
         this.tareaBusiness = new TareaBusiness();
         this.tareas = new ArrayList<>();
         this.gipdf = new GenerarInformePDF(1);
+        this.clienteSingleton=ClienteSingleton.getInstance();
         initComponents();
         agregarTareas();
     }//constructor
@@ -165,9 +174,9 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jcbTareasActionPerformed
 
     private void jbtnGenerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGenerarActionPerformed
-        Sitio sitio = this.sitioBusiness.obtenerSitio(this.jcbTareas.getSelectedItem().toString());
-        System.out.println(sitio);
-        gipdf.generarInforme(sitio);
+        GestionXML gestionXML=new GestionXML();
+        this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("informacionSitio", (String)this.jcbTareas.getSelectedItem())));
+        
     }//GEN-LAST:event_jbtnGenerarActionPerformed
 
 
@@ -179,4 +188,22 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame {
     private javax.swing.JButton jbtnVolver;
     private javax.swing.JComboBox<String> jcbTareas;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void update(String dato) {
+        try {
+            GestionXML gestionXML = new GestionXML();
+            Element eProtocolo = gestionXML.stringToXML(dato);
+            String accion = eProtocolo.getAttributeValue("accion");
+
+            if (accion.equals("generaPdf")) {
+                Sitio sitio=gestionXML.xmlASitio(eProtocolo);
+                gipdf.generarInforme(sitio);
+            }
+        } catch (JDOMException ex) {
+            Logger.getLogger(JIFGenerarPDF.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(JIFGenerarPDF.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

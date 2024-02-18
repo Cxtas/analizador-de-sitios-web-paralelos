@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author Diego
+ * 
  */
 public interface Observable {
      

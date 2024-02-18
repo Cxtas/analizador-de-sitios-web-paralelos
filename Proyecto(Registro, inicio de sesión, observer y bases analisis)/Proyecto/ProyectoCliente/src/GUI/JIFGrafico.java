@@ -4,14 +4,20 @@
  */
 package GUI;
 
-import Business.SitioBusiness;
 import Business.TareaBusiness;
+import Domain.ClienteSingleton;
 import Domain.Sitio;
 import Domain.Tarea;
 import Domain.Usuario;
+import Utility.GestionXML;
+import Utility.Observer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
@@ -25,7 +31,7 @@ import org.jfree.data.general.DefaultPieDataset;
  *
  * @author Estephanie
  */
-public class JIFGrafico extends javax.swing.JInternalFrame {
+public class JIFGrafico extends javax.swing.JInternalFrame implements Observer {
 
     /**
      * Creates new form JIFGrafico
@@ -33,22 +39,22 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
     private TareaBusiness tareaBusiness;
     private ArrayList<Tarea> tareas;
     private Usuario usuario;
-    private SitioBusiness sitioBusiness;
+
     private Sitio sitio;
-    
+    private ClienteSingleton clienteSingleton;
+
     public JIFGrafico(Usuario usuario) throws IOException, JDOMException {
         this.tareaBusiness = new TareaBusiness();
-        this.sitioBusiness= new SitioBusiness();
-        
         this.tareas = new ArrayList<>();
         this.usuario = usuario;
         this.tareas = this.tareaBusiness.obtenerTareas();//obtiene todas las tareas registradas
+        this.clienteSingleton = ClienteSingleton.getInstance();
         initComponents();
         agregarTareas();
         //this.sitio=new Sitio();
     }//constructor
-    
- //Agrega las tareas que pertenecen al analista que inició sesión al combobox
+
+    //Agrega las tareas que pertenecen al analista que inició sesión al combobox
     private void agregarTareas() {
         Iterator<Tarea> iterator = this.tareas.iterator();
         while (iterator.hasNext()) {
@@ -161,29 +167,9 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnGraficarPastelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGraficarPastelActionPerformed
-        this.sitio = this.sitioBusiness.obtenerSitio((String)this.jcbSitios.getSelectedItem());
-        if(this.sitioBusiness!=null && this.sitio!=null){
-            DefaultPieDataset pieDataset = new DefaultPieDataset();
-           
+        GestionXML gestionXML = new GestionXML();
+        this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("informacionSitioP", (String) this.jcbSitios.getSelectedItem())));
 
-            pieDataset.setValue("Enlaces", this.sitio.getEnlaces());
-            pieDataset.setValue("Imagenes", this.sitio.getImagenes());
-            pieDataset.setValue("Videos", this.sitio.getVideos());
-            pieDataset.setValue("Titulos", this.sitio.getTitulos());
-            pieDataset.setValue("Subtitulos", this.sitio.getSubtitulos());
-            pieDataset.setValue("Tablas", this.sitio.getTablas());
-
-            JFreeChart chart = ChartFactory.createPieChart(
-                    "Elementos de: " + this.jcbSitios.getSelectedItem().toString(),
-                    pieDataset,
-                    true,
-                    true,
-                    false);
-
-            ChartFrame frame = new ChartFrame("Gráfico de Pastel", chart);
-        frame.pack();
-        frame.setVisible(true);
-        }
     }//GEN-LAST:event_jbtnGraficarPastelActionPerformed
 
     private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed
@@ -191,32 +177,9 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jbtnVolverActionPerformed
 
     private void jbtnBarrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnBarrasActionPerformed
-        this.sitio = this.sitioBusiness.obtenerSitio((String)this.jcbSitios.getSelectedItem());
-        if(this.sitioBusiness!=null && this.sitio!=null){
-            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-            
-            dataset.setValue(this.sitio.getEnlaces(), "Cantidad", "Enlaces");
-            dataset.setValue(this.sitio.getImagenes(), "Cantidad", "Imagenes");
-            dataset.setValue(this.sitio.getSubtitulos(), "Cantidad", "Subtitulos");
-            dataset.setValue(this.sitio.getTablas(), "Cantidad", "Tablas");
-            dataset.setValue(this.sitio.getTitulos(), "Cantidad", "Titulos");
-            dataset.setValue(this.sitio.getVideos(), "Cantidad", "Videos");
+        GestionXML gestionXML = new GestionXML();
+        this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("informacionSitioB", (String) this.jcbSitios.getSelectedItem())));
 
-            JFreeChart chart = ChartFactory.createBarChart(
-                    "Elementos de: " + this.jcbSitios.getSelectedItem().toString(),
-                    "Elementos",
-                    "Cantidad",
-                    dataset,
-                    PlotOrientation.VERTICAL,
-                    true,
-                    false,
-                    false);
-
-            ChartFrame frame = new ChartFrame("Elementos del sitio", chart);
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        }//if
     }//GEN-LAST:event_jbtnBarrasActionPerformed
 
 
@@ -229,4 +192,69 @@ public class JIFGrafico extends javax.swing.JInternalFrame {
     private javax.swing.JButton jbtnVolver;
     private javax.swing.JComboBox<String> jcbSitios;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void update(String dato) {
+        try {
+            GestionXML gestionXML = new GestionXML();
+            Element eProtocolo = gestionXML.stringToXML(dato);
+            String accion = eProtocolo.getAttributeValue("accion");
+
+            if (accion.equals("graficoPastel")) {
+                this.sitio=gestionXML.xmlASitio(eProtocolo);
+                DefaultPieDataset pieDataset = new DefaultPieDataset();
+
+                pieDataset.setValue("Enlaces", this.sitio.getEnlaces());
+                pieDataset.setValue("Imagenes", this.sitio.getImagenes());
+                pieDataset.setValue("Videos", this.sitio.getVideos());
+                pieDataset.setValue("Titulos", this.sitio.getTitulos());
+                pieDataset.setValue("Subtitulos", this.sitio.getSubtitulos());
+                pieDataset.setValue("Tablas", this.sitio.getTablas());
+
+                JFreeChart chart = ChartFactory.createPieChart(
+                        "Elementos de: " + this.jcbSitios.getSelectedItem().toString(),
+                        pieDataset,
+                        true,
+                        true,
+                        false);
+
+                ChartFrame frame = new ChartFrame("Gráfico de Pastel", chart);
+                frame.pack();
+                frame.setVisible(true);
+            }
+            if (accion.equals("graficoBarras")) {
+                 this.sitio=gestionXML.xmlASitio(eProtocolo);
+                DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+                dataset.setValue(this.sitio.getEnlaces(), "Cantidad", "Enlaces");
+                dataset.setValue(this.sitio.getImagenes(), "Cantidad", "Imagenes");
+                dataset.setValue(this.sitio.getSubtitulos(), "Cantidad", "Subtitulos");
+                dataset.setValue(this.sitio.getTablas(), "Cantidad", "Tablas");
+                dataset.setValue(this.sitio.getTitulos(), "Cantidad", "Titulos");
+                dataset.setValue(this.sitio.getVideos(), "Cantidad", "Videos");
+
+                JFreeChart chart = ChartFactory.createBarChart(
+                        "Elementos de: " + this.jcbSitios.getSelectedItem().toString(),
+                        "Elementos",
+                        "Cantidad",
+                        dataset,
+                        PlotOrientation.VERTICAL,
+                        true,
+                        false,
+                        false);
+
+                ChartFrame frame = new ChartFrame("Elementos del sitio", chart);
+                frame.pack();
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            }
+            if (accion.equals("falloGrafico")) {
+                JOptionPane.showMessageDialog(this, "La url aún no ha sido analizada");
+            }
+        } catch (JDOMException ex) {
+            Logger.getLogger(JIFGrafico.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(JIFGrafico.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

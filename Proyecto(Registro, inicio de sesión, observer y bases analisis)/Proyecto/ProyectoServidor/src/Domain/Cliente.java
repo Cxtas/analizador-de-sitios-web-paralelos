@@ -6,6 +6,7 @@ package Domain;
 
 import Business.AdministradorBusiness;
 import Business.ExaminadorBusiness;
+import Business.SitioBusiness;
 import Utility.GestionXML;
 import Utility.MyUtil;
 import java.io.BufferedReader;
@@ -21,7 +22,7 @@ import org.jdom.JDOMException;
 
 /**
  *
- * @author Diego
+ * 
  */
 public class Cliente extends Thread {
 
@@ -135,6 +136,43 @@ public class Cliente extends Thread {
                         }else{
                             enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("falloRegistro", "s")));
                         }
+                    }
+                       if (accion.equals("informacionSitioP")) {
+                        String url=eProtocolo.getChild("dato").getValue();
+                        SitioBusiness sitioBusiness=new SitioBusiness();
+                        Sitio sitio=sitioBusiness.obtenerSitio(url);
+                           if (sitio!=null) {
+                               enviarDatos(gestionXML.xmlToString(gestionXML.SitioAXml("graficoPastel", sitio)));
+                           }else{
+                               enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("falloGrafico", "")));
+                           }
+                    }
+                       
+                        if (accion.equals("informacionSitioB")) {
+                        String url=eProtocolo.getChild("dato").getValue();
+                        SitioBusiness sitioBusiness=new SitioBusiness();
+                        Sitio sitio=sitioBusiness.obtenerSitio(url);
+                           if (sitio!=null) {
+                               enviarDatos(gestionXML.xmlToString(gestionXML.SitioAXml("graficoBarras", sitio)));
+                           }else{
+                               enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("falloGrafico", "")));
+                           }
+                    }
+                        if (accion.equals("guardarSitio")) {
+                        Sitio sitio=gestionXML.xmlASitio(eProtocolo);
+                        SitioBusiness sitioBusiness=new SitioBusiness();
+                        boolean hecho=sitioBusiness.guardarSitio(sitio);
+                            if (hecho) {
+                                enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("sitioAgregado", "")));
+                            }
+                    }
+                        if (accion.equals("informacionSitio")) {
+                        String url=eProtocolo.getChild("dato").getValue();
+                        SitioBusiness sitioBusiness=new SitioBusiness();
+                        Sitio sitio=sitioBusiness.obtenerSitio(url);
+                           if (sitio!=null) {
+                               enviarDatos(gestionXML.xmlToString(gestionXML.SitioAXml("generaPdf", sitio)));
+                           }
                     }
                     
                 } catch (JDOMException ex) {
