@@ -162,7 +162,8 @@ public class JIFEliminarUsuarios extends javax.swing.JInternalFrame implements O
     }//GEN-LAST:event_jbtnEliminarActionPerformed
 
     private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed
-        this.setVisible(false);
+        this.clienteSingleton.removeObserver(this);
+        this.dispose();
     }//GEN-LAST:event_jbtnVolverActionPerformed
 
 

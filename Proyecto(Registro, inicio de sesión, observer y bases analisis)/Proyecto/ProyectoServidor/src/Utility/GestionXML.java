@@ -7,6 +7,7 @@ package Utility;
 import Domain.Administrador;
 import Domain.Examinador;
 import Domain.Sitio;
+import Domain.Tarea;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -48,8 +49,8 @@ public class GestionXML {
 
     } // xmlToString
 
-    public static Element administradorAXML(String accion,Administrador administrador) throws IOException {
-        Element eDato=new Element("dato");
+    public static Element administradorAXML(String accion, Administrador administrador) throws IOException {
+        Element eDato = new Element("dato");
         Element eAdministrador = new Element("administrador");//<administrador>
 
         Element eUser = new Element("user");
@@ -57,11 +58,11 @@ public class GestionXML {
 
         Element eContrasenia = new Element("contrasenia");
         eContrasenia.addContent(administrador.getContrasenia());
-        
+
         Element eTipoUsuario = new Element("tipoUsuario");
         eTipoUsuario.addContent(administrador.getTipoUsuario());
-        
-        Element eActivo=new Element("activo");
+
+        Element eActivo = new Element("activo");
         eActivo.addContent(String.valueOf(administrador.isActivo()));
 
         eAdministrador.addContent(eUser);
@@ -70,43 +71,43 @@ public class GestionXML {
         eAdministrador.addContent(eActivo);
 
         eDato.addContent(eAdministrador);
-        
-         Element eProtocolo = crearMensajeProtocolo(accion);
+
+        Element eProtocolo = crearMensajeProtocolo(accion);
         eProtocolo.addContent(eDato);
         return eProtocolo;
     }//crearElAdministrador
 
     public static Administrador xmlAAdministrador(Element element) {
-        Element eAdmin=element.getChild("dato").getChild("administrador");
+        Element eAdmin = element.getChild("dato").getChild("administrador");
         Administrador admin = new Administrador(eAdmin.getChild("user").getValue(), eAdmin.getChild("contrasenia").getValue(),
-                                                eAdmin.getChild("tipoUsuario").getValue(), Boolean.parseBoolean(eAdmin.getChild("activo").getValue()));
+                eAdmin.getChild("tipoUsuario").getValue(), Boolean.parseBoolean(eAdmin.getChild("activo").getValue()));
         return admin;
     }//crearAdministrador
 
-     //agrega una lista de administradores al protocolo.
+    //agrega una lista de administradores al protocolo.
     public static Element agregarAdministradores(String accion, ArrayList<Administrador> administradores) {
         Element edato = new Element("dato");
 
         for (int i = 0; i < administradores.size(); i++) {
             Element eAdministrador = new Element("administrador");
 
-        Element eUser = new Element("user");
-        eUser.addContent(administradores.get(i).getUser());
+            Element eUser = new Element("user");
+            eUser.addContent(administradores.get(i).getUser());
 
-        Element eContrasenia = new Element("contrasenia");
-        eContrasenia.addContent(administradores.get(i).getContrasenia());
-        
-        Element eTipoUsuario = new Element("tipoUsuario");
-        eTipoUsuario.addContent(administradores.get(i).getTipoUsuario());
-        
-        Element eActivo=new Element("activo");
-        eActivo.addContent(String.valueOf(administradores.get(i).isActivo()));
+            Element eContrasenia = new Element("contrasenia");
+            eContrasenia.addContent(administradores.get(i).getContrasenia());
 
-        eAdministrador.addContent(eUser);
-        eAdministrador.addContent(eContrasenia);
-         eAdministrador.addContent(eTipoUsuario);
-        eAdministrador.addContent(eActivo);
-         edato.addContent(eAdministrador);
+            Element eTipoUsuario = new Element("tipoUsuario");
+            eTipoUsuario.addContent(administradores.get(i).getTipoUsuario());
+
+            Element eActivo = new Element("activo");
+            eActivo.addContent(String.valueOf(administradores.get(i).isActivo()));
+
+            eAdministrador.addContent(eUser);
+            eAdministrador.addContent(eContrasenia);
+            eAdministrador.addContent(eTipoUsuario);
+            eAdministrador.addContent(eActivo);
+            edato.addContent(eAdministrador);
 
         }
 
@@ -114,47 +115,46 @@ public class GestionXML {
         eProtocolo.addContent(edato);
         return eProtocolo;
     }//agregarAdministradores
-    
-       public static ArrayList<Examinador> xmlAExaminadores(Element element){
-         ArrayList<Examinador> examinadores=new ArrayList<>();
-          List<Element> examinadorElements = element.getChildren("examinador");
 
-            for (Element examinadorElement : examinadorElements) {
-                String user = examinadorElement.getChildText("user");
-                String contrasenia = examinadorElement.getChildText("contrasenia");
-                String rol = examinadorElement.getChildText("rol");
-                String tipoUsuario=examinadorElement.getChildText("tipoUsuario");
-                boolean activo= Boolean.parseBoolean(String.valueOf(examinadorElement.getChild("activo")));
+    public static ArrayList<Examinador> xmlAExaminadores(Element element) {
+        ArrayList<Examinador> examinadores = new ArrayList<>();
+        List<Element> examinadorElements = element.getChildren("examinador");
 
-                System.out.println(activo);
-                Examinador examinador = new Examinador(user, contrasenia, rol,tipoUsuario ,activo);
-                examinadores.add(examinador);
-            }
-        
+        for (Element examinadorElement : examinadorElements) {
+            String user = examinadorElement.getChildText("user");
+            String contrasenia = examinadorElement.getChildText("contrasenia");
+            String rol = examinadorElement.getChildText("rol");
+            String tipoUsuario = examinadorElement.getChildText("tipoUsuario");
+            boolean activo = Boolean.parseBoolean(String.valueOf(examinadorElement.getChild("activo")));
+
+            System.out.println(activo);
+            Examinador examinador = new Examinador(user, contrasenia, rol, tipoUsuario, activo);
+            examinadores.add(examinador);
+        }
 
         return examinadores;
     }
-      
-       public static ArrayList<Administrador> xmlAAdministradores(Element element){
-        ArrayList<Administrador> administradores=new ArrayList<>();
-        List EAdminList=element.getChildren();
-        
+
+    public static ArrayList<Administrador> xmlAAdministradores(Element element) {
+        ArrayList<Administrador> administradores = new ArrayList<>();
+        List EAdminList = element.getChildren();
+
         for (Object object : EAdminList) {
-            Element adminActual=(Element) object;
-            
-            Administrador administrador=new Administrador(adminActual.getChild("user").getValue(),
-                    adminActual.getChild("contrasenia").getValue(), 
-                    adminActual.getChild("tipoUsuario").getValue(), 
+            Element adminActual = (Element) object;
+
+            Administrador administrador = new Administrador(adminActual.getChild("user").getValue(),
+                    adminActual.getChild("contrasenia").getValue(),
+                    adminActual.getChild("tipoUsuario").getValue(),
                     Boolean.parseBoolean(String.valueOf(adminActual.getChild("activo").getValue())));
-            
+
             administradores.add(administrador);
-            
+
         }
         return administradores;
     }
-    
-     public static Element examinadorAXML(String accion,Examinador examinador) throws IOException {
-        Element eDato=new Element("dato");
+
+    public static Element examinadorAXML(String accion, Examinador examinador) throws IOException {
+        Element eDato = new Element("dato");
         Element eExaminador = new Element("examinador");//<examinador>
 
         Element eUser = new Element("user");
@@ -178,51 +178,51 @@ public class GestionXML {
         eExaminador.addContent(eTipoUsuario);
         eExaminador.addContent(eActivo);
 
-         eDato.addContent(eExaminador);
-        
-         Element eProtocolo = crearMensajeProtocolo(accion);
+        eDato.addContent(eExaminador);
+
+        Element eProtocolo = crearMensajeProtocolo(accion);
         eProtocolo.addContent(eDato);
         return eProtocolo;
     }//crearElExaminador
 
     public static Examinador xmlAExaminador(Element element) {
-        Element eExaminador=element.getChild("dato").getChild("examinador");
-        Examinador examinador = new Examinador(eExaminador.getChild("user").getValue(), 
-                                               eExaminador.getChild("contrasenia").getValue(),
-                                               eExaminador.getChild("rol").getValue(),
-                                               eExaminador.getChild("tipoUsuario").getValue(),
-                                               Boolean.parseBoolean(eExaminador.getChild("activo").getValue()));
+        Element eExaminador = element.getChild("dato").getChild("examinador");
+        Examinador examinador = new Examinador(eExaminador.getChild("user").getValue(),
+                eExaminador.getChild("contrasenia").getValue(),
+                eExaminador.getChild("rol").getValue(),
+                eExaminador.getChild("tipoUsuario").getValue(),
+                Boolean.parseBoolean(eExaminador.getChild("activo").getValue()));
         return examinador;
     }//crearExaminador
-    
-        //agrega una lista de examinadores al protocolo.
+
+    //agrega una lista de examinadores al protocolo.
     public static Element agregarExaminadores(String accion, ArrayList<Examinador> examinadores) {
         Element edato = new Element("dato");
 
         for (int i = 0; i < examinadores.size(); i++) {
-        Element eExaminador = new Element("examinador");//<examinador>
+            Element eExaminador = new Element("examinador");//<examinador>
 
-        Element eUser = new Element("user");
-        eUser.addContent(examinadores.get(i).getUser());
+            Element eUser = new Element("user");
+            eUser.addContent(examinadores.get(i).getUser());
 
-        Element eContrasenia = new Element("contrasenia");
-        eContrasenia.addContent(examinadores.get(i).getContrasenia());
+            Element eContrasenia = new Element("contrasenia");
+            eContrasenia.addContent(examinadores.get(i).getContrasenia());
 
-        Element eRol = new Element("rol");
-        eRol.addContent(examinadores.get(i).getRol());
-        
-         Element eTipoUsuario = new Element("tipoUsuario");
-        eTipoUsuario.addContent(examinadores.get(i).getTipoUsuario());
-        
-        Element eActivo = new Element("activo");
-        eActivo.addContent(String.valueOf(examinadores.get(i).isActivo()));
+            Element eRol = new Element("rol");
+            eRol.addContent(examinadores.get(i).getRol());
 
-        eExaminador.addContent(eUser);
-        eExaminador.addContent(eContrasenia);
-        eExaminador.addContent(eRol);
-        eExaminador.addContent(eActivo);
-        eExaminador.addContent(eTipoUsuario);
-        edato.addContent(eExaminador);
+            Element eTipoUsuario = new Element("tipoUsuario");
+            eTipoUsuario.addContent(examinadores.get(i).getTipoUsuario());
+
+            Element eActivo = new Element("activo");
+            eActivo.addContent(String.valueOf(examinadores.get(i).isActivo()));
+
+            eExaminador.addContent(eUser);
+            eExaminador.addContent(eContrasenia);
+            eExaminador.addContent(eRol);
+            eExaminador.addContent(eActivo);
+            eExaminador.addContent(eTipoUsuario);
+            edato.addContent(eExaminador);
 
         }
 
@@ -250,10 +250,10 @@ public class GestionXML {
 
         Element eContrasenia = new Element("contrasenia");
         eContrasenia.addContent(administrador.getContrasenia());
-        
+
         Element eTipoUsuario = new Element("tipoUsuario");
         eTipoUsuario.addContent(administrador.getTipoUsuario());
-        
+
         Element eActivo = new Element("activo");
         eActivo.addContent(String.valueOf(administrador.isActivo()));
 
@@ -271,7 +271,7 @@ public class GestionXML {
     public static Element agregarExaminador(String accion, Examinador examinador) {
         Element edato = new Element("dato");
 
-         Element eExaminador = new Element("examinador");//<examinador>
+        Element eExaminador = new Element("examinador");//<examinador>
 
         Element eUser = new Element("user");
         eUser.addContent(examinador.getUser());
@@ -281,10 +281,10 @@ public class GestionXML {
 
         Element eRol = new Element("rol");
         eRol.addContent(examinador.getRol());
-        
+
         Element eTipoUsuario = new Element("tipoUsuario");
         eTipoUsuario.addContent(examinador.getTipoUsuario());
-        
+
         Element eActivo = new Element("activo");
         eActivo.addContent(String.valueOf(examinador.isActivo()));
 
@@ -299,20 +299,20 @@ public class GestionXML {
         eProtocolo.addContent(edato);
         return eProtocolo;
     }//agregarExaminador
-    
-       //agrega una accion al protocolo
-        public static Element agregarAccionSimple(String accion,String dato){
-        Element edato= new Element("dato");
+
+    //agrega una accion al protocolo
+    public static Element agregarAccionSimple(String accion, String dato) {
+        Element edato = new Element("dato");
         edato.addContent(dato);
-      
-        Element eProtocolo=crearMensajeProtocolo(accion);
+
+        Element eProtocolo = crearMensajeProtocolo(accion);
         eProtocolo.addContent(edato);
         return eProtocolo;
     }//agregarAccionSimple
 
-         public static Element SitioAXml(String accion,Sitio sitio){
+    public static Element SitioAXml(String accion, Sitio sitio) {
         Element edato = new Element("dato");
-        
+
         Element eSitio = new Element("sitio");
 
         Element eURL = new Element("url");
@@ -375,17 +375,15 @@ public class GestionXML {
         eSitio.addContent(eaEnlaces);
         eSitio.addContent(eProductos);
         eSitio.addContent(ePrecios);
-        
-         edato.addContent(eSitio);
+
+        edato.addContent(eSitio);
 
         Element eProtocolo = crearMensajeProtocolo(accion);
         eProtocolo.addContent(edato);
         return eProtocolo;
     }
-    
-         
-         
-  public static Sitio xmlASitio(Element element) {
+
+    public static Sitio xmlASitio(Element element) {
         Element eSitio = element.getChild("dato").getChild("sitio");
 
         String url = eSitio.getChildText("url");
@@ -411,5 +409,177 @@ public class GestionXML {
         }
         return lista;
     }
+
+    public static Element TareasAXml(String accion, ArrayList<Tarea> tareas) {
+        Element edato = new Element("dato");
+
+        for (int i = 0; i < tareas.size(); i++) {
+
+            Element eTarea = new Element("tarea");
+
+            Element eAvance = new Element("porcentajeAvance");
+            eAvance.addContent(String.valueOf(tareas.get(i).getPorcentajeAvance()));
+
+            Element eEstado = new Element("estado");
+            eEstado.addContent(tareas.get(i).getEstado());
+
+            Element eAnalisis0 = new Element("analisis0");
+            eAnalisis0.addContent(String.valueOf(tareas.get(i).isAnalisis0()));
+
+            Element eAnalisis1 = new Element("analisis1");
+            eAnalisis1.addContent(String.valueOf(tareas.get(i).isAnalisis1()));
+
+            Element eAnalisis2 = new Element("analisis2");
+            eAnalisis2.addContent(String.valueOf(tareas.get(i).isAnalisis2()));
+
+            Element eURL = new Element("url");
+            eURL.addContent(tareas.get(i).getUrl());
+
+            Element eImgs = new Element("imagenes");
+            eImgs.addContent(String.valueOf(tareas.get(i).isImagenes()));
+
+            Element eEnlaces = new Element("enlaces");
+            eEnlaces.addContent(String.valueOf(tareas.get(i).isEnlaces()));
+
+            Element eAnalista = new Element("analista");
+            eAnalista.addContent(tareas.get(i).getAnalista());
+
+            eTarea.addContent(eAvance);
+            eTarea.addContent(eEstado);
+            eTarea.addContent(eAnalisis0);
+            eTarea.addContent(eAnalisis1);
+            eTarea.addContent(eAnalisis2);
+            eTarea.addContent(eURL);
+            eTarea.addContent(eImgs);
+            eTarea.addContent(eEnlaces);
+            eTarea.addContent(eAnalista);
+            edato.addContent(eTarea);
+        }
+        Element eProtocolo = crearMensajeProtocolo(accion);
+        eProtocolo.addContent(edato);
+        return eProtocolo;
+    }
+
+    public static ArrayList<Tarea> xmlATareas(Element element) {
+        ArrayList<Tarea> tareas = new ArrayList<>();
+        Element edato = element.getChild("dato");
+
+        List<Element> elementosTarea = edato.getChildren("tarea");
+        for (Element eTarea : elementosTarea) {
+            Tarea tarea = crearTareaDesdeElemento(eTarea);
+            tareas.add(tarea);
+        }
+
+        return tareas;
+    }
+
+    private static Tarea crearTareaDesdeElemento(Element eTarea) {
+        int porcentajeAvance = Integer.parseInt(eTarea.getChildText("porcentajeAvance"));
+        String estado = eTarea.getChildText("estado");
+        boolean analisis0 = Boolean.parseBoolean(eTarea.getChildText("analisis0"));
+        boolean analisis1 = Boolean.parseBoolean(eTarea.getChildText("analisis1"));
+        boolean analisis2 = Boolean.parseBoolean(eTarea.getChildText("analisis2"));
+        String url = eTarea.getChildText("url");
+        boolean imagenes = Boolean.parseBoolean(eTarea.getChildText("imagenes"));
+        boolean enlaces = Boolean.parseBoolean(eTarea.getChildText("enlaces"));
+        String analista = eTarea.getChildText("analista");
+
+        return new Tarea(porcentajeAvance, estado, analisis0, analisis1, analisis2, url, imagenes, enlaces, analista);
+    }
     
+    
+    public static Element TareaAXml(String accion, Tarea tarea) {
+
+        Element edato = new Element("dato");
+
+        Element eTarea = new Element("tarea");
+
+        Element eAvance = new Element("porcentajeAvance");
+        eAvance.addContent(String.valueOf(tarea.getPorcentajeAvance()));
+
+        Element eEstado = new Element("estado");
+        eEstado.addContent(tarea.getEstado());
+
+        Element eAnalisis0 = new Element("analisis0");
+        eAnalisis0.addContent(String.valueOf(tarea.isAnalisis0()));
+
+        Element eAnalisis1 = new Element("analisis1");
+        eAnalisis1.addContent(String.valueOf(tarea.isAnalisis1()));
+
+        Element eAnalisis2 = new Element("analisis2");
+        eAnalisis2.addContent(String.valueOf(tarea.isAnalisis2()));
+
+        Element eURL = new Element("url");
+        eURL.addContent(tarea.getUrl());
+
+        Element eImgs = new Element("imagenes");
+        eImgs.addContent(String.valueOf(tarea.isImagenes()));
+
+        Element eEnlaces = new Element("enlaces");
+        eEnlaces.addContent(String.valueOf(tarea.isEnlaces()));
+
+        Element eAnalista = new Element("analista");
+        eAnalista.addContent(tarea.getAnalista());
+
+        eTarea.addContent(eAvance);
+        eTarea.addContent(eEstado);
+        eTarea.addContent(eAnalisis0);
+        eTarea.addContent(eAnalisis1);
+        eTarea.addContent(eAnalisis2);
+        eTarea.addContent(eURL);
+        eTarea.addContent(eImgs);
+        eTarea.addContent(eEnlaces);
+        eTarea.addContent(eAnalista);
+
+        edato.addContent(eTarea);
+
+        Element eProtocolo = crearMensajeProtocolo(accion);
+        eProtocolo.addContent(edato);
+        return eProtocolo;
+
+    }
+    
+    public static Tarea xmlATarea(Element element) {
+        Element eTarea = element.getChild("dato").getChild("tarea");
+
+        int porcentajeAvance = Integer.parseInt(eTarea.getChildText("porcentajeAvance"));
+        String estado = eTarea.getChildText("estado");
+        boolean analisis0 = Boolean.parseBoolean(eTarea.getChildText("analisis0"));
+        boolean analisis1 = Boolean.parseBoolean(eTarea.getChildText("analisis1"));
+        boolean analisis2 = Boolean.parseBoolean(eTarea.getChildText("analisis2"));
+        String url = eTarea.getChildText("url");
+        boolean imagenes = Boolean.parseBoolean(eTarea.getChildText("imagenes"));
+        boolean enlaces = Boolean.parseBoolean(eTarea.getChildText("enlaces"));
+        String analista = eTarea.getChildText("analista");
+
+        return new Tarea(porcentajeAvance, estado, analisis0, analisis1, analisis2, url, imagenes, enlaces, analista);
+    }
+    
+    public static Element analistaTareaAXml(String accion, String analista,String url){
+         Element edato = new Element("dato");
+        
+         Element eAnalista = new Element("analista");
+        eAnalista.addContent(analista);
+
+        Element eURL = new Element("url");
+        eURL.addContent(String.valueOf(url));
+        
+        edato.addContent(eAnalista);
+        edato.addContent(eURL);
+
+        Element eProtocolo = crearMensajeProtocolo(accion);
+        eProtocolo.addContent(edato);
+        return eProtocolo;
+    }
+    
+    public static String[] xmlATareaAnalista(Element element){
+        Element edato = element.getChild("dato");
+        
+        String analista=edato.getChild("analista").getValue();
+        String url=edato.getChild("url").getValue();
+        
+        String[] datos={analista,url};
+        
+        return datos;
+    }
 }

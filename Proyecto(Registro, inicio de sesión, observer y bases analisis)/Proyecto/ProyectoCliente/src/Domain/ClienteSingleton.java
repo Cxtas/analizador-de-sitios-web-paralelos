@@ -23,6 +23,8 @@ public class ClienteSingleton implements Runnable,Observable{
 
     private static ClienteSingleton clienteSingleton;
     private ArrayList<Observer> observers=new ArrayList<>();
+    private ArrayList<Tarea> tareas;
+    private boolean lleganTareas;
     
     private Socket socket;
     private InetAddress direccion;
@@ -39,7 +41,8 @@ public class ClienteSingleton implements Runnable,Observable{
         this.leer = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
        
         this.abierto = true;
-       
+       this.tareas=new ArrayList<>();
+       this.lleganTareas=false;
 
     }//constructor
     
@@ -77,7 +80,25 @@ public class ClienteSingleton implements Runnable,Observable{
                     if (Peticion.startsWith("<Protocolo")) {
                         notifyObservers(Peticion);
                         
-                        
+                        Element eProtocolo;
+                        try {
+                            eProtocolo = gestionXML.stringToXML(Peticion);
+                            String accion = eProtocolo.getAttributeValue("accion");
+                            
+                            if (accion.equals("Tareass")) {
+                                 this.tareas = gestionXML.xmlATareas(eProtocolo);//obtiene todas las tareas registradas
+                                 this.lleganTareas=true;
+                            }
+                            
+                            if (accion.equals("Tareasa")) {
+                                 this.tareas = gestionXML.xmlATareas(eProtocolo);//obtiene todas las tareas registradas
+                                 this.lleganTareas=true;
+                            }
+                            
+                        } catch (JDOMException ex) {
+                            Logger.getLogger(ClienteSingleton.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                            
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(ClienteSingleton.class.getName()).log(Level.SEVERE, null, ex);
@@ -114,8 +135,26 @@ public class ClienteSingleton implements Runnable,Observable{
 
     @Override
     public void notifyObservers(String data) {
-        for (Observer observer : observers) {
-            observer.update(data);
+   
+            for (Observer observer : observers) {
+                observer.update(data);
+            }
         }
+
+    public ArrayList<Tarea> getTareas() {
+        return tareas;
     }
+
+    public void setTareas(ArrayList<Tarea> tareas) {
+        this.tareas = tareas;
+    }
+
+    public boolean isLleganTareas() {
+        return lleganTareas;
+    }
+
+    public void setLleganTareas(boolean lleganTareas) {
+        this.lleganTareas = lleganTareas;
+    }
+    
 }

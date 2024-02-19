@@ -258,6 +258,8 @@ public class JFPrincipal extends javax.swing.JFrame {
 
     private void jmiIngresarDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiIngresarDatosActionPerformed
         JIFDatosAnalisis ventana = new JIFDatosAnalisis();
+        ClienteSingleton clienteSingleton=ClienteSingleton.getInstance();
+        clienteSingleton.addObserver(ventana);
         this.jDesktopPane1.add(ventana);
         centrar(ventana);
     }//GEN-LAST:event_jmiIngresarDatosActionPerformed
@@ -286,6 +288,8 @@ public class JFPrincipal extends javax.swing.JFrame {
 
     private void jmiEstadoTareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiEstadoTareasActionPerformed
         JIFEstadoTareas tarea = new JIFEstadoTareas();
+        ClienteSingleton clienteSingleton=ClienteSingleton.getInstance();
+        clienteSingleton.addObserver(tarea);
         this.jDesktopPane1.add(tarea);
         centrar(tarea);
 
@@ -323,9 +327,10 @@ public class JFPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jmiPDFenviarActionPerformed
 
     private void jmiCambioUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiCambioUsuarioActionPerformed
-        this.setVisible(false);
+        
         JFLogging logging = new JFLogging();
         logging.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jmiCambioUsuarioActionPerformed
 
     private void jmiSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiSalirActionPerformed

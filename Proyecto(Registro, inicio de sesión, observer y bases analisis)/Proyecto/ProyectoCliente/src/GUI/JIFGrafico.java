@@ -4,7 +4,6 @@
  */
 package GUI;
 
-import Business.TareaBusiness;
 import Domain.ClienteSingleton;
 import Domain.Sitio;
 import Domain.Tarea;
@@ -31,12 +30,11 @@ import org.jfree.data.general.DefaultPieDataset;
  *
  * @author Estephanie
  */
-public class JIFGrafico extends javax.swing.JInternalFrame implements Observer {
+public class JIFGrafico extends javax.swing.JInternalFrame implements Observer, Runnable {
 
     /**
      * Creates new form JIFGrafico
      */
-    private TareaBusiness tareaBusiness;
     private ArrayList<Tarea> tareas;
     private Usuario usuario;
 
@@ -44,13 +42,16 @@ public class JIFGrafico extends javax.swing.JInternalFrame implements Observer {
     private ClienteSingleton clienteSingleton;
 
     public JIFGrafico(Usuario usuario) throws IOException, JDOMException {
-        this.tareaBusiness = new TareaBusiness();
+
         this.tareas = new ArrayList<>();
         this.usuario = usuario;
-        this.tareas = this.tareaBusiness.obtenerTareas();//obtiene todas las tareas registradas
+        Thread thread=new Thread(this);
+        thread.start();
         this.clienteSingleton = ClienteSingleton.getInstance();
+        GestionXML gestionXML = new GestionXML();
+        this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("AllTasksa", "")));
         initComponents();
-        agregarTareas();
+
         //this.sitio=new Sitio();
     }//constructor
 
@@ -173,7 +174,8 @@ public class JIFGrafico extends javax.swing.JInternalFrame implements Observer {
     }//GEN-LAST:event_jbtnGraficarPastelActionPerformed
 
     private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed
-        this.setVisible(false);
+        this.clienteSingleton.removeObserver(this);
+        this.dispose();
     }//GEN-LAST:event_jbtnVolverActionPerformed
 
     private void jbtnBarrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnBarrasActionPerformed
@@ -201,7 +203,7 @@ public class JIFGrafico extends javax.swing.JInternalFrame implements Observer {
             String accion = eProtocolo.getAttributeValue("accion");
 
             if (accion.equals("graficoPastel")) {
-                this.sitio=gestionXML.xmlASitio(eProtocolo);
+                this.sitio = gestionXML.xmlASitio(eProtocolo);
                 DefaultPieDataset pieDataset = new DefaultPieDataset();
 
                 pieDataset.setValue("Enlaces", this.sitio.getEnlaces());
@@ -223,7 +225,7 @@ public class JIFGrafico extends javax.swing.JInternalFrame implements Observer {
                 frame.setVisible(true);
             }
             if (accion.equals("graficoBarras")) {
-                 this.sitio=gestionXML.xmlASitio(eProtocolo);
+                this.sitio = gestionXML.xmlASitio(eProtocolo);
                 DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
                 dataset.setValue(this.sitio.getEnlaces(), "Cantidad", "Enlaces");
@@ -251,10 +253,31 @@ public class JIFGrafico extends javax.swing.JInternalFrame implements Observer {
             if (accion.equals("falloGrafico")) {
                 JOptionPane.showMessageDialog(this, "La url aún no ha sido analizada");
             }
+
+ 
         } catch (JDOMException ex) {
             Logger.getLogger(JIFGrafico.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(JIFGrafico.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void run() {
+        boolean abierto = true;
+        while (abierto) {
+            if (this.clienteSingleton.isLleganTareas()) {
+                this.tareas = this.clienteSingleton.getTareas();
+                this.clienteSingleton.setLleganTareas(false);
+                agregarTareas();
+                abierto = false;
+              
+            }
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(JIFGenerarPDF.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }

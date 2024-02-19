@@ -2,7 +2,6 @@ package GUI;
 
 import Business.AnalisisBusiness;
 
-import Business.TareaBusiness;
 import Domain.ClienteSingleton;
 import Domain.Sitio;
 import Domain.Tarea;
@@ -30,38 +29,42 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
      * Creates new form JIFRealizarAnalisis
      */
     private AnalisisBusiness analisisBusiness;
-    private TareaBusiness tareaBusiness;
+
     private ArrayList<Tarea> tareas;
     private Usuario usuario;
     private Tarea tareaSelected;
     private Sitio sitio;
     private ClienteSingleton clienteSingleton;
+    private boolean realizado;
 
     public JIFRealizarAnalisis(Usuario usuario) throws IOException, JDOMException {//permite saber cuál es el usuario que inició sesión
         this.usuario = usuario;//se guarda el usuario
-        this.tareaBusiness = new TareaBusiness();
+        this.realizado=true;
         this.tareas = new ArrayList<>();
         this.sitio = null;
         initComponents();
-        this.tareas = this.tareaBusiness.obtenerTareas();//se obtienen las tareas registradas
-        this.tareaSelected = this.tareas.get(0);//inicia en la primera tarea
-        agregarTareas();//se agregan las tareas al combobox
-        Thread thread = new Thread(this);
-        thread.start();//se inicia el hilo para cambiar de tarea
-        this.clienteSingleton=ClienteSingleton.getInstance();
+        this.clienteSingleton = ClienteSingleton.getInstance();
+        GestionXML gestionXML = new GestionXML();
+        this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("AllTasks", "")));
 
     }
 
     //Al ser un hilo permite darse cuenta al momento que se selecciona otra tarea permitiendo cambiar el detalle en tiempo real
     @Override
-  public void run() {
-    while (true) {
-        Object selectedItem = jcbTareasPendientes.getSelectedItem();
-        if (selectedItem != null) {
-            this.tareaSelected = this.tareaBusiness.buscarTarea(selectedItem.toString());
-            actualizarDetalle();
+    public void run() {
+        GestionXML gestionXML=new GestionXML();
+        while (this.realizado) {
+            Object selectedItem = jcbTareasPendientes.getSelectedItem();
+            if (selectedItem != null) {
+                this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("buscarTarea", selectedItem.toString())));
+                
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(JIFRealizarAnalisis.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-    }
     }
 
     //Agrega las tareas que pertenecen al analista que inició sesión al combobox
@@ -217,7 +220,9 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed
-        this.setVisible(false);
+        this.realizado=false;
+        this.clienteSingleton.removeObserver(this);
+        this.dispose();
     }//GEN-LAST:event_jbtnVolverActionPerformed
 
     private void jbtnAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAnalizarActionPerformed
@@ -228,8 +233,7 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
             this.analisisBusiness = new AnalisisBusiness();
 
             if (this.tareaSelected.isAnalisis0()) { //Análisis de elementos que conforman un sitio web.
-              
-                
+
                 hecho1 = this.analisisBusiness.cantidadElementos(this.tareaSelected.getUrl());//Crea un sitio y le asigna la cantidad de los elementos de este tipo de analisis
 //                System.out.println(hecho1);
                 if (hecho1) {
@@ -245,7 +249,7 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
                     JOptionPane.showMessageDialog(this, "No se pudo contar los elementos");
                 }
             }//analisis1
-            
+
             if (this.tareaSelected.isAnalisis1()) {//Análisis de elementos y extracción. seleccionan img y/o enlaces
                 if (this.tareaSelected.isImagenes()) {//si se pidió imagenes
                     hecho2 = this.analisisBusiness.descargarImagen(this.tareaSelected.getUrl());
@@ -273,24 +277,27 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
                 if (hecho4) {
                     this.sitio = this.analisisBusiness.getSitio();
                     this.jtaResultado.append("Productos: " + this.sitio.getProductos() + "\n");
-                    this.jtaResultado.append("Precios: " + this.sitio.getPrecios()+ "\n");
+                    this.jtaResultado.append("Precios: " + this.sitio.getPrecios() + "\n");
                 } else {
                     JOptionPane.showMessageDialog(this, "No se pudo extraer los productos o la pagina no contiene");
                 }
             }//analisis3
 
             if (hecho1 && hecho2 && hecho3 && hecho4) {
-            if (!this.tareas.isEmpty() && jcbTareasPendientes.getSelectedIndex() >= 0 && 
-                    jcbTareasPendientes.getSelectedIndex() < this.tareas.size()) {
-                this.tareas.remove(jcbTareasPendientes.getSelectedIndex());
-                jcbTareasPendientes.removeItemAt(jcbTareasPendientes.getSelectedIndex());
-                jtaResultado.setText("");
+                if (!this.tareas.isEmpty() && jcbTareasPendientes.getSelectedIndex() >= 0
+                        && jcbTareasPendientes.getSelectedIndex() < this.tareas.size()) {
+                    this.tareas.remove(jcbTareasPendientes.getSelectedIndex());
+                    jcbTareasPendientes.removeItemAt(jcbTareasPendientes.getSelectedIndex());
+                    jtaResultado.setText("");
+                }
+                
+
+                GestionXML gestionXML = new GestionXML();
+                this.clienteSingleton.enviarDatos(gestionXML.xmlToString(
+                        gestionXML.agregarAccionSimple("cambiarEstado", this.tareaSelected.getUrl())));
+                
+                this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.SitioAXml("guardarSitio", this.sitio)));
             }
-            this.tareaBusiness.cambiarEstado(this.tareaSelected.getUrl());
-            
-            GestionXML gestionXML=new GestionXML();
-            this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.SitioAXml("guardarSitio", this.sitio)));
-        }
         } catch (NullPointerException ex) {
             System.out.println("Error " + ex);
         } catch (IOException ex) {
@@ -333,6 +340,18 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
 
             if (accion.equals("sitioAgregado")) {
                 JOptionPane.showMessageDialog(this, "analisis finalizado con exito");
+            }
+            if (accion.equals("Tareas")) {
+                this.tareas = gestionXML.xmlATareas(eProtocolo);//obtiene todas las tareas registradas
+                this.tareaSelected = this.tareas.get(0);//inicia en la primera tarea
+                agregarTareas();//se agregan las tareas al combobox
+                Thread thread = new Thread(this);
+                //thread.start();//se inicia el hilo para cambiar de tarea
+
+            }
+            if (accion.equals("informacionTarea")) {
+                this.tareaSelected = gestionXML.xmlATarea(eProtocolo);
+                actualizarDetalle();
             }
         } catch (JDOMException ex) {
             Logger.getLogger(JIFRealizarAnalisis.class.getName()).log(Level.SEVERE, null, ex);

@@ -263,7 +263,8 @@ public class JIFRegistroUsuario extends javax.swing.JInternalFrame implements Ob
     }
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        this.setVisible(false);
+        this.clienteSingleton.removeObserver(this);
+        this.dispose();
     }//GEN-LAST:event_btnVolverActionPerformed
 
     private void jcbTipoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbTipoUsuarioActionPerformed

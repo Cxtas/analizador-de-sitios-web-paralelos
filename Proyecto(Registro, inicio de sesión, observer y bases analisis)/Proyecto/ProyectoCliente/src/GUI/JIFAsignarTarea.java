@@ -4,8 +4,6 @@
  */
 package GUI;
 
-
-import Business.TareaBusiness;
 import Domain.ClienteSingleton;
 import Domain.Examinador;
 import Domain.Tarea;
@@ -29,7 +27,6 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame implements Obser
     private ArrayList<Examinador> analistas;
     private Examinador analista;
 
-    private TareaBusiness tareaBusiness;
     private ArrayList<Tarea> tareas;//Tareas Por Analizar
     private Tarea tarea; //tarea seleccionada
 
@@ -40,19 +37,20 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame implements Obser
      * @throws org.jdom.JDOMException
      */
     private ClienteSingleton clienteSingleton;
+
     public JIFAsignarTarea() throws IOException, JDOMException {
 
-        this.tareaBusiness = new TareaBusiness();
         initComponents();
         this.analista = null;
         this.tarea = null;
         this.analistas = new ArrayList<>();
         this.tareas = new ArrayList<>();
-        this.clienteSingleton=ClienteSingleton.getInstance();
-        
-        GestionXML gestionXML=new GestionXML();
+        this.clienteSingleton = ClienteSingleton.getInstance();
+
+        GestionXML gestionXML = new GestionXML();
         this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("AllExaminadores", "")));
-        agregarTareas();
+        this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("AllTasks", "")));
+
     }//constructor
 
     //Busca entre el arrayList se usuarios solo a los analistas y descarta los otros roles
@@ -70,7 +68,6 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame implements Obser
     }//solicitar
 
     private void agregarTareas() {
-        this.tareas = tareaBusiness.obtenerTareas();//obtiene las tareas registradas
         Iterator<Tarea> iterator = this.tareas.iterator();//se necesita un iterador para no alterar el índice
         while (iterator.hasNext()) {
             Tarea tareaTemp = iterator.next();
@@ -169,27 +166,21 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame implements Obser
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnAsignarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAsignarActionPerformed
-        try {
+        
             this.analista = this.analistas.get(this.jcbAnalistas.getSelectedIndex());//guarda el analista seleccionado
             this.tarea = this.tareas.get(this.jcbTareas.getSelectedIndex());//guarda la tarea
-            boolean asignado = this.tareaBusiness.asignarAnalista(this.analista.getUser(), this.tarea.getUrl());//asigna el analista seleccionado a la tarea
-            if (asignado) {//si se asignó muestra un mensaje
-                JOptionPane.showMessageDialog(this, "Se asignó la tarea " + this.tarea.getUrl() + " al analista: " + this.analista.getUser());
-                //Elimina de la lista de tareas, tareas que ya son asignadas
-                this.tareas.remove(this.jcbTareas.getSelectedIndex());
-                this.jcbTareas.removeItemAt(this.jcbTareas.getSelectedIndex());
-            } else {//si no se pudo asignar envía un mensaje
-                JOptionPane.showMessageDialog(this, "No se pudo asignar");
-            }
-        } catch (NullPointerException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo asignar, revise que se encuentren los datos completos para poder asignar");
-        } catch (IOException ex) {
-            Logger.getLogger(JIFAsignarTarea.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            GestionXML gestionXML=new GestionXML();
+            this.clienteSingleton.enviarDatos(gestionXML.xmlToString(
+                    gestionXML.analistaTareaAXml("asignarAnalista", this.analista.getUser(),  this.tarea.getUrl())));//asigna el analista seleccionado a la tarea
+
+           
+       
     }//GEN-LAST:event_jbtnAsignarActionPerformed
 
     private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed
-        this.setVisible(false);
+         this.clienteSingleton.removeObserver(this);
+        this.dispose();
+       
     }//GEN-LAST:event_jbtnVolverActionPerformed
 
 
@@ -208,13 +199,24 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame implements Obser
             GestionXML gestionXML = new GestionXML();
             Element eProtocolo = gestionXML.stringToXML(dato);
             String accion = eProtocolo.getAttributeValue("accion");
-            
- 
-            
+
             if (accion.equals("Examinadores")) {
-                this.analistas=gestionXML.xmlAExaminadores(eProtocolo);
+                this.analistas = gestionXML.xmlAExaminadores(eProtocolo);
                 solicitarAnalista();
-               
+
+            }
+            if (accion.equals("Tareas")) {
+                this.tareas = gestionXML.xmlATareas(eProtocolo);//obtiene todas las tareas registradas
+                agregarTareas();
+            }
+            if (accion.equals("tareaAsignada")) {
+                JOptionPane.showMessageDialog(this, "Se asignó la tarea " + this.tarea.getUrl() + " al analista: " + this.analista.getUser());
+                //Elimina de la lista de tareas, tareas que ya son asignadas
+                this.tareas.remove(this.jcbTareas.getSelectedIndex());
+                this.jcbTareas.removeItemAt(this.jcbTareas.getSelectedIndex());
+            }
+            if (accion.equals("falloAsignar")) {
+                 JOptionPane.showMessageDialog(this, "No se pudo asignar");
             }
         } catch (JDOMException ex) {
             Logger.getLogger(JIFAsignarTarea.class.getName()).log(Level.SEVERE, null, ex);
@@ -223,4 +225,3 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame implements Obser
         }
     }
 }
-

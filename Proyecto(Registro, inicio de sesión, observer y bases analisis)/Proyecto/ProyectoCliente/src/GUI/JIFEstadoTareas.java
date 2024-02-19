@@ -4,33 +4,41 @@
  */
 package GUI;
 
-import Business.TareaBusiness;
+import Domain.ClienteSingleton;
 import Domain.Tarea;
+import Utility.GestionXML;
+import Utility.Observer;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jdom.Element;
+import org.jdom.JDOMException;
 
 /**
  *
  * @author Estephanie
  */
-public class JIFEstadoTareas extends javax.swing.JInternalFrame {
+public class JIFEstadoTareas extends javax.swing.JInternalFrame implements Observer {
 
     /**
      * Creates new form JIFEstadoTareas
      */
-    private TareaBusiness tareaBusiness;
     private ArrayList<Tarea> tareas;
-    
+
+    private ClienteSingleton clienteSingleton;
+
     public JIFEstadoTareas() {
-        this.tareaBusiness = new TareaBusiness();
+
         this.tareas = new ArrayList<>();
         initComponents();
-        this.tareas = this.tareaBusiness.obtenerTareas();//se obtienen las tareas registradas
-        for (Tarea tarea : this.tareas) {
-            this.jTextArea1.append(tarea.toString()+"\n");//se escribe en el textArea las tareas y sus detalles
-        }
+        this.clienteSingleton = ClienteSingleton.getInstance();
+        GestionXML gestionXML = new GestionXML();
+        this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("AllTasks", "")));
+
     }//constructor
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -101,7 +109,8 @@ public class JIFEstadoTareas extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed
-       this.setVisible(false);
+        this.clienteSingleton.removeObserver(this);
+        this.dispose();
     }//GEN-LAST:event_jbtnVolverActionPerformed
 
 
@@ -111,4 +120,24 @@ public class JIFEstadoTareas extends javax.swing.JInternalFrame {
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JButton jbtnVolver;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void update(String dato) {
+        try {
+            GestionXML gestionXML = new GestionXML();
+            Element eProtocolo = gestionXML.stringToXML(dato);
+            String accion = eProtocolo.getAttributeValue("accion");
+
+            if (accion.equals("Tareas")) {
+                this.tareas = gestionXML.xmlATareas(eProtocolo);//obtiene todas las tareas registradas
+                for (Tarea tarea : this.tareas) {
+                    this.jTextArea1.append(tarea.toString() + "\n");//se escribe en el textArea las tareas y sus detalles
+                }
+            }
+        } catch (JDOMException ex) {
+            Logger.getLogger(JIFEstadoTareas.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(JIFEstadoTareas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

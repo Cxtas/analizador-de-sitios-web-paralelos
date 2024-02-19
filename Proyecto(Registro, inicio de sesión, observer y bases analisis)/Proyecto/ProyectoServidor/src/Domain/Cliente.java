@@ -7,6 +7,7 @@ package Domain;
 import Business.AdministradorBusiness;
 import Business.ExaminadorBusiness;
 import Business.SitioBusiness;
+import Business.TareaBusiness;
 import Utility.GestionXML;
 import Utility.MyUtil;
 import java.io.BufferedReader;
@@ -22,7 +23,7 @@ import org.jdom.JDOMException;
 
 /**
  *
- * 
+ *
  */
 public class Cliente extends Thread {
 
@@ -59,122 +60,177 @@ public class Cliente extends Thread {
                     //PROTOCOLOSS
                     if (accion.equals("autenticarAdministrador")) {
                         Administrador administrador = gestionXML.xmlAAdministrador(eProtocolo);
-                        AdministradorBusiness administradorBusiness=new AdministradorBusiness();
-                        Administrador a=administradorBusiness.verificarUsuario(administrador.getUser(),administrador.getContrasenia());
-                        if (a!=null) {
+                        AdministradorBusiness administradorBusiness = new AdministradorBusiness();
+                        Administrador a = administradorBusiness.verificarUsuario(administrador.getUser(), administrador.getContrasenia());
+                        if (a != null) {
                             enviarDatos(gestionXML.xmlToString(gestionXML.agregarAdministrador("validadoA", a)));
-                        }else{
+                        } else {
                             enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("denegado", "s")));
                         }
                     }
-                    
+
                     if (accion.equals("autenticarExaminador")) {
                         Examinador examinador = gestionXML.xmlAExaminador(eProtocolo);
-                        ExaminadorBusiness examinadorBusiness=new ExaminadorBusiness();
-                        Examinador e=examinadorBusiness.buscarExaminador(examinador.getUser(),examinador.getContrasenia());
-                        if (e!=null) {
+                        ExaminadorBusiness examinadorBusiness = new ExaminadorBusiness();
+                        Examinador e = examinadorBusiness.buscarExaminador(examinador.getUser(), examinador.getContrasenia());
+                        if (e != null) {
                             enviarDatos(gestionXML.xmlToString(gestionXML.agregarExaminador("validadoE", e)));
-                        }else{
+                        } else {
                             enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("denegado", "s")));
                         }
                     }
-                    
+
                     if (accion.equals("AllExaminadores")) {
-                        ExaminadorBusiness examinadorBusiness=new ExaminadorBusiness();
-                        ArrayList<Examinador> examinadores= examinadorBusiness.obtenerExaminadores();
+                        ExaminadorBusiness examinadorBusiness = new ExaminadorBusiness();
+                        ArrayList<Examinador> examinadores = examinadorBusiness.obtenerExaminadores();
                         enviarDatos(gestionXML.xmlToString(gestionXML.agregarExaminadores("Examinadores", examinadores)));
                     }
-                    
-                     if (accion.equals("AllAdministradores")) {
-                        AdministradorBusiness administradorBusiness=new AdministradorBusiness();
-                        ArrayList<Administrador> administradores=administradorBusiness.obtenerAdministradores();
+
+                    if (accion.equals("AllAdministradores")) {
+                        AdministradorBusiness administradorBusiness = new AdministradorBusiness();
+                        ArrayList<Administrador> administradores = administradorBusiness.obtenerAdministradores();
                         enviarDatos(gestionXML.xmlToString(gestionXML.agregarAdministradores("Administradores", administradores)));
                     }
-                    
+
                     if (accion.equals("eliminarAdministrador")) {
                         System.out.println(peticion);
                         Administrador administrador = gestionXML.xmlAAdministrador(eProtocolo);
-                        AdministradorBusiness administradorBusiness=new AdministradorBusiness();
-                       boolean a=administradorBusiness.desactivarAdministrador(administrador);
-                       System.out.println(a);
+                        AdministradorBusiness administradorBusiness = new AdministradorBusiness();
+                        boolean a = administradorBusiness.desactivarAdministrador(administrador);
+                        System.out.println(a);
                         if (a) {
                             enviarDatos(gestionXML.xmlToString(GestionXML.agregarAccionSimple("eliminado", "")));
-                        }else{
+                        } else {
                             enviarDatos(gestionXML.xmlToString(GestionXML.agregarAccionSimple("falloEliminacion", "")));
                         }
                     }
-                    
-                     if (accion.equals("eliminarExaminador")) {
-                         System.out.println(peticion);
-                         Examinador examinador = gestionXML.xmlAExaminador(eProtocolo);
-                        ExaminadorBusiness examinadorBusiness=new ExaminadorBusiness();
-                        boolean e=examinadorBusiness.desactivarExaminador(examinador);
-                         System.out.println(e);
+
+                    if (accion.equals("eliminarExaminador")) {
+                        System.out.println(peticion);
+                        Examinador examinador = gestionXML.xmlAExaminador(eProtocolo);
+                        ExaminadorBusiness examinadorBusiness = new ExaminadorBusiness();
+                        boolean e = examinadorBusiness.desactivarExaminador(examinador);
+                        System.out.println(e);
                         if (e) {
-                             enviarDatos(gestionXML.xmlToString(GestionXML.agregarAccionSimple("eliminado", "")));
-                        }else{
-                             enviarDatos(gestionXML.xmlToString(GestionXML.agregarAccionSimple("falloEliminacion", "")));
+                            enviarDatos(gestionXML.xmlToString(GestionXML.agregarAccionSimple("eliminado", "")));
+                        } else {
+                            enviarDatos(gestionXML.xmlToString(GestionXML.agregarAccionSimple("falloEliminacion", "")));
                         }
                     }
-                     if (accion.equals("registrarAdministrador")) {
+                    if (accion.equals("registrarAdministrador")) {
                         Administrador administrador = gestionXML.xmlAAdministrador(eProtocolo);
-                        AdministradorBusiness administradorBusiness=new AdministradorBusiness();
-                        boolean a=administradorBusiness.insertarAdministrador(administrador);
+                        AdministradorBusiness administradorBusiness = new AdministradorBusiness();
+                        boolean a = administradorBusiness.insertarAdministrador(administrador);
                         if (a) {
                             enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("RegistroExitoso", "s")));
-                        }else{
+                        } else {
                             enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("falloRegistro", "s")));
                         }
                     }
-                     
-                       if (accion.equals("registrarExaminador")) {
-                       Examinador examinador=gestionXML.xmlAExaminador(eProtocolo);
-                        ExaminadorBusiness examinadorBusiness=new ExaminadorBusiness();
-                        boolean a=examinadorBusiness.insertarExaminador(examinador);
+
+                    if (accion.equals("registrarExaminador")) {
+                        Examinador examinador = gestionXML.xmlAExaminador(eProtocolo);
+                        ExaminadorBusiness examinadorBusiness = new ExaminadorBusiness();
+                        boolean a = examinadorBusiness.insertarExaminador(examinador);
                         if (a) {
                             enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("RegistroExitoso", "s")));
-                        }else{
+                        } else {
                             enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("falloRegistro", "s")));
                         }
                     }
-                       if (accion.equals("informacionSitioP")) {
-                        String url=eProtocolo.getChild("dato").getValue();
-                        SitioBusiness sitioBusiness=new SitioBusiness();
-                        Sitio sitio=sitioBusiness.obtenerSitio(url);
-                           if (sitio!=null) {
-                               enviarDatos(gestionXML.xmlToString(gestionXML.SitioAXml("graficoPastel", sitio)));
-                           }else{
-                               enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("falloGrafico", "")));
-                           }
+                    if (accion.equals("informacionSitioP")) {
+                        String url = eProtocolo.getChild("dato").getValue();
+                        SitioBusiness sitioBusiness = new SitioBusiness();
+                        Sitio sitio = sitioBusiness.obtenerSitio(url);
+                        if (sitio != null) {
+                            enviarDatos(gestionXML.xmlToString(gestionXML.SitioAXml("graficoPastel", sitio)));
+                        } else {
+                            enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("falloGrafico", "")));
+                        }
                     }
-                       
-                        if (accion.equals("informacionSitioB")) {
-                        String url=eProtocolo.getChild("dato").getValue();
-                        SitioBusiness sitioBusiness=new SitioBusiness();
-                        Sitio sitio=sitioBusiness.obtenerSitio(url);
-                           if (sitio!=null) {
-                               enviarDatos(gestionXML.xmlToString(gestionXML.SitioAXml("graficoBarras", sitio)));
-                           }else{
-                               enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("falloGrafico", "")));
-                           }
+
+                    if (accion.equals("informacionSitioB")) {
+                        String url = eProtocolo.getChild("dato").getValue();
+                        SitioBusiness sitioBusiness = new SitioBusiness();
+                        Sitio sitio = sitioBusiness.obtenerSitio(url);
+                        if (sitio != null) {
+                            enviarDatos(gestionXML.xmlToString(gestionXML.SitioAXml("graficoBarras", sitio)));
+                        } else {
+                            enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("falloGrafico", "")));
+                        }
                     }
-                        if (accion.equals("guardarSitio")) {
-                        Sitio sitio=gestionXML.xmlASitio(eProtocolo);
-                        SitioBusiness sitioBusiness=new SitioBusiness();
-                        boolean hecho=sitioBusiness.guardarSitio(sitio);
-                            if (hecho) {
-                                enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("sitioAgregado", "")));
-                            }
+                    if (accion.equals("guardarSitio")) {
+                        Sitio sitio = gestionXML.xmlASitio(eProtocolo);
+                        SitioBusiness sitioBusiness = new SitioBusiness();
+                        boolean hecho = sitioBusiness.guardarSitio(sitio);
+                        if (hecho) {
+                            enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("sitioAgregado", "")));
+                        }
                     }
-                        if (accion.equals("informacionSitio")) {
-                        String url=eProtocolo.getChild("dato").getValue();
-                        SitioBusiness sitioBusiness=new SitioBusiness();
-                        Sitio sitio=sitioBusiness.obtenerSitio(url);
-                           if (sitio!=null) {
-                               enviarDatos(gestionXML.xmlToString(gestionXML.SitioAXml("generaPdf", sitio)));
-                           }
+                    if (accion.equals("informacionSitio")) {
+                        String url = eProtocolo.getChild("dato").getValue();
+                        SitioBusiness sitioBusiness = new SitioBusiness();
+                        Sitio sitio = sitioBusiness.obtenerSitio(url);
+                        if (sitio != null) {
+                            enviarDatos(gestionXML.xmlToString(gestionXML.SitioAXml("generaPdf", sitio)));
+                        }
                     }
-                    
+                    if (accion.equals("AllTasks")) {
+                        TareaBusiness tareaBusiness = new TareaBusiness();
+                        ArrayList<Tarea> tareas = tareaBusiness.obtenerTareas();
+                        enviarDatos(gestionXML.xmlToString(gestionXML.TareasAXml("Tareas", tareas)));
+
+                    }
+                    if (accion.equals("AllTasksa")) {
+                        TareaBusiness tareaBusiness = new TareaBusiness();
+                        ArrayList<Tarea> tareas = tareaBusiness.obtenerTareas();
+                        enviarDatos(gestionXML.xmlToString(gestionXML.TareasAXml("Tareasa", tareas)));
+
+                    }
+                    if (accion.equals("AllTaskss")) {
+                        TareaBusiness tareaBusiness = new TareaBusiness();
+                        ArrayList<Tarea> tareas = tareaBusiness.obtenerTareas();
+                        enviarDatos(gestionXML.xmlToString(gestionXML.TareasAXml("Tareass", tareas)));
+
+                    }
+
+                    if (accion.equals("agregarTarea")) {
+                        Tarea tarea = gestionXML.xmlATarea(eProtocolo);
+                        TareaBusiness tareaBusiness = new TareaBusiness();
+                        boolean a = tareaBusiness.insertarTareas(tarea);
+                        if (a) {
+                            enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("registroTarea", "s")));
+                        } else {
+                            enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("falloTarea", "s")));
+                        }
+                    }
+
+                    if (accion.equals("asignarAnalista")) {
+                        String[] datos = gestionXML.xmlATareaAnalista(eProtocolo);
+                        TareaBusiness tareaBusiness = new TareaBusiness();
+                        boolean hecho = tareaBusiness.asignarAnalista(datos[0], datos[1]);
+                        if (hecho) {
+                            enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("tareaAsignada", "s")));
+                        } else {
+                            enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("falloAsignar", "s")));
+                        }
+                    }
+
+                    if (accion.equals("cambiarEstado")) {
+                        String url = eProtocolo.getChild("dato").getValue();
+                        TareaBusiness tareaBusiness = new TareaBusiness();
+                        tareaBusiness.cambiarEstado(url);
+                    }
+
+                    if (accion.equals("buscarTarea")) {
+                        String url = eProtocolo.getChild("dato").getValue();
+                        TareaBusiness tareaBusiness = new TareaBusiness();
+                        Tarea tarea = tareaBusiness.buscarTarea(url);
+                        if (tarea != null) {
+                            enviarDatos(gestionXML.xmlToString(gestionXML.TareaAXml("informacionTarea", tarea)));
+                        }
+                    }
+
                 } catch (JDOMException ex) {
                     Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
                 }

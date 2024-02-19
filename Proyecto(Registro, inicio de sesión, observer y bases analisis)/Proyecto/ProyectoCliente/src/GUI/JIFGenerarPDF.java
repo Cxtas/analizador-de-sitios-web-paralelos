@@ -4,8 +4,6 @@
  */
 package GUI;
 
-
-import Business.TareaBusiness;
 import Data.AnalisisData;
 import Domain.ClienteSingleton;
 import Domain.GenerarInformePDF;
@@ -25,33 +23,36 @@ import org.jdom.JDOMException;
  *
  * @author Estephanie
  */
-public class JIFGenerarPDF extends javax.swing.JInternalFrame implements Observer {
+public class JIFGenerarPDF extends javax.swing.JInternalFrame implements Observer,Runnable {
 
     /**
      * Creates new form JIFGenerarPDFenviar
      */
     private AnalisisData ad;
- 
+
     private Sitio s;
     private GenerarInformePDF gipdf;
-    private TareaBusiness tareaBusiness;
+
     private ArrayList<Tarea> tareas;
-    
+
     private ClienteSingleton clienteSingleton;
-    
+
     public JIFGenerarPDF() throws IOException, JDOMException {
 
-        this.tareaBusiness = new TareaBusiness();
         this.tareas = new ArrayList<>();
         this.gipdf = new GenerarInformePDF(1);
-        this.clienteSingleton=ClienteSingleton.getInstance();
+        this.clienteSingleton = ClienteSingleton.getInstance();
+
+        GestionXML gestionXML = new GestionXML();
+        this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("AllTaskss", "")));
         initComponents();
-        agregarTareas();
+        Thread thread=new Thread(this);
+        thread.start();
     }//constructor
-    
+
     //Agrega las tareas al combobox
     private void agregarTareas() {
-        this.tareas = tareaBusiness.obtenerTareas();
+
         Iterator<Tarea> iterator = this.tareas.iterator();//se necesita un iterador para no alterar el índice
         while (iterator.hasNext()) {
             Tarea tareaTemp = iterator.next();
@@ -166,17 +167,19 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame implements Observe
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed
+        this.clienteSingleton.removeObserver(this);
         this.dispose();
+        
     }//GEN-LAST:event_jbtnVolverActionPerformed
 
     private void jcbTareasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbTareasActionPerformed
-         // TODO add your handling code here:
+        // TODO add your handling code here:
     }//GEN-LAST:event_jcbTareasActionPerformed
 
     private void jbtnGenerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGenerarActionPerformed
-        GestionXML gestionXML=new GestionXML();
-        this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("informacionSitio", (String)this.jcbTareas.getSelectedItem())));
-        
+        GestionXML gestionXML = new GestionXML();
+        this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.agregarAccionSimple("informacionSitio", (String) this.jcbTareas.getSelectedItem())));
+
     }//GEN-LAST:event_jbtnGenerarActionPerformed
 
 
@@ -197,13 +200,34 @@ public class JIFGenerarPDF extends javax.swing.JInternalFrame implements Observe
             String accion = eProtocolo.getAttributeValue("accion");
 
             if (accion.equals("generaPdf")) {
-                Sitio sitio=gestionXML.xmlASitio(eProtocolo);
+                Sitio sitio = gestionXML.xmlASitio(eProtocolo);
                 gipdf.generarInforme(sitio);
             }
+            
+                agregarTareas();
+            
         } catch (JDOMException ex) {
             Logger.getLogger(JIFGenerarPDF.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(JIFGenerarPDF.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void run() {
+        boolean abierto=true;
+        while (abierto) {            
+            if (this.clienteSingleton.isLleganTareas()) {
+                this.tareas=this.clienteSingleton.getTareas();
+                this.clienteSingleton.setLleganTareas(false);
+                agregarTareas();
+                abierto=false;
+            }
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(JIFGenerarPDF.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }

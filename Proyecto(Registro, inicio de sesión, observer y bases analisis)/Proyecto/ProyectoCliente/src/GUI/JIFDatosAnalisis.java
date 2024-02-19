@@ -4,29 +4,37 @@
  */
 package GUI;
 
-import Business.TareaBusiness;
+
+import Domain.ClienteSingleton;
 import Domain.Tarea;
+import Utility.GestionXML;
+import Utility.Observer;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import org.jdom.Element;
+import org.jdom.JDOMException;
 
 /**
  *
  * @author Estephanie
  */
-public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
+public class JIFDatosAnalisis extends javax.swing.JInternalFrame implements Observer {
 
     /**
      * Creates new form JIFDatosAnalisis
      */
     private Tarea tarea;
 
+    private ClienteSingleton clienteSingleton;
     public JIFDatosAnalisis() {
         initComponents();
         this.tarea = null;
+        this.clienteSingleton=ClienteSingleton.getInstance();
+        
     }
 
     /**
@@ -154,30 +162,25 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
 
     private void jbtnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnGuardarActionPerformed
 
-        try {
-            TareaBusiness tareaBusiness = new TareaBusiness();
+ 
+
             if (isValidURL(this.jtfURL.getText())) {//si el texto ingresado es una url prosigue
                 this.tarea = new Tarea(0, "en proceso", this.jtfURL.getText());//se guardan datos generales de la tarea
                 boolean analisisSelected = getAnalisisSelected();//se le dan los detalles a la tarea registrada
                 if (analisisSelected) {//si los detalles son idoneos
-                    boolean registrado = tareaBusiness.insertarTareas(this.tarea);//se registra la tarea
-                    if (registrado) {//si se registra correctamente se indica
-                        JOptionPane.showMessageDialog(this, "Se agregó una tarea");
-                        setInformacion();//se borra la información de la tarea registrada
-                    } else {//si no se registra bien se alerta al usuario
-                        JOptionPane.showMessageDialog(this, "No se pudo agregar");
-                    }
+                    GestionXML gestionXML =new GestionXML();
+                    this.clienteSingleton.enviarDatos(gestionXML.xmlToString(gestionXML.TareaAXml("agregarTarea", this.tarea)));
+                    
                 }
             }//fin valida url
-        } catch (IOException ex) {
-            Logger.getLogger(JIFDatosAnalisis.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+      
 
     }//GEN-LAST:event_jbtnGuardarActionPerformed
 
     private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed
-        this.setVisible(false);
+        this.clienteSingleton.removeObserver(this);
+        this.dispose();
+        
     }//GEN-LAST:event_jbtnVolverActionPerformed
 
     //borra la información de los espacios para una nueva tarea
@@ -256,4 +259,26 @@ public class JIFDatosAnalisis extends javax.swing.JInternalFrame {
     private javax.swing.JCheckBox jcheckImg;
     private javax.swing.JTextField jtfURL;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void update(String dato) {
+        try {
+            GestionXML gestionXML = new GestionXML();
+            Element eProtocolo = gestionXML.stringToXML(dato);
+            String accion = eProtocolo.getAttributeValue("accion");
+
+            if (accion.equals("registroTarea")) {
+                JOptionPane.showMessageDialog(this, "Se agregó una tarea");
+                setInformacion();//se borra la información de la tarea registrada
+            }
+            if (accion.equals("falloTarea")) {
+                JOptionPane.showMessageDialog(this, "No se pudo agregar");
+            }
+        } catch (JDOMException ex) {
+            Logger.getLogger(JIFDatosAnalisis.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(JIFDatosAnalisis.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
+    }
 }
