@@ -22,6 +22,7 @@ import org.jdom.output.XMLOutputter;
 /**
  *
  * @author Estephanie
+ * Proyecto Cata
  */
 public class GestionXML {
 
@@ -582,4 +583,194 @@ public class GestionXML {
         
         return datos;
     }
+    
+    //codigo nuevo
+    
+
+    public static Element SitiosAXml(String accion, ArrayList<Sitio> sitios) {
+        Element edato = new Element("dato");
+
+        for (int i = 0; i < sitios.size(); i++) {
+
+            Element eSitio = new Element("sitio");
+
+            Element eURL = new Element("url");
+            eURL.addContent(sitios.get(i).getUrl());
+
+            Element eImagenes = new Element("imagenes");
+            eImagenes.addContent(String.valueOf(sitios.get(i).getImagenes()));
+
+            Element eEnlaces = new Element("enlaces");
+            eEnlaces.addContent(String.valueOf(sitios.get(i).getEnlaces()));
+
+            Element eVideos = new Element("videos");
+            eVideos.addContent(String.valueOf(sitios.get(i).getVideos()));
+
+            Element eTitulos = new Element("titulos");
+            eTitulos.addContent(String.valueOf(sitios.get(i).getTitulos()));
+
+            Element eSubtitulos = new Element("subtitulos");
+            eSubtitulos.addContent(String.valueOf(sitios.get(i).getSubtitulos()));
+
+            Element eTablas = new Element("tablas");
+            eTablas.addContent(String.valueOf(sitios.get(i).getTablas()));
+
+            Element eaEnlaces = new Element("eanlaces");
+
+            //for para añadir el array de enlaces al archivo
+            for (int j = 0; j < sitios.get(i).getaEnlaces().size(); j++) {
+                Element eaEnlace = new Element("enlace");
+                eaEnlace.addContent(sitios.get(i).getaEnlaces().get(j));
+
+                eaEnlaces.addContent(eaEnlace);
+            }
+
+            Element eProductos = new Element("productos");
+
+            //for para añadir productos al archivo
+            for (int it = 0; it < sitios.get(i).getProductos().size(); it++) {
+                Element eProducto = new Element("producto");
+                eProducto.addContent(sitios.get(i).getProductos().get(it));
+
+                eProductos.addContent(eProducto);
+            }
+
+            Element ePrecios = new Element("precios");
+            //for para añadir precios al archivo
+            for (int k = 0; k < sitios.get(i).getPrecios().size(); k++) {
+                Element ePrecio = new Element("precio");
+                ePrecio.addContent(sitios.get(i).getPrecios().get(k));
+
+                ePrecios.addContent(ePrecio);
+            }
+
+            eSitio.addContent(eURL);
+            eSitio.addContent(eImagenes);
+            eSitio.addContent(eEnlaces);
+            eSitio.addContent(eVideos);
+            eSitio.addContent(eTitulos);
+            eSitio.addContent(eSubtitulos);
+            eSitio.addContent(eTablas);
+            eSitio.addContent(eaEnlaces);
+            eSitio.addContent(eProductos);
+            eSitio.addContent(ePrecios);
+
+            edato.addContent(eSitio);
+        }
+
+        Element eProtocolo = crearMensajeProtocolo(accion);
+        eProtocolo.addContent(edato);
+        return eProtocolo;
+    }
+
+ 
+    public static Element agregarTarea(String accion, Tarea tarea) {
+        Element edato = new Element("dato");
+
+        Element eTarea = new Element("tarea");
+
+        Element eAvance = new Element("porcentajeAvance");
+        eAvance.addContent(String.valueOf(tarea.getPorcentajeAvance()));
+
+        Element eEstado = new Element("estado");
+        eEstado.addContent(tarea.getEstado());
+
+        Element eAnalisis0 = new Element("analisis0");
+        eAnalisis0.addContent(String.valueOf(tarea.isAnalisis0()));
+
+        Element eAnalisis1 = new Element("analisis1");
+        eAnalisis1.addContent(String.valueOf(tarea.isAnalisis1()));
+
+        Element eAnalisis2 = new Element("analisis2");
+        eAnalisis2.addContent(String.valueOf(tarea.isAnalisis2()));
+
+        Element eURL = new Element("url");
+        eURL.addContent(tarea.getUrl());
+
+        Element eImgs = new Element("imagenes");
+        eImgs.addContent(String.valueOf(tarea.isImagenes()));
+
+        Element eEnlaces = new Element("enlaces");
+        eEnlaces.addContent(String.valueOf(tarea.isEnlaces()));
+
+        Element eAnalista = new Element("analista");
+        eAnalista.addContent(tarea.getAnalista());
+
+        eTarea.addContent(eAvance);
+        eTarea.addContent(eEstado);
+        eTarea.addContent(eAnalisis0);
+        eTarea.addContent(eAnalisis1);
+        eTarea.addContent(eAnalisis2);
+        eTarea.addContent(eURL);
+        eTarea.addContent(eImgs);
+        eTarea.addContent(eEnlaces);
+        eTarea.addContent(eAnalista);
+
+        edato.addContent(eTarea);
+
+        Element eProtocolo = crearMensajeProtocolo(accion);
+        eProtocolo.addContent(edato);
+        return eProtocolo;
+    }//tareaAxml
+    
+    public static Element agregarTareas(String accion, ArrayList<Tarea> tareas) {
+        Element edato = new Element("dato");
+
+        for (int i = 0; i < tareas.size(); i++) {
+
+            Element eTarea = new Element("tarea");
+
+            Element eAvance = new Element("porcentajeAvance");
+            eAvance.addContent(String.valueOf(tareas.get(i).getPorcentajeAvance()));
+
+            Element eEstado = new Element("estado");
+            eEstado.addContent(tareas.get(i).getEstado());
+
+            Element eAnalisis0 = new Element("analisis0");
+            eAnalisis0.addContent(String.valueOf(tareas.get(i).isAnalisis0()));
+
+            Element eAnalisis1 = new Element("analisis1");
+            eAnalisis1.addContent(String.valueOf(tareas.get(i).isAnalisis1()));
+
+            Element eAnalisis2 = new Element("analisis2");
+            eAnalisis2.addContent(String.valueOf(tareas.get(i).isAnalisis2()));
+
+            Element eURL = new Element("url");
+            eURL.addContent(tareas.get(i).getUrl());
+
+            Element eImgs = new Element("imagenes");
+            eImgs.addContent(String.valueOf(tareas.get(i).isImagenes()));
+
+            Element eEnlaces = new Element("enlaces");
+            eEnlaces.addContent(String.valueOf(tareas.get(i).isEnlaces()));
+
+            Element eAnalista = new Element("analista");
+            eAnalista.addContent(tareas.get(i).getAnalista());
+
+            eTarea.addContent(eAvance);
+            eTarea.addContent(eEstado);
+            eTarea.addContent(eAnalisis0);
+            eTarea.addContent(eAnalisis1);
+            eTarea.addContent(eAnalisis2);
+            eTarea.addContent(eURL);
+            eTarea.addContent(eImgs);
+            eTarea.addContent(eEnlaces);
+            eTarea.addContent(eAnalista);
+            edato.addContent(eTarea);
+        }//for
+
+        Element eProtocolo = crearMensajeProtocolo(accion);
+        eProtocolo.addContent(edato);
+        return eProtocolo;
+    }
+
+    public static String[] xmlAsignarAnalista(Element element) {
+        Element eDatos = element.getChild("dato").getChild("asignar");
+
+        String datos[] = new String[2];
+        datos[0] = eDatos.getChild("analista").getValue();
+        datos[1] = eDatos.getChild("tarea").getValue();
+
+        return datos;
+    }//xmlATarea
 }
