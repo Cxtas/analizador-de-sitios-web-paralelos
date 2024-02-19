@@ -96,6 +96,14 @@
             <Property name="text" type="java.lang.String" value="Resultados"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="jmiComparaci&#xf3;n">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Comparaci&#xf3;n"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jmiComparaci&#xf3;nActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jmiGrafico">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Gr&#xe1;fico"/>

@@ -89,6 +89,7 @@ public class JFPrincipal extends javax.swing.JFrame {
         jmAnalisis = new javax.swing.JMenu();
         jmiAnalizar = new javax.swing.JMenuItem();
         jmResultados = new javax.swing.JMenu();
+        jmiComparación = new javax.swing.JMenuItem();
         jmiGrafico = new javax.swing.JMenuItem();
         jmiPDFenviar = new javax.swing.JMenuItem();
         jmiCorreo = new javax.swing.JMenuItem();
@@ -184,6 +185,14 @@ public class JFPrincipal extends javax.swing.JFrame {
         jMenuBar1.add(jmAnalisis);
 
         jmResultados.setText("Resultados");
+
+        jmiComparación.setText("Comparación");
+        jmiComparación.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiComparaciónActionPerformed(evt);
+            }
+        });
+        jmResultados.add(jmiComparación);
 
         jmiGrafico.setText("Gráfico");
         jmiGrafico.addActionListener(new java.awt.event.ActionListener() {
@@ -359,6 +368,18 @@ public class JFPrincipal extends javax.swing.JFrame {
         centrar(ec);
     }//GEN-LAST:event_jmiCorreoActionPerformed
 
+    private void jmiComparaciónActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiComparaciónActionPerformed
+        try {
+            JIFComparación comparacion = new JIFComparación();
+            this.jDesktopPane1.add(comparacion);
+            centrar(comparacion);
+        } catch (IOException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JDOMException ex) {
+            Logger.getLogger(JFPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jmiComparaciónActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -410,6 +431,7 @@ public class JFPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenu jmTareas;
     private javax.swing.JMenuItem jmiAnalizar;
     private javax.swing.JMenuItem jmiCambioUsuario;
+    private javax.swing.JMenuItem jmiComparación;
     private javax.swing.JMenuItem jmiCorreo;
     private javax.swing.JMenuItem jmiEliminarUsuarios;
     private javax.swing.JMenuItem jmiEstadoTareas;

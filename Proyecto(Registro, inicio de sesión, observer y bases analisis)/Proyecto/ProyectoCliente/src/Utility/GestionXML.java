@@ -389,6 +389,35 @@ public class GestionXML {
         eProtocolo.addContent(edato);
         return eProtocolo;
     }
+    
+    public static ArrayList<Sitio> xmlASitios(Element element) {
+        ArrayList<Sitio> sitios = new ArrayList<>();
+
+        Element eDato = element.getChild("dato");
+
+        if (eDato != null) {
+            List<Element> eListaSitios = eDato.getChildren("sitio");
+            for (Object object : eListaSitios) {
+                Element eSitio = (Element) object;
+
+                String url = eSitio.getChildText("url");
+                int imagenes = Integer.parseInt(eSitio.getChildText("imagenes"));
+                int enlaces = Integer.parseInt(eSitio.getChildText("enlaces"));
+                int videos = Integer.parseInt(eSitio.getChildText("videos"));
+                int titulos = Integer.parseInt(eSitio.getChildText("titulos"));
+                int subtitulos = Integer.parseInt(eSitio.getChildText("subtitulos"));
+                int tablas = Integer.parseInt(eSitio.getChildText("tablas"));
+
+                ArrayList<String> enlacesList = obtenerElementos(eSitio, "eanlaces", "enlace");
+                ArrayList<String> productosList = obtenerElementos(eSitio, "productos", "producto");
+                ArrayList<String> preciosList = obtenerElementos(eSitio, "precios", "precio");
+
+                sitios.add(new Sitio(url, imagenes, enlaces, videos, titulos, subtitulos, tablas, enlacesList, productosList, preciosList));
+
+            }
+        }
+        return sitios;
+    }
 
     public static Sitio xmlASitio(Element element) {
         Element eSitio = element.getChild("dato").getChild("sitio");

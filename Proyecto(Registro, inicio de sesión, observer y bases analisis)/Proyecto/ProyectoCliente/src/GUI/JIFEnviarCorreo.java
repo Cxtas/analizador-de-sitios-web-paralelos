@@ -151,6 +151,7 @@ public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
         lblAdjuntos = new javax.swing.JLabel();
         jbtnAdjuntos = new javax.swing.JButton();
         jbtnAñadir = new javax.swing.JButton();
+        jbtnVolver = new javax.swing.JButton();
 
         jbtnSendEmail.setText("Enviar correo");
         jbtnSendEmail.addActionListener(new java.awt.event.ActionListener() {
@@ -199,17 +200,28 @@ public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
             }
         });
 
+        jbtnVolver.setText("Volver");
+        jbtnVolver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnVolverActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jbtnSendEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(63, 63, 63)
+                .addComponent(jbtnVolver)
+                .addGap(49, 49, 49))
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(175, 175, 175)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jbtnSendEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jLabel1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(50, 50, 50)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -254,7 +266,9 @@ public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(lblAdjuntos, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jbtnSendEmail)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jbtnSendEmail)
+                    .addComponent(jbtnVolver))
                 .addGap(27, 27, 27))
         );
 
@@ -303,6 +317,10 @@ public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
         jtfDestinatario.setText("");
     }//GEN-LAST:event_jbtnAñadirActionPerformed
 
+    private void jbtnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnVolverActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_jbtnVolverActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -314,6 +332,7 @@ public class JIFEnviarCorreo extends javax.swing.JInternalFrame {
     private javax.swing.JButton jbtnAdjuntos;
     private javax.swing.JButton jbtnAñadir;
     private javax.swing.JButton jbtnSendEmail;
+    private javax.swing.JButton jbtnVolver;
     private javax.swing.JTextField jtfAsunto;
     private javax.swing.JTextArea jtfContenido;
     private javax.swing.JTextField jtfDestinatario;

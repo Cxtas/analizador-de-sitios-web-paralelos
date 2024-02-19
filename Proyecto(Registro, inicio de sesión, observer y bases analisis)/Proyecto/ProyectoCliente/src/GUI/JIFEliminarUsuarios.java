@@ -11,8 +11,6 @@ import Domain.Examinador;
 import Domain.Usuario;
 import Utility.GestionXML;
 import Utility.Observer;
-import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;

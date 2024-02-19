@@ -27,6 +27,7 @@ public class JIFAsignarTarea extends javax.swing.JInternalFrame implements Obser
     private ArrayList<Examinador> analistas;
     private Examinador analista;
 
+   
     private ArrayList<Tarea> tareas;//Tareas Por Analizar
     private Tarea tarea; //tarea seleccionada
 
