@@ -346,7 +346,7 @@ public class JIFRealizarAnalisis extends javax.swing.JInternalFrame implements R
                 this.tareaSelected = this.tareas.get(0);//inicia en la primera tarea
                 agregarTareas();//se agregan las tareas al combobox
                 Thread thread = new Thread(this);
-                //thread.start();//se inicia el hilo para cambiar de tarea
+                thread.start();//se inicia el hilo para cambiar de tarea
 
             }
             if (accion.equals("informacionTarea")) {
