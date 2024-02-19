@@ -173,7 +173,7 @@ public final class JIFComparación extends javax.swing.JInternalFrame implements
      @Override
     public void update(String dato) {
         try {
-            GestionXML gestionXML = new GestionXML();
+            GestionXML gestionXML= new GestionXML();
             Element eProtocolo = gestionXML.stringToXML(dato);
             String accion = eProtocolo.getAttributeValue("accion");
             

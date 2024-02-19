@@ -3,14 +3,19 @@ package Data;
 import Domain.DescargaArchivo;
 import Domain.Sitio;
 import Utility.Ruta;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -20,8 +25,11 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -90,7 +98,6 @@ public class AnalisisData {
             Elements videos = doc.select("video");
             this.sitio.setVideos(videos.size());
 
-
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -113,11 +120,10 @@ public class AnalisisData {
             Document doc = Jsoup.connect(url).get();
             //recoge los enlaces
             this.enlaces = doc.select("a");
-            int it = 0;//ponerle número al enlace
             for (Element enlace : this.enlaces) {
                 this.aEnlaces.add(enlace.attr("href"));
-                it++;
             }
+
             this.sitio.setaEnlaces(this.aEnlaces);
 
         } catch (NoSuchAlgorithmException ex) {
@@ -140,13 +146,12 @@ public class AnalisisData {
     public boolean descargarImagen(String url) throws IOException {
 
         try {
-             // Desactivar la verificación del certificado SSL
-            desactivarCertificado();
             //Crea un sitio para almacenar la siguiente información
             if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
                 this.sitio = new Sitio(url);
             }
-           
+            // Desactivar la verificación del certificado SSL
+            desactivarCertificado();
 
             Document doc = Jsoup.connect(url).get();
 
@@ -162,27 +167,23 @@ public class AnalisisData {
 
             //Descarga imágenes
             ArrayList<DescargaArchivo> hiloDescarga = new ArrayList<>();
-            String tituloSinSignos= this.titulo.replaceAll("\\p{Punct}", "");
+            String tituloSinSignos = this.titulo.replaceAll("\\p{Punct}", "");//quita los signos para evitar que no se cree la carpeta
             File carpeta = new File(tituloSinSignos + "/");
             boolean crear = carpeta.mkdirs();//crea la carpeta cada vez
-            if (carpeta.exists()) {//valida que haya una carpeta para guardar las imágenes
+            if (carpeta.exists()) {
                 for (int i = 0; i < this.imagenesURL.size(); i++) {
                     String linea = this.imagenesURL.get(i);
                     //busca el formato que tiene la imagen
                     int format = linea.lastIndexOf(".");
-                    String formato="";
-                    if (format!=-1) {
+                    String formato = ".jpg";
+                    if (format != -1) {//evita que haya error si no se encuentra el .formato
                         formato = linea.substring(format);
-                    }else
-//                System.out.println(linea);//links de imagenes
+                    }
                     hiloDescarga.add(new DescargaArchivo(linea, carpeta.getName() + "/" + i + formato));//Le da a hilo los datos para descargar
                 }
                 for (int i = 0; i < hiloDescarga.size(); i++) {
                     hiloDescarga.get(i).start();//empiezan las descargas
                 }
-
-            } else {
-                return false;
             }
 
         } catch (NoSuchAlgorithmException ex) {
@@ -198,9 +199,8 @@ public class AnalisisData {
         return true;
     }//método
 
-    public boolean precios(String url) throws NoSuchAlgorithmException, KeyManagementException {
+    public boolean precios(String url) {//, BufferedWriter writer
         try {
-            desactivarCertificado();
             //Crea un sitio para almacenar la siguiente información
             if (this.sitio == null) {//si se escogen todos los enlaces permite que se guarden en un mismo objeto sitio
                 this.sitio = new Sitio(url);
@@ -213,9 +213,10 @@ public class AnalisisData {
 
             for (Element span : spansPrice) {
                 String priceText = span.text();//toma el texto de la etiqueta
-                if (!priceText.equals("")) {//si no está vacio
-                    if (esPrecio(priceText))//si es un precio
-                    {
+                if ((!priceText.equals("")) && (esPrecio(priceText))) {//si no está vacio Y es un precio
+                    String soloNum = priceText.replaceAll("[^0-9]", "");//para verificar que sea mayor a 0
+                    int precioInt = Integer.parseInt(soloNum);
+                    if (precioInt > 0) {
                         precios.add(priceText);//se agrega al array
                     }
                 }
@@ -224,31 +225,45 @@ public class AnalisisData {
             if (precios.isEmpty()) {//si no funcionó el anterior y el array está vacio
                 Elements spans = doc.select("span"); //se prueba con el span solito
                 for (Element spanOne : spans) {
-                    if (spanOne.children().isEmpty()) {//algunos precios vienen con el span solito <span></span>
+                    //pero busca que el span tenga las siguientes clases que contienen precios
+                    if (spanOne.hasClass("price") || spanOne.hasClass("price product-price") || spanOne.hasClass("woocommerce-Price-currencySymbol")) {
                         String priceText = spanOne.text();//toma el texto
-                        if (!priceText.equals("")) //si no está vacio
-                        {
-                            if (esPrecio(priceText))//si es un precio
-                            {
-                                precios.add(priceText);//se añade
+                        if ((!priceText.equals("")) && (esPrecio(priceText))) { //si no está vacio
+                            String soloNum = priceText.replaceAll("[^0-9]", "");//para verificar que sea mayor a 0
+                            int precioInt = Integer.parseInt(soloNum);
+                            if (precioInt > 0) {
+                                precios.add(priceText);//se agrega al array
                             }
                         }
                     }
                 }
-            }//empty
-
-            //mostrar precios
-            for (int i = 0; i < precios.size(); i++) {
-//                System.out.println("Precio: " + precios.get(i));
             }
 
+            if (precios.isEmpty()) {//si no funcionó el anterior y el array está vacio
+                Elements bdis = doc.select("bdi"); //se prueba con la etiqueta bdi
+                for (Element bdi : bdis) {
+                    String priceText = bdi.text();//toma el texto
+                    String soloNum = priceText.replaceAll("[^0-9]", "");//para verificar que sea mayor a 0
+                    int precioInt = Integer.parseInt(soloNum);
+                    if (precioInt > 0) {
+                        precios.add(priceText);//se agrega al array
+                    }
+                }
+            }
+
+            //mostrar precios
+//            for (int i = 0; i < precios.size(); i++) {
+//                System.out.println("Precio: " + precios.get(i));
+//            }
+
+            //------------------------------------------------------------------------------------------------------------------------------------
             //nombres
             Elements aTitle = doc.select("a");//los que tengan <a>
             ArrayList<String> productosN = new ArrayList<>();
-
             String ptitle = "";
             for (Element title : aTitle) {
-                if (title.hasClass("product-item-link") || title.hasClass("product-name")) {//los que tengan algunas estas clases
+                ptitle = "";
+                if (title.hasClass("product-item-link") || title.hasClass("product-name") || title.hasClass("title")) {//los que tengan algunas estas clases
                     ptitle = title.text();
                 }
                 //evita que se guarden datos en blanco o repetidos
@@ -256,12 +271,46 @@ public class AnalisisData {
                     if (!productosN.contains(ptitle)) {
                         productosN.add(ptitle);
                     }
+                } else {//si no encontró busca etiquetas a que tengan en el primer atributo title que contiene el nombre de un producto
+                    ptitle = buscarAtributoTitulo(title);
+                    if (ptitle != null) {//verifica que no guarde vacios
+                        if (!productosN.contains(ptitle)) {
+                            productosN.add(ptitle);
+                        }
+                    }
+                }
+            }//for
+
+            //si no funcionó se prueba con cualquier otra etiqueta que tenga clase product-title
+            if (productosN.isEmpty()) {
+                Elements productos2 = doc.select("[class~=product-title]");
+                // Si hay elementos que tienen la clase "product-title"
+                for (Element elemento : productos2) {
+                    ptitle = elemento.text();
+                    if (!ptitle.equals("")) {
+                        if (!productosN.contains(ptitle)) {
+                            productosN.add(ptitle);
+                        }
+                    }
                 }
             }
-            //se muestran los nombres
-            for (int i = 0; i < productosN.size(); i++) {
-//                System.out.println("Producto: " + productosN.get(i));
+            if (productosN.isEmpty()) {
+                Elements productos2 = doc.select("[class~=woocommerce-loop-product__title]");
+                // Si hay elementos que tienen la clase "product-title"
+                for (Element elemento : productos2) {
+                    ptitle = elemento.text();
+                    if (!ptitle.equals("")) {
+                        if (!productosN.contains(ptitle)) {
+                            productosN.add(ptitle);
+                        }
+                    }
+                }
             }
+            
+            //se muestran los nombres
+//            for (int i = 0; i < productosN.size(); i++) {
+//                System.out.println("Producto: " + productosN.get(i));
+//            }
 
             //añade los precios y nombres al array de sitio
             this.sitio.setProductos(productosN);
@@ -272,7 +321,7 @@ public class AnalisisData {
             System.out.println("Ocurrió un error al procesar la solicitud HTTP: " + e.getMessage());
             e.printStackTrace();
             return false;
-        }catch (NullPointerException ex) {
+        } catch (NullPointerException ex) {
             Logger.getLogger(AnalisisData.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
@@ -281,9 +330,21 @@ public class AnalisisData {
 
     public static boolean esPrecio(Object obj) {//verifica que sea un precio
         String text = String.valueOf(obj);
-        Pattern pattern = Pattern.compile("[₡€$£¥:]?\\s?\\d{1,3}(\\s?\\d{3})*(\\s?,\\s?\\d+)?");
+        Pattern pattern = Pattern.compile("[₡¢€$£¥]?\\s?\\d{1,3}((\\.|,|\\s)\\d{3})*(\\s?(\\.|,|\\s)\\s?\\d+)?\\b");
         Matcher matcher = pattern.matcher(text);
         return matcher.matches();
+    }
+
+    //busca en la etiqueta <a> los que tengan como primer atributo titulo: <a title=
+    private static String buscarAtributoTitulo(Element element) {
+        Iterator<Attribute> atributo = element.attributes().iterator();//busca los atributos de la primera etiqueta
+        if (atributo.hasNext()) {
+            Attribute primerAtributo = atributo.next();
+            if (primerAtributo.getKey().equals("title")) {//si el primero es title
+                return primerAtributo.getValue();//lo devuelve
+            }
+        }
+        return null;//si no encontró devuelve null
     }
 
     private static void desactivarCertificado() throws NoSuchAlgorithmException, KeyManagementException {

@@ -175,6 +175,16 @@ public class Cliente extends Thread {
                             enviarDatos(gestionXML.xmlToString(gestionXML.SitioAXml("generaPdf", sitio)));
                         }
                     }
+                    
+                    if (accion.equals("AllSitios")) {
+                        SitioBusiness sitioBusiness = new SitioBusiness();
+                        ArrayList<Sitio> sitios = sitioBusiness.obtenerSitios();
+                        if (sitios != null) {
+                            enviarDatos(gestionXML.xmlToString(gestionXML.SitiosAXml("sitios", sitios)));
+                        }
+                    }
+
+                    
                     if (accion.equals("AllTasks")) {
                         TareaBusiness tareaBusiness = new TareaBusiness();
                         ArrayList<Tarea> tareas = tareaBusiness.obtenerTareas();
